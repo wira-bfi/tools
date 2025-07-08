@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lora Tools</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+        <script src="
+        https://cdn.jsdelivr.net/npm/jsonpath@1.1.1/jsonpath.min.js
+        "></script>
+        <style>
+            @import url("https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css");
+        </style>
+    </head>
+    <body class="bg-gray-100 p-4">
+        <div class="w-full max-w-6xl mx-auto">
+            <!-- Header with Tabs -->
+            <div class="bg-white border-2 border-gray-300 rounded-t-lg p-4">
+                <h1 class="text-xl font-bold text-gray-800 mb-2">Lora Tools</h1>
+                <div class="flex space-x-2 border-b border-gray-200">
+                    <button
+                        id="tab-visualizer"
+                        class="tab-btn px-4 py-2 text-sm font-semibold text-blue-700 border-b-2 border-blue-700 focus:outline-none"
+                        onclick="showTab('visualizer')"
+                    >
+                        Internal Doc Revision Visualizer
+                    </button>
+                    <button
+                        id="tab-readset"
+                        class="tab-btn px-4 py-2 text-sm font-semibold text-gray-600 border-b-2 border-transparent hover:text-blue-700 hover:border-blue-300 focus:outline-none"
+                        onclick="showTab('readset')"
+                    >
+                        ReadSet Checker
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div
+                class="bg-white border-2 border-t-0 border-gray-300 rounded-b-lg flex"
+                style="height: 600px"
+            >
+                <!-- Tab Panels -->
+                <!-- Internal Doc Revision Visualizer Tab -->
+                <div id="panel-visualizer" class="flex-1 p-4 overflow-scroll">
+                    <!-- Place your Internal Doc Revision Visualizer content here -->
+                    <!-- Main Content Area -->
+                    <div
+                        class="bg-white rounded-b-lg flex"
+                        style="height: 600px"
+                    >
+                        <!-- Left Panel - Cytoscape -->
+                        <div
+                            class="flex-1 border-r-2 border-gray-300 p-4 overflow-scroll"
+                        >
+                            <div
+                                class="bg-gray-50 border border-gray-200 rounded p-2 mb-4"
+                            >
+                                <textarea
+                                    id="lastdocrev"
+                                    class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                                    rows="4"
+                                    placeholder="Input Internal Doc Revision"
+                                    value=""
+                                >
+                                </textarea>
+                            </div>
+                            <div
+                                id="cy"
+                                class="w-full bg-white border border-gray-200 rounded mb-4"
+                                style="height: 480px"
+                            ></div>
+
+                            <div class="mb-4">
+                                <div
+                                    class="bg-gray-200 border border-gray-300 rounded-t p-2"
+                                >
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700"
+                                    >
+                                        Document
+                                    </h3>
+                                </div>
+                                <div
+                                    class="bg-white border border-t-0 border-gray-300 rounded-b p-3"
+                                >
+                                    <div
+                                        id="nodeInfo"
+                                        class="text-sm text-gray-600"
+                                    >
+                                        <div
+                                            id="document"
+                                            class="mt-2 overflow-scroll"
+                                        >
+                                            <p class="text-xs text-gray-500">
+                                                Click a node to see document
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel -->
+                        <div class="w-80 p-4 overflow-scroll">
+                            <div class="mb-4">
+                                <div
+                                    class="bg-gray-200 border border-gray-300 rounded-t p-2"
+                                >
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700"
+                                    >
+                                        Read Set
+                                    </h3>
+                                </div>
+                                <div
+                                    class="bg-white border border-t-0 border-gray-300 rounded-b p-3"
+                                >
+                                    <div
+                                        id="nodeInfo"
+                                        class="text-sm text-gray-600"
+                                    >
+                                        <div
+                                            id="readSet"
+                                            class="mt-2 overflow-scroll"
+                                        >
+                                            <p class="text-xs text-gray-500">
+                                                Click a node to see read set
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div
+                                    class="bg-gray-200 border border-gray-300 rounded-t p-2"
+                                >
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700"
+                                    >
+                                        Write Set
+                                    </h3>
+                                </div>
+                                <div
+                                    class="bg-white border border-t-0 border-gray-300 rounded-b p-3"
+                                >
+                                    <div
+                                        id="nodeInfo"
+                                        class="text-sm text-gray-600"
+                                    >
+                                        <div
+                                            id="writeSet"
+                                            class="mt-2 overflow-scroll"
+                                        >
+                                            <p class="text-xs text-gray-500">
+                                                Click a node to see write set
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div
+                                    class="bg-gray-200 border border-gray-300 rounded-t p-2"
+                                >
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700"
+                                    >
+                                        Data changed
+                                    </h3>
+                                </div>
+                                <div
+                                    class="bg-white border border-t-0 border-gray-300 rounded-b p-3"
+                                >
+                                    <div
+                                        id="nodeInfo"
+                                        class="text-sm text-gray-600"
+                                    >
+                                        <div
+                                            id="diffToLastDoc"
+                                            class="mt-2 overflow-scroll"
+                                        >
+                                            <p class="text-xs text-gray-500">
+                                                Click a node to see diff
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ReadSet Checker Tab -->
+                <div
+                    id="panel-readset"
+                    class="w-full p-4 overflow-scroll hidden"
+                >
+                    <!-- Place your ReadSet Checker content here -->
+                    <p class="text-xs text-gray-500 mb-4">
+                        Last sync: <span id="last-sync-time"></span>
+                    </p>
+                    <select
+                        id="doctype"
+                        name="doctype"
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mb-4"
+                    ></select>
+                    <textarea
+                        id="docrev"
+                        class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none mb-4"
+                        rows="4"
+                        placeholder="Input Doc Revision"
+                        value=""
+                    >
+                    </textarea>
+                    <p
+                        id="readset-checker"
+                        class="font-medium text-blue-600"
+                    ></p>
+                </div>
+                <!-- End Tab Panels -->
+            </div>
+        </div>
+
+        <script>
+            let readsets = [];
+            let constants = {};
+            let dataToCompare = {};
+            fetch("readset-output.json")
+                .then((response) => response.json())
+                .then((data) => {
+                    readsets = data.readSets;
+                    constants = data.constants
+                    
+                    document.getElementById("last-sync-time").innerHTML = data.extractedAt
+
+                    const select = document.getElementById("doctype");
+
+                    select.innerHTML = "";
+
+                    // Add options from API
+                    data.readSets.forEach((r) => {
+                        const option = document.createElement("option");
+                        option.value = r.type;
+                        option.textContent = r.type;
+                        select.appendChild(option);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+
+            const docrevtextarea = document.getElementById("docrev");
+            docrevtextarea.addEventListener("input", function (event) {
+                dataToCompare = JSON.parse(event.target.value);
+                checkReadset(type, dataToCompare);
+            });
+
+            const doctypeselect = document.getElementById("doctype");
+            doctypeselect.addEventListener("change", function (event) {
+                type = event.target.value;
+                checkReadset(type, dataToCompare);
+            });
+
+            function checkReadset(type, dataToCompare) {
+                const r = readsets.find((x) => x.type === type);
+                const missingData = [];
+                r.readSet.forEach((v) => {
+                    const p = constants[v];
+                    const result = jsonpath.query(dataToCompare, p);
+
+                    if (result.length === 0) {
+                        missingData.push(p);
+                    }
+                });
+
+                if (missingData.length === 0) {
+                    document.getElementById("readset-checker").innerHTML =
+                        '<pre class="text-xs">all good</pre>';
+                } else {
+                    document.getElementById("readset-checker").innerHTML =
+                        `<pre class="text-xs">${JSON.stringify(missingData, null, 2)}</pre>`;
+                }
+            }
+        </script>
+
+        <script>
+            function showTab(tab) {
+                // Tab buttons
+                document
+                    .getElementById("tab-visualizer")
+                    .classList.remove("text-gray-600", "border-transparent");
+                document
+                    .getElementById("tab-readset")
+                    .classList.remove("text-gray-600", "border-transparent");
+                document
+                    .getElementById("tab-visualizer")
+                    .classList.add("text-gray-600", "border-transparent");
+                document
+                    .getElementById("tab-readset")
+                    .classList.add("text-gray-600", "border-transparent");
+
+                // Panels
+                document
+                    .getElementById("panel-visualizer")
+                    .classList.add("hidden");
+                document
+                    .getElementById("panel-readset")
+                    .classList.add("hidden");
+
+                if (tab === "visualizer") {
+                    document
+                        .getElementById("tab-visualizer")
+                        .classList.add("text-blue-700", "border-blue-700");
+                    document
+                        .getElementById("tab-visualizer")
+                        .classList.remove(
+                            "text-gray-600",
+                            "border-transparent",
+                        );
+                    document
+                        .getElementById("panel-visualizer")
+                        .classList.remove("hidden");
+                    document
+                        .getElementById("tab-readset")
+                        .classList.remove("text-blue-700", "border-blue-700");
+                } else {
+                    document
+                        .getElementById("tab-readset")
+                        .classList.add("text-blue-700", "border-blue-700");
+                    document
+                        .getElementById("tab-readset")
+                        .classList.remove(
+                            "text-gray-600",
+                            "border-transparent",
+                        );
+                    document
+                        .getElementById("panel-readset")
+                        .classList.remove("hidden");
+                    document
+                        .getElementById("tab-visualizer")
+                        .classList.remove("text-blue-700", "border-blue-700");
+                }
+            }
+            // Default to first tab
+            showTab("visualizer");
+
+            const textarea = document.getElementById("lastdocrev");
+            textarea.addEventListener("input", function (event) {
+                const req = JSON.parse(event.target.value);
+                // Remove the first node from history
+                req[1].history.nodes.shift();
+
+                // Prepare nodes array, ensuring the first node is always set_data
+                const nodesWithSetData = [
+                    { set_data: {} },
+                    ...req[1].history.nodes.filter(
+                        (node) => Object.keys(node).length > 0,
+                    ),
+                ];
+
+                const setData = {};
+                const internalData = {};
+
+                // Utility to generate unique node keys
+                const uniqueNodeKeys = new Set();
+                function getUniqueKey(baseKey) {
+                    let counter = 1;
+                    let candidate = `${baseKey}_${counter}`;
+                    while (uniqueNodeKeys.has(candidate)) {
+                        counter++;
+                        candidate = `${baseKey}_${counter}`;
+                    }
+                    uniqueNodeKeys.add(candidate);
+                    return candidate;
+                }
+
+                // Map each node to its unique keys and associated hashes
+                function mapNodeKeys(nodes) {
+                    return nodes.map((node) =>
+                        Object.keys(node).map((key) => ({
+                            name: getUniqueKey(key),
+                            readHash: node[key].read_hash,
+                            writeHash: node[key].write_hash,
+                        })),
+                    );
+                }
+
+                const nodeKeysByNode = mapNodeKeys(nodesWithSetData);
+
+                // Build edges between consecutive node keys
+                function buildEdges(nodeKeysByNode) {
+                    const edges = [];
+                    for (let i = 0; i < nodeKeysByNode.length - 1; i++) {
+                        for (const fromKey of nodeKeysByNode[i]) {
+                            for (const toKey of nodeKeysByNode[i + 1]) {
+                                edges.push({
+                                    data: {
+                                        id: `${fromKey.name}_${toKey.name}`,
+                                        source: fromKey.name,
+                                        target: toKey.name,
+                                        // label: JSON.stringify(req[1].history.cache[toKey.readHash]),
+                                    },
+                                });
+                            }
+                        }
+                    }
+                    return edges;
+                }
+
+                const edges = buildEdges(nodeKeysByNode);
+
+                // Build Cytoscape node elements
+                function buildCytoscapeNodes(uniqueNodeKeys) {
+                    return Array.from(uniqueNodeKeys).map((node) => {
+                        let nodeClass = "";
+
+                        if (node.includes("set_data")) {
+                            nodeClass = "green-node";
+                        } else if (node.match(/^survey_\d$/)) {
+                            nodeClass = "yellow-node";
+                        }
+
+                        return {
+                            data: {
+                                id: node,
+                                label: node,
+                            },
+                            ...(nodeClass && { classes: nodeClass }),
+                        };
+                    });
+                }
+
+                const nodes = buildCytoscapeNodes(uniqueNodeKeys);
+
+                // Cytoscape initialization
+                const cy = cytoscape({
+                    container: document.getElementById("cy"),
+                    elements: [...nodes, ...edges],
+                    style: [
+                        {
+                            selector: "node",
+                            style: {
+                                "background-color": "#3b82f6",
+                                label: "data(label)",
+                                "text-valign": "center",
+                                "text-halign": "center",
+                                color: "white",
+                                "font-size": "12px",
+                                "font-weight": "bold",
+                                "font-family": "Arial, sans-serif",
+                                "text-outline-width": 1,
+                                "text-outline-opacity": 0.7,
+                                width: 100,
+                                height: 100,
+                                "border-width": 2,
+                                "border-color": "#1d4ed8",
+                                "text-wrap": "wrap",
+                                "text-max-width": "70px",
+                                "text-margin-y": 2,
+                            },
+                        },
+                        {
+                            selector: "node:hover",
+                            style: {
+                                "background-color": "#1d4ed8",
+                                "border-color": "#1e40af",
+                                cursor: "pointer",
+                            },
+                        },
+                        {
+                            selector: "node.selected",
+                            style: {
+                                "background-color": "#dc2626",
+                                "border-color": "#b91c1c",
+                                "border-width": 3,
+                                color: "#fef3c7",
+                                "text-outline-color": "#b91c1c",
+                                "text-outline-width": 2,
+                                "text-outline-opacity": 0.8,
+                                "font-size": "13px",
+                            },
+                        },
+                        {
+                            selector: "edge",
+                            style: {
+                                width: 2,
+                                "line-color": "#6b7280",
+                                "target-arrow-color": "#6b7280",
+                                "target-arrow-shape": "triangle",
+                                "curve-style": "bezier",
+                                "arrow-scale": 1.2,
+                                opacity: 0.8,
+                            },
+                        },
+                        {
+                            selector: "edge.highlighted",
+                            style: {
+                                width: 3,
+                                "line-color": "#dc2626",
+                                "target-arrow-color": "#dc2626",
+                                label: "data(label)",
+                                "font-size": "11px",
+                                "font-weight": "bold",
+                                "font-family": "Arial, sans-serif",
+                                color: "#1f2937",
+                                "text-background-color": "#fef3c7",
+                                "text-background-opacity": 0.95,
+                                "text-background-padding": "4px",
+                                "text-border-width": 1.5,
+                                "text-border-color": "#f59e0b",
+                                "text-border-opacity": 0.8,
+                                "text-border-style": "solid",
+                                "source-text-offset": 25,
+                                "target-text-offset": 25,
+                                "text-rotation": "none",
+                                "text-margin-y": -2,
+                                "text-wrap": "wrap",
+                                "text-max-width": "80px",
+                            },
+                        },
+                        {
+                            selector: ".green-node",
+                            style: {
+                                "background-color": "green",
+                                label: "data(id)",
+                            },
+                        },
+                        {
+                            selector: ".yellow-node",
+                            style: {
+                                "background-color": "yellow",
+                                label: "data(id)",
+                            },
+                        },
+                    ],
+                    layout: {
+                        name: "cose",
+                        idealEdgeLength: 60,
+                        nodeOverlap: 1,
+                        refresh: 20,
+                        fit: true,
+                        padding: 30,
+                        randomize: false,
+                        componentSpacing: 100,
+                        nodeRepulsion: 4000000,
+                        edgeElasticity: 100,
+                        nestingFactor: 1,
+                        gravity: 80,
+                        numIter: 1000,
+                        initialTemp: 2000,
+                        coolingFactor: 0.95,
+                        minTemp: 1.0,
+                    },
+                });
+
+                let selectedNode = null;
+
+                // Node click event handler
+                cy.on("tap", "node", function (evt) {
+                    const node = evt.target;
+                    const nodeId = node.id();
+                    const nodeLabel = node.data("label");
+
+                    cy.elements().removeClass("selected highlighted");
+                    node.addClass("selected");
+                    selectedNode = node;
+
+                    const connectedEdges = node.connectedEdges();
+                    connectedEdges.addClass("highlighted");
+
+                    updateNodeInfo(nodeLabel, connectedEdges);
+                });
+
+                // Background click to deselect
+                cy.on("tap", function (evt) {
+                    if (evt.target === cy) {
+                        cy.elements().removeClass("selected highlighted");
+                        selectedNode = null;
+                        updateNodeInfo(null, []);
+                    }
+                });
+
+                // Update info panel for selected node
+                function updateNodeInfo(nodeLabel, edges) {
+                    const readSetDiv = document.getElementById("readSet");
+                    const writeSetDiv = document.getElementById("writeSet");
+                    const diffToLastDocDiv =
+                        document.getElementById("diffToLastDoc");
+                    const docDiv = document.getElementById("document");
+
+                    // Find the node object by label
+                    let nodeObj = null;
+                    for (const nodeArr of nodeKeysByNode) {
+                        nodeObj = nodeArr.find((n) => n.name === nodeLabel);
+                        if (nodeObj) break;
+                    }
+
+                    // Build doc and rawDoc history
+                    const doc = {};
+                    const rawDoc = {};
+                    let lastDiff = {};
+                    const fields = Object.keys(req[1].fields);
+                    const source = { ...req[1].fields };
+
+                    // Parse field history
+                    const regex =
+                        /^\s*\[(?<name>[a-z0-9_]+)(\-\S+)?:\(true:(?<value>.*)\)\]\s*$/;
+                    fields.forEach((field) => {
+                        rawDoc[field] = [];
+                        const h = source[field].value.desc
+                            .split("-->")
+                            .filter(
+                                (x) =>
+                                    x !== "chain: (nil) " &&
+                                    !x.includes("__rollback"),
+                            )
+                            .map((x) => {
+                                const result = x.match(regex);
+                                if (result) {
+                                    return {
+                                        name:
+                                            result.groups.name === "__external"
+                                                ? "set_data"
+                                                : result.groups.name,
+                                        value: result.groups.value,
+                                    };
+                                }
+                            });
+                        if (h.length === 0) {
+                            doc[field] = null;
+                        } else {
+                            rawDoc[field] = h;
+                        }
+                    });
+
+                    // Append __internal to sets constant from LSS
+                    for (const nodeArr of [
+                        [{ name: "__internal" }],
+                        ...nodeKeysByNode,
+                    ]) {
+                        for (const y of nodeArr) {
+                            const regex = /_\d+$/;
+                            const normalize = y.name.replace(regex, "");
+                            const diff = {};
+
+                            // Filter raw doc which have activity with activity normalized value
+                            const filteredFields = Object.keys(rawDoc).filter(
+                                (field) =>
+                                    rawDoc[field].length > 0 &&
+                                    rawDoc[field][0] &&
+                                    rawDoc[field][0].name === normalize,
+                            );
+
+                            // check if the node has writeHash
+                            if (y.writeHash) {
+                                const writeSet = Object.keys(
+                                    req[1].history.cache[y.writeHash].value,
+                                );
+
+                                // loop over the filtered field check if field exist in writeset
+                                for (const f of filteredFields) {
+                                    if (writeSet.includes(f)) {
+                                        const resActivity = rawDoc[f].shift();
+                                        if (doc[f] !== resActivity.value) {
+                                            diff[f] = resActivity.value;
+                                        }
+                                        doc[f] = resActivity.value;
+                                    }
+                                }
+                            } else {
+                                // shift value from filtered field then add to doc and diff object
+                                for (const f of filteredFields) {
+                                    const resActivity = rawDoc[f].shift();
+                                    if (y.name.includes("__internal")) {
+                                        internalData[f] = resActivity.value;
+                                    }
+                                    if (y.name.includes("set_data")) {
+                                        if (!setData[y.name]) {
+                                            setData[y.name] = {};
+                                        }
+                                        setData[y.name][f] = resActivity.value;
+                                    }
+                                    if (doc[f] !== resActivity.value) {
+                                        diff[f] = resActivity.value;
+                                    }
+                                    doc[f] = resActivity.value;
+                                }
+                            }
+
+                            if (y.name === nodeLabel) {
+                                lastDiff = diff;
+                                break;
+                            }
+                        }
+                    }
+
+                    // Render info panels
+                    if (nodeLabel && nodeLabel.includes("set_data")) {
+                        readSetDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">no data</pre></p>`;
+                        writeSetDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(setData[nodeLabel], null, 2)}</pre></p>`;
+                        diffToLastDocDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(setData[nodeLabel], null, 2)}</pre></p>`;
+                        docDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(doc, null, 2)}</pre></p>`;
+                    } else if (nodeLabel) {
+                        readSetDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(req[1].history.cache[nodeObj.readHash], null, 2)}</pre></p>`;
+                        writeSetDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(req[1].history.cache[nodeObj.writeHash], null, 2)}</pre></p>`;
+                        diffToLastDocDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(lastDiff, null, 2)}</pre></p>`;
+                        docDiv.innerHTML = `<p class="font-medium text-blue-600"><pre class="text-xs">${JSON.stringify(doc, null, 2)}</pre></p>`;
+                    } else {
+                        readSetDiv.innerHTML =
+                            '<p class="font-medium">Selected Node: None</p>';
+                        writeSetDiv.innerHTML =
+                            '<p class="font-medium">Selected Node: None</p>';
+                        diffToLastDocDiv.innerHTML =
+                            '<p class="font-medium">Selected Node: None</p>';
+                        docDiv.innerHTML =
+                            '<p class="font-medium">Selected Node: None</p>';
+                    }
+                }
+
+                // Initial Cytoscape fit on DOMContentLoaded
+                document.addEventListener("DOMContentLoaded", function () {
+                    cy.fit();
+                });
+            });
+        </script>
+    </body>
+</html>
