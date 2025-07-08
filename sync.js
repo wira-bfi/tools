@@ -118,7 +118,7 @@ async function main() {
       constants: allConstants,
     };
 
-    fs.writeFileSync(path.join("public", outputFile), JSON.stringify(outputData, null, 2));
+    fs.writeFileSync(outputFile, JSON.stringify(outputData, null, 2));
   } catch (error) {
     console.error("Error:", error.message);
     process.exit(1);
