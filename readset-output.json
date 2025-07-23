@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-07-21T02:57:29.337Z",
+  "extractedAt": "2025-07-23T06:22:42.478Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/"
@@ -202,7 +202,11 @@
         "DocSurveyAppointmentAppointmentType",
         "DocProcessSurveyTaskSurveyBranchId",
         "DocChannelSoaId",
-        "DocChannelPartnerId"
+        "DocChannelPartnerId",
+        "DocCustomerProfessionalOccupationCode",
+        "DocProcessLoanEstimationPartnershipLtvMax",
+        "DocProcessPdModelOverlayS1LtvMax",
+        "DocStatusReservationExpiry"
       ]
     },
     {
