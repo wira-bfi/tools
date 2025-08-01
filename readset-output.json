@@ -1,12 +1,12 @@
 {
-  "extractedAt": "2025-07-29T04:02:43.520Z",
+  "extractedAt": "2025-08-01T05:55:45.774Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/"
   ],
   "totalFiles": 9,
   "totalReadSets": 4,
-  "totalConstants": 591,
+  "totalConstants": 593,
   "readSets": [
     {
       "type": "underwriting",
@@ -72,7 +72,30 @@
         "DocDocumentsAssetAssetFrontDocumentId",
         "DocDocumentsAssetAssetFrontDocumentType",
         "DocDocumentsAssetAssetRearDocumentId",
-        "DocDocumentsAssetAssetRearDocumentType"
+        "DocDocumentsAssetAssetRearDocumentType",
+        "DocDocumentsIncomeProofDocumentType",
+        "DocDocumentsBusinessPhotoDocumentId",
+        "DocDocumentsBusinessPhotoDocumentType",
+        "DocDocumentsBusinessLocationDocumentId",
+        "DocDocumentsBusinessLocationDocumentType",
+        "DocDocumentsBusinessLegalityDocumentId",
+        "DocDocumentsBusinessLegalityDocumentType",
+        "DocProcessCreditCheckingNeighborhoodSource1InformantName",
+        "DocProcessCreditCheckingNeighborhoodSource1InformantMobileNumber",
+        "DocProcessCreditCheckingNeighborhoodSource1OccupationCode",
+        "DocCustomerProfessionalBusinessSuitability",
+        "DocProcessCreditCheckingNeighborhoodSource1FamilyReputation",
+        "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseUsesAssetMoreThanOnce",
+        "DocProcessCreditCheckingNeighborhoodSource1UnitSeenAtResidenceMoreThanOnce",
+        "DocProcessCreditCheckingNeighborhoodSource1ConsumerOftenAtHome",
+        "DocProcessCreditCheckingNeighborhoodSource1ConsumerAffiliateWithOrganization",
+        "DocProcessCreditCheckingNeighborhoodSource1HouseSuitability",
+        "DocAssetBpkbOwnershipPeriod",
+        "DocProcessCreditCheckingNeighborhoodSource1OtherInformation",
+        "DocCustomerEmergencyContactName",
+        "DocCustomerEmergencyContactRelationWithCustomer",
+        "DocCustomerEmergencyContactStreetAddress",
+        "DocCustomerEmergencyContactMobileNumber"
       ]
     },
     {
@@ -803,10 +826,12 @@
     "DocProcessObligorLatestExposure": "$.process.obligor.latest_exposure",
     "DocProcessObligorObligorId": "$.process.obligor.obligor_id",
     "DocProcessObligorObligorSummaryDmsDocumentId": "$.process.obligor.obligor_summary_dms_document_id",
+    "DocProcessOperationsTaskBpkbReviewRevisionCount": "$.process.operations_task.bpkb_review_revision_count",
     "DocProcessOperationsTaskBpkbReviewerEmployeeId": "$.process.operations_task.bpkb_reviewer_employee_id",
     "DocProcessOperationsTaskProcessingBranchId": "$.process.operations_task.processing_branch_id",
     "DocProcessOperationsTaskProcessingBranchName": "$.process.operations_task.processing_branch_name",
     "DocProcessOperationsTaskRcoEmployeeId": "$.process.operations_task.rco_employee_id",
+    "DocProcessOperationsTaskRcoValidationRevisionCount": "$.process.operations_task.rco_validation_revision_count",
     "DocProcessPdModelAliCloudAScore": "$.process.pd_model.ali_cloud.a_score",
     "DocProcessPdModelAliCloudBypass": "$.process.pd_model.ali_cloud.bypass",
     "DocProcessPdModelAliCloudPdScore": "$.process.pd_model.ali_cloud.pd_score",
