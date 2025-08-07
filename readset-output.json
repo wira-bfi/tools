@@ -1,12 +1,12 @@
 {
-  "extractedAt": "2025-08-01T05:55:45.774Z",
+  "extractedAt": "2025-08-07T08:40:50.251Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/"
   ],
-  "totalFiles": 9,
+  "totalFiles": 10,
   "totalReadSets": 4,
-  "totalConstants": 593,
+  "totalConstants": 603,
   "readSets": [
     {
       "type": "underwriting",
@@ -95,7 +95,11 @@
         "DocCustomerEmergencyContactName",
         "DocCustomerEmergencyContactRelationWithCustomer",
         "DocCustomerEmergencyContactStreetAddress",
-        "DocCustomerEmergencyContactMobileNumber"
+        "DocCustomerEmergencyContactMobileNumber",
+        "DocProcessSurveyTaskSurveyBranchName",
+        "DocChannelSoaId",
+        "DocChannelPartnerId",
+        "DocChannelPartnerInternalName"
       ]
     },
     {
@@ -228,7 +232,8 @@
         "DocCustomerProfessionalOccupationTypeCode",
         "DocProcessLoanEstimationPartnershipLtvMax",
         "DocStatusReservationExpiry",
-        "DocCustomerPersonalNumberDependents"
+        "DocCustomerPersonalNumberDependents",
+        "DocSurveyAppointmentSurveyLocationOptionsArray"
       ]
     },
     {
@@ -872,6 +877,16 @@
     "DocProcessSimpleSurveyScoreS1Result": "$.process.simple_survey_score.s1.result",
     "DocProcessSimpleSurveyScoreS1Score": "$.process.simple_survey_score.s1.score",
     "DocProcessSoftRacS1Passed": "$.process.soft_rac.s1.passed",
+    "DocProcessStatusTimestampsApproved": "$.process.status_timestamps.approved",
+    "DocProcessStatusTimestampsCanceled": "$.process.status_timestamps.canceled",
+    "DocProcessStatusTimestampsDisbursed": "$.process.status_timestamps.disbursed",
+    "DocProcessStatusTimestampsExpired": "$.process.status_timestamps.expired",
+    "DocProcessStatusTimestampsLive": "$.process.status_timestamps.live",
+    "DocProcessStatusTimestampsNew": "$.process.status_timestamps.new",
+    "DocProcessStatusTimestampsPreApproved": "$.process.status_timestamps.pre_approved",
+    "DocProcessStatusTimestampsPreQualified": "$.process.status_timestamps.pre_qualified",
+    "DocProcessStatusTimestampsRejected": "$.process.status_timestamps.rejected",
+    "DocProcessStatusTimestampsTerminal": "$.process.status_timestamps.terminal",
     "DocProcessStnkOcrResultBpkbNumber": "$.process.stnk_ocr_result.bpkb_number",
     "DocProcessStnkOcrResultChassisNumber": "$.process.stnk_ocr_result.chassis_number",
     "DocProcessStnkOcrResultEngineNumber": "$.process.stnk_ocr_result.engine_number",
