@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-08-07T08:40:50.251Z",
+  "extractedAt": "2025-08-12T06:59:10.237Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/"
@@ -63,7 +63,7 @@
         "DocAssetAssetUsage",
         "DocProcessAssetPricingPrice",
         "DocLoanStructureLtv",
-        "DocLoanStructureAmount",
+        "DocLoanStructureProvisionalAmount",
         "DocLoanStructureTenure",
         "DocLoanStructureInterestRate",
         "DocLoanStructureProductOffering",
@@ -131,7 +131,7 @@
         "DocProcessAssetPricingPrice",
         "DocLoanStructureLtv",
         "DocLoanStructureFundingRatio",
-        "DocLoanStructureAmount",
+        "DocLoanStructureProvisionalAmount",
         "DocLoanStructureMaxFunding",
         "DocLoanStructureInterestRate",
         "DocLoanStructureLifeInsurancePremium",
@@ -230,7 +230,7 @@
         "DocChannelSoaId",
         "DocChannelPartnerId",
         "DocCustomerProfessionalOccupationTypeCode",
-        "DocProcessLoanEstimationPartnershipLtvMax",
+        "DocProcessLoanEstimationMaxFundingRatio",
         "DocStatusReservationExpiry",
         "DocCustomerPersonalNumberDependents",
         "DocSurveyAppointmentSurveyLocationOptionsArray"
@@ -256,7 +256,7 @@
         "DocAssetLicensePlate",
         "DocCustomerKtpName",
         "DocLoanStructureProductId",
-        "DocLoanStructureAmount",
+        "DocLoanStructureProvisionalAmount",
         "DocLoanStructureTenure",
         "DocLoanStructureCapitalizedNtfAmount",
         "DocLoanStructureLtv",
@@ -371,8 +371,8 @@
         "DocDocumentsEmploymentEvidenceDocumentType",
         "DocStatusReservationExpiry",
         "DocLoanStructureOriginalAmount",
-        "DocProcessLoanEstimationPartnershipLtvMax",
-        "DocProcessPdModelOverlayS1LtvMax"
+        "DocProcessLoanEstimationMaxFundingRatio",
+        "DocProcessPdModelOverlayS1MaxFundingRatio"
       ]
     }
   ],
@@ -701,7 +701,6 @@
     "DocGuarantor3SubDistrictCode": "$.guarantor_3.sub_district_code",
     "DocId": "$.id",
     "DocLoanStructureAdminFee": "$.loan_structure.admin_fee",
-    "DocLoanStructureAmount": "$.loan_structure.amount",
     "DocLoanStructureAssetInsurancePremium": "$.loan_structure.asset_insurance_premium",
     "DocLoanStructureBillingDate": "$.loan_structure.billing_date",
     "DocLoanStructureCapitalizedNtfAmount": "$.loan_structure.capitalized_ntf_amount",
@@ -718,6 +717,7 @@
     "DocLoanStructureProductId": "$.loan_structure.product_id",
     "DocLoanStructureProductOffering": "$.loan_structure.product_offering",
     "DocLoanStructureProvisionFee": "$.loan_structure.provision_fee",
+    "DocLoanStructureProvisionalAmount": "$.loan_structure.provisional_amount",
     "DocLoanStructurePurposeFinancePurpose": "$.loan_structure.purpose.finance_purpose",
     "DocLoanStructurePurposeFinancePurposeDetails": "$.loan_structure.purpose.finance_purpose_details",
     "DocLoanStructurePurposeOfFinancing": "$.loan_structure.purpose_of_financing",
@@ -805,7 +805,7 @@
     "DocProcessIncomeModelCustomerIncome": "$.process.income_model.customer.income",
     "DocProcessIncomeModelSpouseIncome": "$.process.income_model.spouse.income",
     "DocProcessLivingCostS1Result": "$.process.living_cost.s1.result",
-    "DocProcessLoanEstimationPartnershipLtvMax": "$.process.loan_estimation.partnership_ltv_max",
+    "DocProcessLoanEstimationMaxFundingRatio": "$.process.loan_estimation.max_funding_ratio",
     "DocProcessNegativeListCnvCustomerCrimeBadType": "$.process.negative_list.cnv.customer.crime.bad_type",
     "DocProcessNegativeListCnvCustomerCrimeIsFound": "$.process.negative_list.cnv.customer.crime.is_found",
     "DocProcessNegativeListCnvCustomerNegativeListInternalBadType": "$.process.negative_list.cnv.customer.negative_list_internal.bad_type",
@@ -850,7 +850,7 @@
     "DocProcessPdModelAlternativeOverlayS1Result": "$.process.pd_model_alternative_overlay.s1.result",
     "DocProcessPdModelOverlayS1AddAdminFee": "$.process.pd_model_overlay.s1.add_admin_fee",
     "DocProcessPdModelOverlayS1AddOtherFee": "$.process.pd_model_overlay.s1.add_other_fee",
-    "DocProcessPdModelOverlayS1LtvMax": "$.process.pd_model_overlay.s1.ltv_max",
+    "DocProcessPdModelOverlayS1MaxFundingRatio": "$.process.pd_model_overlay.s1.max_funding_ratio",
     "DocProcessPdModelOverlayS1Result": "$.process.pd_model_overlay.s1.result",
     "DocProcessPdModelRacS1Passed": "$.process.pd_model_rac.s1.passed",
     "DocProcessPefindoProfileFinalInstallment": "$.process.pefindo_profile.final_installment",
@@ -912,8 +912,8 @@
     "DocProcessUserConsentTimestamp": "$.process.user_consent_timestamp",
     "DocProcessUserEkycPassed": "$.process.user_ekyc_passed",
     "DocProcessUserManualKycRequired": "$.process.user_manual_kyc_required",
-    "DocProcessVehicleVerificationScoreS1FinalFundingRatio": "$.process.vehicle_verification_score.s1.final_funding_ratio",
     "DocProcessVehicleVerificationScoreS1LtvMax": "$.process.vehicle_verification_score.s1.ltv_max",
+    "DocProcessVehicleVerificationScoreS1MaxFundingRatio": "$.process.vehicle_verification_score.s1.max_funding_ratio",
     "DocProcessVehicleVerificationScoreS1Result": "$.process.vehicle_verification_score.s1.result",
     "DocProcessVehicleVerificationScoreS1Score": "$.process.vehicle_verification_score.s1.score",
     "DocProcessVehicleVerificationScoreS1ScoreCategory": "$.process.vehicle_verification_score.s1.score_category",
