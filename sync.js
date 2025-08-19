@@ -1,14 +1,16 @@
-const fs = require("fs");
-const path = require("path");
-const glob = require("glob");
+const fs = require('fs');
+const path = require('path');
+const glob = require('glob');
 
 const args = process.argv.slice(2);
-const basePath = args[0] || ".";
-const outputFile = args[1] || "readset-output.json";
+const basePath = args[0] || '.';
+const outputFile = args[1] || 'readset-output.json';
 
 const patterns = [
-  path.join(basePath, "internal/process/tasking/**/*.go"),
-  path.join(basePath, "internal/process/document/**/*.go"),
+  path.join(basePath, 'internal/process/tasking/**/*.go'),
+  path.join(basePath, 'internal/process/document/**/*.go'),
+  path.join(basePath, 'internal/process/operation/**/impl.go'),
+  path.join(basePath, 'internal/process/scoring/**/impl.go'),
 ];
 
 const readSetRegex =
@@ -31,7 +33,7 @@ function extractConstants(content) {
       const constName = constMatch[1];
       const constValue = constMatch[2];
 
-      const commentIndex = constValue.indexOf("//");
+      const commentIndex = constValue.indexOf('//');
       const cleanValue =
         commentIndex !== -1
           ? constValue.substring(0, commentIndex).trim()
@@ -51,24 +53,35 @@ function extractReadSet(content, filePath) {
     const readSetContent = match[1];
 
     const values = readSetContent
-      .split(",")
+      .split(',')
       .map((value) => value.trim())
       .filter((value) => value.length > 0)
       .map((value) => {
-        const commentIndex = value.indexOf("//");
+        const commentIndex = value.indexOf('//');
         if (commentIndex !== -1) {
           value = value.substring(0, commentIndex).trim();
         }
 
-        if (value.startsWith("document.")) {
-          return value.substring("document.".length);
+        if (value.startsWith('document.')) {
+          return value.substring('document.'.length);
         }
         return value;
       })
       .filter((value) => value.length > 0);
 
+    let t = path.basename(path.dirname(filePath));
+
+    if (filePath.includes('scoring') || filePath.includes('operation')) {
+      const match = content.match(
+        /const\s+\(\s*[^)]*?processAndActivityName\s*=\s*"([^"]+)"[^)]*?\)/s
+      );
+      if (match && match[1]) {
+        t = match[1].trim();
+      }
+    }
+
     results.push({
-      type: path.basename(path.dirname(filePath)),
+      type: t,
       readSet: values,
     });
   }
@@ -91,7 +104,7 @@ async function main() {
 
     for (const filePath of files) {
       try {
-        const content = fs.readFileSync(filePath, "utf8");
+        const content = fs.readFileSync(filePath, 'utf8');
         const fileName = path.basename(filePath);
 
         const readSets = extractReadSet(content, filePath);
@@ -99,7 +112,7 @@ async function main() {
           allReadSets.push(...readSets);
         }
 
-        if (fileName === "dp-ndf-v0_0_1.go") {
+        if (fileName === 'dp-ndf-v0_0_1.go') {
           const constants = extractConstants(content);
           Object.assign(allConstants, constants);
         }
@@ -110,7 +123,12 @@ async function main() {
 
     const outputData = {
       extractedAt: new Date().toISOString(),
-      searchPaths: ["internal/process/tasking/", "internal/process/document/"],
+      searchPaths: [
+        'internal/process/tasking/',
+        'internal/process/document/',
+        'internal/process/operation/',
+        'internal/process/scoring/',
+      ],
       totalFiles: files.length,
       totalReadSets: allReadSets.length,
       totalConstants: Object.keys(allConstants).length,
@@ -120,7 +138,7 @@ async function main() {
 
     fs.writeFileSync(outputFile, JSON.stringify(outputData, null, 2));
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error('Error:', error.message);
     process.exit(1);
   }
 }

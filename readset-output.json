@@ -1,12 +1,14 @@
 {
-  "extractedAt": "2025-08-12T06:59:10.237Z",
+  "extractedAt": "2025-08-19T07:46:12.677Z",
   "searchPaths": [
     "internal/process/tasking/",
-    "internal/process/document/"
+    "internal/process/document/",
+    "internal/process/operation/",
+    "internal/process/scoring/"
   ],
-  "totalFiles": 10,
-  "totalReadSets": 4,
-  "totalConstants": 603,
+  "totalFiles": 85,
+  "totalReadSets": 78,
+  "totalConstants": 617,
   "readSets": [
     {
       "type": "underwriting",
@@ -49,6 +51,8 @@
         "DocDocumentsDebtorSignatureDocumentType",
         "DocDocumentsSpouseSignatureDocumentId",
         "DocDocumentsSpouseSignatureDocumentType",
+        "DocDocumentsAssetSelfieWithVehicleDocumentId",
+        "DocDocumentsAssetSelfieWithVehicleDocumentType",
         "DocLoanStructurePurposeFinancePurposeDetails",
         "DocLoanStructureMonthlyInstallment",
         "DocCustomerDomicileStaySince",
@@ -99,7 +103,23 @@
         "DocProcessSurveyTaskSurveyBranchName",
         "DocChannelSoaId",
         "DocChannelPartnerId",
-        "DocChannelPartnerInternalName"
+        "DocChannelPartnerInternalName",
+        "DocAssetBpkbNumber",
+        "DocAssetChassisNumber",
+        "DocAssetUnitColor",
+        "DocAssetEngineNumber",
+        "DocAssetBpkbInvoiceNumber",
+        "DocDocumentsBpkbPage1DocumentId",
+        "DocDocumentsBpkbPage1DocumentType",
+        "DocDocumentsBpkbPage2DocumentId",
+        "DocDocumentsBpkbPage2DocumentType",
+        "DocDocumentsBpkbPage3DocumentId",
+        "DocDocumentsBpkbPage3DocumentType",
+        "DocDocumentsBpkbPage4DocumentId",
+        "DocDocumentsBpkbPage4DocumentType",
+        "DocProcessOperationsTaskProcessingBranchId",
+        "DocProcessOperationsTaskProcessingBranchName",
+        "DocDocumentsAssetDocumentStatus"
       ]
     },
     {
@@ -140,6 +160,7 @@
         "DocLoanStructureProvisionFee",
         "DocLoanStructureTenure",
         "DocLoanStructureCapitalizedNtfAmount",
+        "DocLoanStructureNtfAmount",
         "DocLoanStructureMonthlyInstallment",
         "DocLoanStructureOriginalAmount",
         "DocSurveyAppointmentSurveyType",
@@ -374,6 +395,1010 @@
         "DocProcessLoanEstimationMaxFundingRatio",
         "DocProcessPdModelOverlayS1MaxFundingRatio"
       ]
+    },
+    {
+      "type": "submitassetdocument",
+      "readSet": [
+        "DocId",
+        "DocProcessOperationsTaskBpkbReviewerEmployeeId",
+        "DocProcessOperationsTaskProcessingBranchId"
+      ]
+    },
+    {
+      "type": "returnassetdocument",
+      "readSet": [
+        "DocId"
+      ]
+    },
+    {
+      "type": "readytoreleaseassetdocument",
+      "readSet": [
+        "DocId",
+        "DocProcessOperationsTaskBpkbReviewerEmployeeId"
+      ]
+    },
+    {
+      "type": "golive_create_cif_guarantor",
+      "readSet": [
+        "DocGuarantorName",
+        "DocGuarantorNik",
+        "DocGuarantorMobileNumber",
+        "DocGuarantorBirthDate",
+        "DocGuarantorGender",
+        "DocGuarantorMaritalStatusCode",
+        "DocGuarantorOccupation",
+        "DocGuarantorOccupationCode",
+        "DocGuarantorMonthlyIncome",
+        "DocGuarantorRt",
+        "DocGuarantorRw",
+        "DocGuarantorSubDistrictCode",
+        "DocGuarantorDomicileRt",
+        "DocGuarantorDomicileRw",
+        "DocGuarantorDomicileSubDistrictCode"
+      ]
+    },
+    {
+      "type": "golive_create_cif",
+      "readSet": [
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerContactMobileNumber",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalMotherMaidenName",
+        "DocCustomerProfessionalOccupationCode",
+        "DocCustomerProfessionalIndustry",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocCustomerKtpGender",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerKtpStreetAddress",
+        "DocCustomerKtpSubDistrictCode",
+        "DocCustomerKtpRt",
+        "DocCustomerKtpRw",
+        "DocCustomerDomicileAddressStreetAddress",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileAddressRt",
+        "DocCustomerDomicileAddressRw",
+        "DocCustomerProfessionalCompanyAddress",
+        "DocCustomerProfessionalCompanySubDistrictCode",
+        "DocCustomerProfessionalRt",
+        "DocCustomerProfessionalRw"
+      ]
+    },
+    {
+      "type": "golive_create_agreement",
+      "readSet": [
+        "DocStatusApplication",
+        "DocLoanStructureLoanCalculatorId",
+        "DocSurveyAppointmentSurveyLocationType",
+        "DocLoanStructurePurposeFinancePurpose",
+        "DocProcessSurveyTaskSurveyBranchId",
+        "DocLoanStructureProductId",
+        "DocLoanStructureProductOffering",
+        "DocId",
+        "DocChannelSoaId",
+        "DocChannelActivityId",
+        "DocChannelMarketingId",
+        "DocProcessSurveyTaskSurveyorEmployeeId",
+        "DocProcessCustomerInformationCifId",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocLoanStructureInterestRate",
+        "DocLoanStructureTenure",
+        "DocCustomerKtpName",
+        "DocCustomerBankInformationAccountNumber",
+        "DocCustomerBankInformationAccountName",
+        "DocCustomerBankInformationBankId",
+        "DocAssetAssetUsage",
+        "DocAssetLicensePlate",
+        "DocAssetChassisNumber",
+        "DocAssetEngineNumber",
+        "DocAssetTaxExpirationDate",
+        "DocAssetManufacturingYear",
+        "DocCustomerKtpSubDistrictCode",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpRt",
+        "DocCustomerKtpRw",
+        "DocCustomerKtpZipCode",
+        "DocAssetBpkbOwnership",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalMotherMaidenName",
+        "DocCustomerProfessionalOccupationCode",
+        "DocCustomerProfessionalIndustry",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocCustomerKtpGender",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerDomicileAddressStreetAddress",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileAddressRt",
+        "DocCustomerDomicileAddressRw",
+        "DocCustomerProfessionalCompanyAddress",
+        "DocCustomerProfessionalCompanySubDistrictCode",
+        "DocCustomerProfessionalRt",
+        "DocCustomerProfessionalRw"
+      ]
+    },
+    {
+      "type": "update_reservation_on_appointment",
+      "readSet": [
+        "DocSurveyAppointmentStartTime"
+      ]
+    },
+    {
+      "type": "submissionverification",
+      "readSet": [
+        "DocId",
+        "DocChannelEkycAuthority"
+      ]
+    },
+    {
+      "type": "set_survey_data_by_assignment_rule",
+      "readSet": [
+        "DocLoanStructureRiskLevel",
+        "DocLoanStructureProductId"
+      ]
+    },
+    {
+      "type": "reservation_expiry_update",
+      "readSet": [
+        "DocBranchBranchId",
+        "DocAssetLicensePlate",
+        "DocStatusReservationExpiry",
+        "DocId"
+      ]
+    },
+    {
+      "type": "getsurveybranchid",
+      "readSet": [
+        "DocLoanStructureProductId",
+        "DocCustomerDomicileAddressSubDistrictCode"
+      ]
+    },
+    {
+      "type": "get_spouse_ktp_ocr",
+      "readSet": [
+        "DocDocumentsSpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "getprocessingbranchinformation",
+      "readSet": [
+        "DocProcessOperationsTaskProcessingBranchId"
+      ]
+    },
+    {
+      "type": "getpefindospouseprofile",
+      "readSet": [
+        "DocId",
+        "DocSpouseKtpNik",
+        "DocSpouseKtpName",
+        "DocSpouseKtpBirthDate",
+        "DocSpouseKtpBirthPlace",
+        "DocCustomerKtpGender",
+        "DocBranchBranchId",
+        "DocLoanStructureProductId"
+      ]
+    },
+    {
+      "type": "get_pefindo_guarantor_3_profile",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocLoanStructureProductId",
+        "DocGuarantor3Name",
+        "DocGuarantor3Nik",
+        "DocGuarantor3BirthDate",
+        "DocGuarantor3BirthPlace",
+        "DocGuarantor3Gender"
+      ]
+    },
+    {
+      "type": "get_pefindo_guarantor_2_profile",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocLoanStructureProductId",
+        "DocGuarantor2Name",
+        "DocGuarantor2Nik",
+        "DocGuarantor2BirthDate",
+        "DocGuarantor2BirthPlace",
+        "DocGuarantor2Gender"
+      ]
+    },
+    {
+      "type": "get_pefindo_guarantor_1_profile",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocLoanStructureProductId",
+        "DocGuarantorName",
+        "DocGuarantorNik",
+        "DocGuarantorBirthDate",
+        "DocGuarantorBirthPlace",
+        "DocGuarantorGender"
+      ]
+    },
+    {
+      "type": "getpefindocustomerprofile",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpGender",
+        "DocBranchBranchId",
+        "DocLoanStructureProductId"
+      ]
+    },
+    {
+      "type": "getobligorsummary",
+      "readSet": [
+        "DocProcessObligorObligorId"
+      ]
+    },
+    {
+      "type": "get_income_model_spouse",
+      "readSet": [
+        "DocId",
+        "DocSpouseKtpName",
+        "DocSpouseKtpNik",
+        "DocSpouseKtpBirthDate",
+        "DocSpouseKtpBirthPlace",
+        "DocCustomerKtpStreetAddress",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpGender",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalNumberDependents",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetManufacturingYear",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocLoanStructureLtv",
+        "DocLoanStructureTenure",
+        "DocProcessAssetPricingPrice"
+      ]
+    },
+    {
+      "type": "get_income_model_customer",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpStreetAddress",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpGender",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalNumberDependents",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetManufacturingYear",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocLoanStructureLtv",
+        "DocLoanStructureTenure",
+        "DocProcessAssetPricingPrice"
+      ]
+    },
+    {
+      "type": "get_customer_ktp_ocr",
+      "readSet": [
+        "DocDocumentsKtpDocumentId"
+      ]
+    },
+    {
+      "type": "getcustomerinformationbynik",
+      "readSet": [
+        "DocCustomerKtpNik"
+      ]
+    },
+    {
+      "type": "getbranchinformation",
+      "readSet": [
+        "DocProcessSurveyTaskSurveyBranchId"
+      ]
+    },
+    {
+      "type": "get_administrative_tier",
+      "readSet": [
+        "DocCustomerDomicileAddressSubDistrictCode"
+      ]
+    },
+    {
+      "type": "check_wtp_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocProcessPefindoProfileMaxCollectionLast12Month",
+        "DocProcessPefindoProfileTotalInstallment",
+        "DocCustomerPersonalMonthlyInstallmentOutsideBfi"
+      ]
+    },
+    {
+      "type": "check_vehicle_verification_score_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetUnitAbleToTurnOn",
+        "DocProcessPdModelOverlayS1Result",
+        "DocAssetUnitUnderConsumerControl",
+        "DocAssetUnitNoClearMarkOfAccident",
+        "DocCustomerDomicileOwnershipCode",
+        "DocChannelMarketingId",
+        "DocProcessPdModelS1PdResult",
+        "DocLoanStructureProvisionalAmount",
+        "DocProcessObligorLatestExposure",
+        "DocSurveyAppointmentSurveyType"
+      ]
+    },
+    {
+      "type": "check_vehicle_verification_score_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerDomicileStaySince",
+        "DocChannelMarketingId",
+        "DocAssetUnitAbleToTurnOn",
+        "DocAssetUnitNoClearMarkOfAccident",
+        "DocAssetIsMotorcycleComponentComplete",
+        "DocProcessPdModelOverlayS1MaxFundingRatio"
+      ]
+    },
+    {
+      "type": "check_soft_rac_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerDomicileOwnershipCode",
+        "DocLoanStructureProductId",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureTenure",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetBpkbStatus",
+        "DocAssetManufacturingYear",
+        "DocProcessReturningCustomerType",
+        "DocProcessObligorExpoCurrentObl",
+        "DocProcessObligorLatestExposure",
+        "DocChannelSoaId"
+      ]
+    },
+    {
+      "type": "check_soft_rac_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocLoanStructureProductId",
+        "DocLoanStructureProvisionalAmount",
+        "DocAssetBpkbOwnership",
+        "DocProcessReturningCustomerType",
+        "DocChannelSoaId"
+      ]
+    },
+    {
+      "type": "check_simple_survey_score_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocAssetAssetCode",
+        "DocProcessAbilityToPayDirS1Dir",
+        "DocProcessAbilityToPayDsrS1Dsr",
+        "DocProcessPdModelS1PdResult",
+        "DocProcessVehicleVerificationScoreS1ScoreCategory",
+        "DocProcessWtpS1Score",
+        "DocLoanStructureOriginalAmount",
+        "DocProcessAssetPricingPrice"
+      ]
+    },
+    {
+      "type": "check_simple_survey_score_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalIsProfessionValid",
+        "DocCustomerPersonalCharacter",
+        "DocBranchBranchId",
+        "DocAssetBpkbOwnership",
+        "DocAssetBpkbOwnershipPeriod",
+        "DocAssetVehicleGuaranteed"
+      ]
+    },
+    {
+      "type": "check_result_aggregation_scoring_2_ndf2w",
+      "readSet": [
+        "DocProcessVehicleVerificationScoreS1Result"
+      ]
+    },
+    {
+      "type": "check_rapindo_asset_search_ndf4w",
+      "readSet": [
+        "DocAssetChassisNumber",
+        "DocLoanStructureRiskLevel"
+      ]
+    },
+    {
+      "type": "check_pre_fatal_rac_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocProcessReturningCustomerType",
+        "DocChannelMarketingId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocProcessObligorLatestExposure",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocAssetAssetCode",
+        "DocAssetManufacturingYear",
+        "DocAssetBpkbStatus",
+        "DocAssetBpkbOwnership",
+        "DocLoanStructureTenure",
+        "DocLoanStructureProductOffering"
+      ]
+    },
+    {
+      "type": "check_pre_fatal_rac_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocBranchBranchId",
+        "DocLoanStructureMonthlyInstallment",
+        "DocCustomerProfessionalMonthlyIncome"
+      ]
+    },
+    {
+      "type": "check_pd_model_rac_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocChannelMarketingId",
+        "DocProcessPdModelS1PdResult",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureProvisionalAmount",
+        "DocProcessObligorLatestExposure",
+        "DocAssetManufacturingYear",
+        "DocAssetBpkbOwnership",
+        "DocAssetBpkbStatus",
+        "DocAssetAssetCode",
+        "DocCustomerDomicileOwnershipCode",
+        "DocAssetStnkStatus"
+      ]
+    },
+    {
+      "type": "check_pd_model_overlay_ndf4w",
+      "readSet": [
+        "DocChannelSoaId",
+        "DocProcessPdModelS1PdResult",
+        "DocProcessPdModelS1CreditScore",
+        "DocProcessReturningCustomerType",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureNtfAmount",
+        "DocProcessAssetPricingPrice",
+        "DocProcessObligorLatestExposure",
+        "DocProcessPefindoProfilePefindoDetailCustomerGrade",
+        "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId",
+        "DocProcessPdModelRacS1Passed",
+        "DocLoanStructureProductOffering",
+        "DocChannelMarketingId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocId",
+        "DocAssetAssetCode",
+        "DocAssetBpkbStatus",
+        "DocAssetBpkbOwnership",
+        "DocLoanStructureCapitalizedNtfAmount"
+      ]
+    },
+    {
+      "type": "check_pd_model_overlay_partnership_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocProcessPefindoProfilePefindoDetailScoringType",
+        "DocProcessReturningCustomerType",
+        "DocCustomerDomicileOwnershipCode",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocLoanStructureProvisionalAmount",
+        "DocProcessAssetPricingPrice",
+        "DocAssetBpkbOwnership",
+        "DocAssetAssetCode",
+        "DocLoanStructureTenure",
+        "DocAssetManufacturingYear",
+        "DocCustomerPersonalMaritalStatusCode"
+      ]
+    },
+    {
+      "type": "check_pd_model_overlay_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocProcessPefindoProfilePefindoDetailScoringType",
+        "DocProcessReturningCustomerType",
+        "DocCustomerDomicileOwnershipCode",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocLoanStructureProvisionalAmount",
+        "DocProcessAssetPricingPrice",
+        "DocAssetBpkbOwnership",
+        "DocAssetAssetCode",
+        "DocLoanStructureTenure",
+        "DocAssetManufacturingYear",
+        "DocCustomerPersonalMaritalStatusCode"
+      ]
+    },
+    {
+      "type": "check_pd_model_alternative_overlay_partnership_ndf4w",
+      "readSet": [
+        "DocChannelSoaId",
+        "DocChannelMarketingId",
+        "DocProcessPdModelAlternativeAliCloudCreditScore",
+        "DocProcessPdModelAlternativeAliCloudPdResult",
+        "DocProcessAssetPricingPrice",
+        "DocProcessReturningCustomerType",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocProcessObligorLatestExposure",
+        "DocCustomerDomicileOwnershipCode",
+        "DocLoanStructureProductOffering",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetBpkbStatus",
+        "DocId"
+      ]
+    },
+    {
+      "type": "check_pd_model_alternative_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpGender",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerProfessionalLengthCurrentJob",
+        "DocAssetManufacturingYear",
+        "DocAssetBpkbOwnership",
+        "DocAssetAssetCode",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureTenure",
+        "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount"
+      ]
+    },
+    {
+      "type": "check_s1_pd_model_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocProcessPdModelAliCloudAScore"
+      ]
+    },
+    {
+      "type": "check_s1_pd_model_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocProcessPdModelAliCloudPdScore",
+        "DocProcessPefindoProfilePefindoDetailScoringType",
+        "DocChannelSoaId"
+      ]
+    },
+    {
+      "type": "check_ali_cloud_pd_model_ndf4w_nonmarried",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpGender",
+        "DocAssetManufacturingYear",
+        "DocAssetAssetCode",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureTenure",
+        "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocBranchBranchId",
+        "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId"
+      ]
+    },
+    {
+      "type": "check_ali_cloud_pd_model_ndf4w_married",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpGender",
+        "DocAssetManufacturingYear",
+        "DocAssetAssetCode",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureTenure",
+        "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocBranchBranchId",
+        "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId",
+        "DocProcessPefindoProfilePefindoDetailSpouseStatusResult"
+      ]
+    },
+    {
+      "type": "check_ali_cloud_pd_model_ndf2w_non_married",
+      "readSet": [
+        "DocId",
+        "DocProcessReturningCustomerType",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpGender",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocAssetManufacturingYear",
+        "DocAssetBpkbOwnership",
+        "DocAssetAssetCode",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureTenure",
+        "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureProductOffering",
+        "DocProcessPefindoProfilePefindoDetailCustomerStatusResult"
+      ]
+    },
+    {
+      "type": "check_ali_cloud_pd_model_ndf2w_married",
+      "readSet": [
+        "DocId",
+        "DocProcessReturningCustomerType",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerKtpGender",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocAssetManufacturingYear",
+        "DocAssetBpkbOwnership",
+        "DocAssetAssetCode",
+        "DocProcessAssetPricingPrice",
+        "DocLoanStructureTenure",
+        "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureProductOffering",
+        "DocProcessPefindoProfilePefindoDetailCustomerStatusResult",
+        "DocProcessPefindoProfilePefindoDetailSpouseStatusResult"
+      ]
+    },
+    {
+      "type": "checknegativelistspouse",
+      "readSet": [
+        "DocId",
+        "DocSpouseKtpNik",
+        "DocSpouseKtpName",
+        "DocSpouseKtpBirthDate",
+        "DocSpouseKtpBirthPlace",
+        "DocLoanStructureProductId",
+        "DocBranchBranchId"
+      ]
+    },
+    {
+      "type": "checknegativelistcustomer",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocLoanStructureProductId",
+        "DocBranchBranchId"
+      ]
+    },
+    {
+      "type": "check_living_cost_low",
+      "readSet": [
+        "DocId",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalNumberDependents"
+      ]
+    },
+    {
+      "type": "check_living_cost",
+      "readSet": [
+        "DocId",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerPersonalNumberDependents",
+        "DocCustomerPersonalNumberDependentsChildren"
+      ]
+    },
+    {
+      "type": "check_ktp_forgery",
+      "readSet": [
+        "DocDocumentsKtpDocumentId",
+        "DocChannelKtpForgeryAuthority"
+      ]
+    },
+    {
+      "type": "check_internal_data_blacklist_non_married",
+      "readSet": [
+        "DocId",
+        "DocProcessNegativeListCnvCustomerCrimeBadType",
+        "DocProcessNegativeListCnvCustomerCrimeIsFound",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalIsFound",
+        "DocProcessNegativeListCnvCustomerPepBadType",
+        "DocProcessNegativeListCnvCustomerPepIsFound",
+        "DocProcessNegativeListCnvCustomerSanctionListBadType",
+        "DocProcessNegativeListCnvCustomerSanctionListIsFound",
+        "DocProcessNegativeListCnvCustomerTerroristBadType",
+        "DocProcessNegativeListCnvCustomerTerroristIsFound"
+      ]
+    },
+    {
+      "type": "check_internal_data_blacklist_married",
+      "readSet": [
+        "DocId",
+        "DocProcessNegativeListCnvCustomerCrimeBadType",
+        "DocProcessNegativeListCnvCustomerCrimeIsFound",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalIsFound",
+        "DocProcessNegativeListCnvCustomerPepBadType",
+        "DocProcessNegativeListCnvCustomerPepIsFound",
+        "DocProcessNegativeListCnvCustomerSanctionListBadType",
+        "DocProcessNegativeListCnvCustomerSanctionListIsFound",
+        "DocProcessNegativeListCnvCustomerTerroristBadType",
+        "DocProcessNegativeListCnvCustomerTerroristIsFound",
+        "DocProcessNegativeListCnvSpouseCrimeBadType",
+        "DocProcessNegativeListCnvSpouseCrimeIsFound",
+        "DocProcessNegativeListCnvSpouseNegativeListInternalBadType",
+        "DocProcessNegativeListCnvSpouseNegativeListInternalIsFound",
+        "DocProcessNegativeListCnvSpousePepBadType",
+        "DocProcessNegativeListCnvSpousePepIsFound",
+        "DocProcessNegativeListCnvSpouseSanctionListBadType",
+        "DocProcessNegativeListCnvSpouseSanctionListIsFound",
+        "DocProcessNegativeListCnvSpouseTerroristBadType",
+        "DocProcessNegativeListCnvSpouseTerroristIsFound"
+      ]
+    },
+    {
+      "type": "checkidverificationdukcapil",
+      "readSet": [
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerContactMobileNumber",
+        "DocDocumentsKtpDocumentId",
+        "DocDocumentsSelfieDocumentId"
+      ]
+    },
+    {
+      "type": "check_s1_hard_rac_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpBirthDate",
+        "DocLoanStructureProvisionalAmount"
+      ]
+    },
+    {
+      "type": "check_s1_hard_rac_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpBirthDate",
+        "DocLoanStructureProvisionalAmount",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocAssetManufacturingYear"
+      ]
+    },
+    {
+      "type": "check_fatal_score",
+      "readSet": [
+        "DocId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocBranchBranchId",
+        "DocAssetVehicleGuaranteed",
+        "DocCustomerPersonalCharacter"
+      ]
+    },
+    {
+      "type": "check_external_data_blacklist_non_married",
+      "readSet": [
+        "DocId",
+        "DocProcessNegativeListCnvCustomerCrimeIsFound",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
+        "DocProcessNegativeListCnvCustomerPepIsFound",
+        "DocProcessNegativeListCnvCustomerSanctionListIsFound",
+        "DocProcessNegativeListCnvCustomerTerroristIsFound"
+      ]
+    },
+    {
+      "type": "check_external_data_blacklist_married",
+      "readSet": [
+        "DocId",
+        "DocProcessNegativeListCnvCustomerCrimeIsFound",
+        "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
+        "DocProcessNegativeListCnvCustomerPepIsFound",
+        "DocProcessNegativeListCnvCustomerSanctionListIsFound",
+        "DocProcessNegativeListCnvCustomerTerroristIsFound",
+        "DocProcessNegativeListCnvSpouseCrimeIsFound",
+        "DocProcessNegativeListCnvSpouseNegativeListInternalBadType",
+        "DocProcessNegativeListCnvSpousePepIsFound",
+        "DocProcessNegativeListCnvSpouseSanctionListIsFound",
+        "DocProcessNegativeListCnvSpouseTerroristIsFound"
+      ]
+    },
+    {
+      "type": "check_existing_customer",
+      "readSet": [
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpGender",
+        "DocLoanStructureProductId"
+      ]
+    },
+    {
+      "type": "checkduplicatelicenseplate",
+      "readSet": [
+        "DocLoanStructureProductId",
+        "DocAssetLicensePlate",
+        "DocBranchBranchId",
+        "DocId"
+      ]
+    },
+    {
+      "type": "checkcustomerobligor",
+      "readSet": [
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpGender"
+      ]
+    },
+    {
+      "type": "checkcustomerage",
+      "readSet": [
+        "DocLoanStructureProductId",
+        "DocCustomerKtpBirthDate",
+        "DocLoanStructureTenure",
+        "DocSubmissionDate",
+        "DocCustomerPersonalMaritalStatusCode"
+      ]
+    },
+    {
+      "type": "check_credit_checking",
+      "readSet": [
+        "DocId",
+        "DocLoanStructureProductOffering",
+        "DocCustomerProfessionalOccupationCode",
+        "DocCustomerPersonalFundsOtherThanPurchase",
+        "DocCustomerPersonalInstallmentHelperThanSpouse",
+        "DocAssetDebtorSpouseCanIdentifyCollateral",
+        "DocProcessCreditCheckingNeighborhoodSource1AssetNegativeInfo",
+        "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseUsesAssetMoreThanOnce",
+        "DocProcessCreditCheckingNeighborhoodSource1OccupationCode",
+        "DocProcessCreditCheckingNeighborhoodSource1UnitLeftResidenceMoreThanOnce",
+        "DocProcessCreditCheckingNeighborhoodSource1UnitSeenAtResidenceMoreThanOnce"
+      ]
+    },
+    {
+      "type": "check_atp_dsr_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocProcessIncomeModelCustomerIncome",
+        "DocProcessPefindoProfileFinalInstallment"
+      ]
+    },
+    {
+      "type": "check_atp_dir_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocProcessLivingCostS1Result",
+        "DocProcessIncomeModelCustomerIncome",
+        "DocProcessPefindoProfileFinalInstallment"
+      ]
+    },
+    {
+      "type": "check_asset_pricing",
+      "readSet": [
+        "DocLoanStructureProductId",
+        "DocAssetAssetCode",
+        "DocAssetManufacturingYear",
+        "DocBranchBranchId"
+      ]
+    },
+    {
+      "type": "check_anti_fraud_1",
+      "readSet": [
+        "DocId",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpGender",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpStreetAddress",
+        "DocCustomerKtpSubDistrictCode",
+        "DocCustomerProfessionalOccupationTypeCode",
+        "DocCustomerProfessionalEducationCode",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerKtpZipCode",
+        "DocCustomerContactMobileNumber",
+        "DocProcessReturningCustomerType",
+        "DocSubmissionDate",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureTenure",
+        "DocLoanStructureMonthlyInstallment",
+        "DocLoanStructureProductId",
+        "DocLoanStructureProductOffering",
+        "DocChannelMarketingId",
+        "DocAssetManufacturingYear",
+        "DocAssetLicensePlate",
+        "DocProcessAssetPricingPrice"
+      ]
+    },
+    {
+      "type": "cancellicenseplatereservation",
+      "readSet": [
+        "DocAssetLicensePlate",
+        "DocId"
+      ]
+    },
+    {
+      "type": "calculate_ndf2w4w_loan_estimations",
+      "readSet": [
+        "DocLoanStructureProductId",
+        "DocLoanStructureProductOffering",
+        "DocLoanStructureProvisionalAmount",
+        "DocLoanStructureTenure",
+        "DocAssetAssetCode",
+        "DocAssetManufacturingYear",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocProcessReturningCustomerType"
+      ]
+    },
+    {
+      "type": "calculate_income_per_month_ndf4w_medium",
+      "readSet": [
+        "DocId",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocProcessIncomeModelCustomerIncome",
+        "DocCustomerProfessionalProofMonthlyIncome",
+        "DocCustomerProfessionalProofVariableIncome",
+        "DocCustomerPersonalMaritalStatusCode"
+      ]
+    },
+    {
+      "type": "calculate_income_per_month_ndf4w_low",
+      "readSet": [
+        "DocId",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocProcessIncomeModelCustomerIncome",
+        "DocCustomerPersonalMaritalStatusCode"
+      ]
     }
   ],
   "constants": {
@@ -412,6 +1437,7 @@
     "DocAssetUnitTypeAndPhysicalConditionAppropriate": "$.asset.unit_type_and_physical_condition_appropriate",
     "DocAssetUnitUnderConsumerControl": "$.asset.unit_under_consumer_control",
     "DocAssetVehicleGuaranteed": "$.asset.vehicle_guaranteed",
+    "DocAssetWholeInteriorCondition": "$.asset.whole_interior_condition",
     "DocBranchBranchId": "$.branch.branch_id",
     "DocBranchPosId": "$.branch.pos_id",
     "DocChannelActivityId": "$.channel.activity_id",
@@ -495,6 +1521,7 @@
     "DocCustomerProfessionalNpwpType": "$.customer.professional.npwp_type",
     "DocCustomerProfessionalOccupationCode": "$.customer.professional.occupation_code",
     "DocCustomerProfessionalOccupationTypeCode": "$.customer.professional.occupation_type_code",
+    "DocCustomerProfessionalOtherBusiness": "$.customer.professional.other_business",
     "DocCustomerProfessionalProofMonthlyIncome": "$.customer.professional.proof_monthly_income",
     "DocCustomerProfessionalProofVariableIncome": "$.customer.professional.proof_variable_income",
     "DocCustomerProfessionalRt": "$.customer.professional.rt",
@@ -641,6 +1668,7 @@
     "DocDocumentsVehicleInspectionDocumentType": "$.documents.vehicle_inspection.document_type",
     "DocGuarantorBirthDate": "$.guarantor.birth_date",
     "DocGuarantorBirthPlace": "$.guarantor.birth_place",
+    "DocGuarantorCifId": "$.guarantor.cif_id",
     "DocGuarantorDomicileRt": "$.guarantor.domicile.rt",
     "DocGuarantorDomicileRw": "$.guarantor.domicile.rw",
     "DocGuarantorDomicileStreetAddress": "$.guarantor.domicile.street_address",
@@ -661,6 +1689,7 @@
     "DocGuarantorSubDistrictCode": "$.guarantor.sub_district_code",
     "DocGuarantor2BirthDate": "$.guarantor_2.birth_date",
     "DocGuarantor2BirthPlace": "$.guarantor_2.birth_place",
+    "DocGuarantor2CifId": "$.guarantor_2.cif_id",
     "DocGuarantor2DomicileRt": "$.guarantor_2.domicile.rt",
     "DocGuarantor2DomicileRw": "$.guarantor_2.domicile.rw",
     "DocGuarantor2DomicileStreetAddress": "$.guarantor_2.domicile.street_address",
@@ -681,6 +1710,7 @@
     "DocGuarantor2SubDistrictCode": "$.guarantor_2.sub_district_code",
     "DocGuarantor3BirthDate": "$.guarantor_3.birth_date",
     "DocGuarantor3BirthPlace": "$.guarantor_3.birth_place",
+    "DocGuarantor3CifId": "$.guarantor_3.cif_id",
     "DocGuarantor3DomicileRt": "$.guarantor_3.domicile.rt",
     "DocGuarantor3DomicileRw": "$.guarantor_3.domicile.rw",
     "DocGuarantor3DomicileStreetAddress": "$.guarantor_3.domicile.street_address",
@@ -858,6 +1888,15 @@
     "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId": "$.process.pefindo_profile.pefindo_detail.customer.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailCustomerGrade": "$.process.pefindo_profile.pefindo_detail.customer.grade",
     "DocProcessPefindoProfilePefindoDetailCustomerStatusResult": "$.process.pefindo_profile.pefindo_detail.customer.status_result",
+    "DocProcessPefindoProfilePefindoDetailGuarantor1DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_1.dms_document_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor1Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_1.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor1StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_1.status_result",
+    "DocProcessPefindoProfilePefindoDetailGuarantor2DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_2.dms_document_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor2Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_2.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor2StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_2.status_result",
+    "DocProcessPefindoProfilePefindoDetailGuarantor3DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_3.dms_document_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor3Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_3.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor3StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_3.status_result",
     "DocProcessPefindoProfilePefindoDetailScoringType": "$.process.pefindo_profile.pefindo_detail.scoring_type",
     "DocProcessPefindoProfilePefindoDetailSpouseDmsDocumentId": "$.process.pefindo_profile.pefindo_detail.spouse.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailSpouseGrade": "$.process.pefindo_profile.pefindo_detail.spouse.grade",
