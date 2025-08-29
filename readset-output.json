@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-08-28T04:04:53.577Z",
+  "extractedAt": "2025-08-29T07:44:49.698Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/",
@@ -15,7 +15,6 @@
       "readSet": [
         "DocCustomerKtpName",
         "DocCustomerKtpNik",
-        "DocCustomerDomicileAddressSubDistrictCode",
         "DocLoanStructureProductId",
         "DocLoanStructureRiskLevel",
         "DocProcessSurveyTaskSurveyBranchId",
@@ -68,6 +67,7 @@
         "DocAssetAssetUsage",
         "DocProcessAssetPricingPrice",
         "DocLoanStructureLtv",
+        "DocLoanStructureCapitalizedNtfAmount",
         "DocLoanStructureProvisionalAmount",
         "DocLoanStructureOriginalAmount",
         "DocLoanStructureTenure",
@@ -121,6 +121,8 @@
         "DocDocumentsStnkDocumentId",
         "DocDocumentsStnkDocumentType",
         "DocCustomerDomicileAddressSubDistrictCode",
+        "DocCustomerDomicileAddressRt",
+        "DocCustomerDomicileAddressRw",
         "DocDocumentsIncomeProofDocumentType",
         "DocDocumentsBusinessPhotoDocumentId",
         "DocDocumentsBusinessPhotoDocumentType",
@@ -149,6 +151,16 @@
         "DocChannelSoaId",
         "DocChannelPartnerId",
         "DocChannelPartnerInternalName",
+        "DocCustomerProfessionalOccupationCode",
+        "DocCustomerProfessionalCompanyName",
+        "DocCustomerProfessionalCompanyAddress",
+        "DocCustomerProfessionalCompanyPhone",
+        "DocCustomerProfessionalEconomicSector",
+        "DocCustomerProfessionalIndustry",
+        "DocCustomerProfessionalEmploymentStatus",
+        "DocCustomerProfessionalBusinessSinceYear",
+        "DocDocumentsEmploymentEvidenceDocumentId",
+        "DocDocumentsEmploymentEvidenceDocumentType",
         "DocAssetBpkbNumber",
         "DocAssetChassisNumber",
         "DocAssetUnitColor",
@@ -172,8 +184,7 @@
         "DocCustomerDomicileAddressProvinceName",
         "DocSurveyAppointmentSurveyLocationType",
         "DocSurveyAppointmentSurveyType",
-        "DocStatusReservationExpiry",
-        "DocCustomerDomicileAddressSubDistrictCode"
+        "DocStatusReservationExpiry"
       ]
     },
     {
@@ -328,6 +339,7 @@
     {
       "type": "bpkbreview",
       "readSet": [
+        "DocStatusApplication",
         "DocAssetLicensePlate",
         "DocCustomerKtpName",
         "DocLoanStructureProductId",
@@ -447,7 +459,8 @@
         "DocStatusReservationExpiry",
         "DocLoanStructureOriginalAmount",
         "DocProcessLoanEstimationMaxFundingRatio",
-        "DocProcessPdModelOverlayS1MaxFundingRatio"
+        "DocProcessPdModelOverlayS1MaxFundingRatio",
+        "DocLoanStructureRiskLevel"
       ]
     },
     {
@@ -518,7 +531,10 @@
         "DocCustomerProfessionalCompanyAddress",
         "DocCustomerProfessionalCompanySubDistrictCode",
         "DocCustomerProfessionalRt",
-        "DocCustomerProfessionalRw"
+        "DocCustomerProfessionalRw",
+        "DocCustomerEmergencyContactName",
+        "DocCustomerEmergencyContactRelationWithCustomer",
+        "DocCustomerEmergencyContactMobileNumber"
       ]
     },
     {
@@ -573,7 +589,10 @@
         "DocCustomerProfessionalCompanyAddress",
         "DocCustomerProfessionalCompanySubDistrictCode",
         "DocCustomerProfessionalRt",
-        "DocCustomerProfessionalRw"
+        "DocCustomerProfessionalRw",
+        "DocCustomerEmergencyContactMobileNumber",
+        "DocCustomerEmergencyContactName",
+        "DocCustomerEmergencyContactRelationWithCustomer"
       ]
     },
     {
