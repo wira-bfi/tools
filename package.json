@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "sync-readset": "node sync.js"
+    "sync-readset": "node sync.js",
+    "test": "node test.js"
   },
   "keywords": [],
   "author": "",
