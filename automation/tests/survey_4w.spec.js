@@ -13,7 +13,7 @@ function StartApplication() {
 
   const payload = {
     id: workflowId,
-    name: 'dp-ndf-v0_1_0',
+    name: 'dp-ndf-v0_2_0',
   };
   const start = fetch(`${baseConfig.lgs_base_url}/application/start`, {
     method: 'POST',
@@ -181,7 +181,7 @@ test('Create a new survey 4w task', async ({ page }) => {
     '$.customer.bank_information.bank_id': 47,
     '$.customer.contact.mobile_number': '+6282178593737',
     '$.customer.domicile.address.street_address': 'JL. JAKARTA RAYA',
-    '$.customer.domicile.address.sub_district_code': '12.71.05.1002',
+    '$.customer.domicile.address.sub_district_code': '32.73.27.1003',
     '$.customer.domicile.ownership_code': 'SD',
     '$.customer.ktp.birth_date': '1997-04-24',
     '$.customer.ktp.birth_place': 'MANOKWARI',
@@ -195,14 +195,17 @@ test('Create a new survey 4w task', async ({ page }) => {
     '$.customer.professional.education_code': 'S1',
     '$.customer.professional.monthly_income': '10000000',
     '$.customer.professional.occupation_type_code': 'M',
-    '$.documents.ktp.document_id': 'a114ae6f-09f2-4b5b-b782-bac9dae86d44',
-    '$.documents.selfie.document_id': '9d40dacc-eef0-4c48-95c6-5a8ca9f3bc2f',
+    '$.documents.ktp.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
+    '$.documents.selfie.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
     '$.loan_structure.original_amount': 12690000,
     '$.loan_structure.product_id': 1,
     '$.loan_structure.product_offering': 37,
     '$.loan_structure.tenure': 12,
     '$.process.survey_task.surveyor_employee_name': 'Joko Anwar',
     '$.customer.personal.number_dependents': 5,
+    '$.customer.bank_information.account_name': `${faker.person.firstName()} ${faker.person.lastName()}`,
+    '$.customer.bank_information.account_number': '111643252',
+    '$.customer.bank_information.bank_id': '47',
   };
 
   const { workflowId, start } = await StartApplication();
@@ -338,7 +341,7 @@ const VERIFICATION_PAGE_DATA = [
   {
     type: 'file',
     id: '$.documents.ktp.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
+    filePath: path.resolve(process.cwd(), 'assets/ktp-daniel.jpeg'),
   },
   {
     type: 'file',
@@ -603,7 +606,8 @@ const ASET_KAPASITAS_DATA = [
     name: '$.customer.personal.installment_helper_than_spouse',
     value: 'false',
   },
-  { type: 'select', id: '$.asset.asset_usage', value: 'NON_COMMERCIAL' },
+  { type: 'radio', name: '$.asset.asset_usage', value: 'NON_COMMERCIAL' },
+  { type: 'radio', name: 'ltw.loan_structure.finance_purpose_type', value: 'P' },
   {
     type: 'custom',
     callback: async (page) => {

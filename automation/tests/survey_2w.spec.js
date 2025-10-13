@@ -13,7 +13,7 @@ function StartApplication() {
 
   const payload = {
     id: workflowId,
-    name: 'dp-ndf-v0_1_0',
+    name: 'dp-ndf-v0_2_0',
   };
   const start = fetch(`${baseConfig.lgs_base_url}/application/start`, {
     method: 'POST',
@@ -172,12 +172,12 @@ test('Create a new survey 2w task', async ({ page }) => {
     '$.asset.bpkb_status': 'on_hand',
     '$.asset.license_plate': licensePlate,
     '$.loan_structure.product_id': 2,
-    '$.customer.domicile.address.sub_district_code': '12.71.05.1002',
+    '$.customer.domicile.address.sub_district_code': '32.73.27.1003',
     '$.asset.manufacturing_year': 2021,
     '$.asset.tax_status': 'tax_paid_off',
     '$.channel.ekyc_authority': 'partner',
     '$.channel.ktp_ocr_required': false,
-    '$.channel.partner_id': '907d075e-5cef-4179-940e-794946b6eb33',
+    '$.channel.partner_id': '15871124-0258-4e3f-9f31-bc995e348a8d',
     '$.channel.partner_internal_name': 'partner-goto',
     '$.customer.domicile.address.street_address': 'Jl. Jakarta Raya',
     '$.customer.domicile.ownership_code': 'SD',
@@ -190,14 +190,17 @@ test('Create a new survey 2w task', async ({ page }) => {
     '$.customer.ktp.nik': '3328182404970002',
     '$.customer.ktp.gender': 'M',
     '$.customer.personal.marital_status_code': 'S',
-    '$.documents.ktp.document_id': 'a114ae6f-09f2-4b5b-b782-bac9dae86d44',
-    '$.documents.selfie.document_id': '9d40dacc-eef0-4c48-95c6-5a8ca9f3bc2f',
+    '$.documents.ktp.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
+    '$.documents.selfie.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
     '$.loan_structure.provisional_amount': 5000000,
     '$.loan_structure.product_offering': 11,
     '$.loan_structure.tenure': 12,
     '$.loan_structure.original_amount': 10385000,
     '$.customer.professional.occupation_code': 'PNSBPKAGTU',
     '$.customer.personal.number_dependents': 1,
+    '$.customer.bank_information.account_name': `${faker.person.firstName()} ${faker.person.lastName()}`,
+    '$.customer.bank_information.account_number': '111643252',
+    '$.customer.bank_information.bank_id': '47',
   };
 
   const { workflowId, start } = await StartApplication();
@@ -248,9 +251,11 @@ async function selectLastScheduledTask(page) {
 }
 
 async function submitForm(page, timeout = 5000) {
-  const submitButton = page.locator('button[name="action"][type="submit"][value="submit"]');
+  const submitButton = page.locator(
+    'button[name="action"][type="submit"][value="submit"]'
+  );
   await submitButton.waitFor({ state: 'visible' });
-  
+
   let isLoading = (await submitButton.getAttribute('data-loading')) === 'true';
   if (isLoading) {
     await page.waitForTimeout(timeout);
@@ -264,36 +269,41 @@ async function fillFormFields(page, formData) {
   for (const field of formData) {
     try {
       if (field.type === 'input') {
-        const locator = field.selector ? page.locator(field.selector) : 
-                      page.locator(`#${escapeCssId(field.id)}`);
+        const locator = field.selector
+          ? page.locator(field.selector)
+          : page.locator(`#${escapeCssId(field.id)}`);
         await locator.fill(field.value);
-        console.log(`Filled input: ${field.id || field.selector} with ${field.value}`);
-      } 
-      else if (field.type === 'select') {
-        const locator = field.selector ? page.locator(field.selector) : 
-                      page.locator(`#${escapeCssId(field.id)}`);
+        console.log(
+          `Filled input: ${field.id || field.selector} with ${field.value}`
+        );
+      } else if (field.type === 'select') {
+        const locator = field.selector
+          ? page.locator(field.selector)
+          : page.locator(`#${escapeCssId(field.id)}`);
         await locator.selectOption(field.value);
-        console.log(`Selected option: ${field.id || field.selector} = ${field.value}`);
-      }
-      else if (field.type === 'radio') {
-        const radioLocator = field.selector ? page.locator(field.selector) :
-                           page.locator(`input[name="${escapeCssId(field.name)}"][value="${field.value}"]`);
+        console.log(
+          `Selected option: ${field.id || field.selector} = ${field.value}`
+        );
+      } else if (field.type === 'radio') {
+        const radioLocator = field.selector
+          ? page.locator(field.selector)
+          : page.locator(
+              `input[name="${escapeCssId(field.name)}"][value="${field.value}"]`
+            );
         await radioLocator.check();
         console.log(`Checked radio: ${field.name} = ${field.value}`);
-      }
-      else if (field.type === 'file') {
-        const fileInput = field.selector ? page.locator(field.selector) :
-                         page.locator(`#${escapeCssId(field.id)} input[type="file"]`);
+      } else if (field.type === 'file') {
+        const fileInput = field.selector
+          ? page.locator(field.selector)
+          : page.locator(`#${escapeCssId(field.id)} input[type="file"]`);
         await fileInput.setInputFiles(field.filePath);
         console.log(`Uploaded file: ${field.id || field.selector}`);
         if (field.delay) await page.waitForTimeout(field.delay);
-      }
-      else if (field.type === 'button') {
+      } else if (field.type === 'button') {
         const button = page.locator(field.selector);
         await button.click();
         console.log(`Clicked button: ${field.selector}`);
-      }
-      else if (field.type === 'custom' && field.callback) {
+      } else if (field.type === 'custom' && field.callback) {
         await field.callback(page);
       }
 
@@ -301,7 +311,10 @@ async function fillFormFields(page, formData) {
         await page.waitForTimeout(field.waitTimeout);
       }
     } catch (error) {
-      console.error(`Error processing field ${field.id || field.selector}:`, error);
+      console.error(
+        `Error processing field ${field.id || field.selector}:`,
+        error
+      );
     }
   }
 }
@@ -322,30 +335,30 @@ const PIN_TEST_DATA = [
       for (let i = 0; i < pin.length; i++) {
         await pinInputs.nth(i).fill(pin[i]);
       }
-    }
-  }
+    },
+  },
 ];
 
 const VERIFICATION_PAGE_DATA = [
   {
     type: 'file',
     id: '$.documents.ktp.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/gas.png')
+    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
   },
   {
     type: 'file',
     id: '$.documents.selfie.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/gas.png')
+    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
   },
   {
     type: 'input',
     id: '$.customer.domicile.address.rt',
-    value: '000'
+    value: '000',
   },
   {
     type: 'input',
     id: '$.customer.domicile.address.rw',
-    value: '000'
+    value: '000',
   },
   {
     type: 'custom',
@@ -357,27 +370,27 @@ const VERIFICATION_PAGE_DATA = [
       const confirmButton = dialog.locator('.uk-button.uk-button-primary');
       await confirmButton.waitFor({ state: 'visible' });
       await confirmButton.click();
-    }
+    },
   },
   {
     type: 'input',
     id: '$.customer.domicile.stay_since',
-    value: '2000'
+    value: '2000',
   },
   {
     type: 'select',
     id: 'ltw.custom_domicile_ownership_code',
-    value: 'Keluarga'
+    value: 'Keluarga',
   },
   {
     type: 'file',
     id: '$.documents.stnk.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/stnk.jpeg')
+    filePath: path.resolve(process.cwd(), 'assets/stnk.jpeg'),
   },
   {
     type: 'file',
     id: '$.documents.tax_notice.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/stnk.jpeg')
+    filePath: path.resolve(process.cwd(), 'assets/stnk.jpeg'),
   },
   {
     type: 'custom',
@@ -386,49 +399,65 @@ const VERIFICATION_PAGE_DATA = [
       const ocrLoading = page.locator('#asset-survey-section__loading');
       if (await ocrLoading.isVisible()) {
         await page.waitForTimeout(30000);
-        const failedModal = page.locator('#asset-survey-section__failed-upload-modal');
+        const failedModal = page.locator(
+          '#asset-survey-section__failed-upload-modal'
+        );
         if (await failedModal.isVisible()) {
           const button = failedModal.locator('button');
           await button.click();
         }
       }
-      const failedModal = page.locator('#asset-survey-section__failed-upload-modal');
+      const failedModal = page.locator(
+        '#asset-survey-section__failed-upload-modal'
+      );
       if (await failedModal.isVisible()) {
         const button = failedModal.locator('button');
         await button.click();
-        await page.locator('#\\$\\.asset\\.tax_expiration_date').fill('2029-06-24');
-        await page.locator('#\\$\\.asset\\.stnk_expiration_date').fill('2029-06-24');
-        await page.locator('#\\$\\.process\\.stnk_ocr_result\\.unit_color').fill('ABU ABU');
-        await page.locator('#\\$\\.process\\.stnk_ocr_result\\.chassis_number').fill('P1234567890129831');
-        await page.locator('#\\$\\.process\\.stnk_ocr_result\\.engine_number').fill('L15Z15605255');
+        await page
+          .locator('#\\$\\.asset\\.tax_expiration_date')
+          .fill('2029-06-24');
+        await page
+          .locator('#\\$\\.asset\\.stnk_expiration_date')
+          .fill('2029-06-24');
+        await page
+          .locator('#\\$\\.process\\.stnk_ocr_result\\.unit_color')
+          .fill('ABU ABU');
+        await page
+          .locator('#\\$\\.process\\.stnk_ocr_result\\.chassis_number')
+          .fill('P1234567890129831');
+        await page
+          .locator('#\\$\\.process\\.stnk_ocr_result\\.engine_number')
+          .fill('L15Z15605255');
         await page.locator('#\\$\\.asset\\.stnk_number').fill('53358771');
       }
-    }
+    },
   },
   {
     type: 'radio',
     name: '$.asset.bpkb_ownership',
-    value: '1'
+    value: '1',
   },
   {
     type: 'radio',
     name: 'ltw.custom_vehicle_guaranteed',
-    value: 'OWNED_BY_DEBTOR'
+    value: 'OWNED_BY_DEBTOR',
   },
   {
     type: 'radio',
     name: 'ltw.custom_bpkb_ownership_period',
-    value: 'MORE_THAN_12_MONTH'
-  }
+    value: 'MORE_THAN_12_MONTH',
+  },
 ];
 
 const FOTO_DOKUMEN_DATA = [
   {
     type: 'custom',
     callback: async (page) => {
-      const fotoAsetLink = page.locator('li[role="presentation"] a', { hasText: 'Foto Aset' });
+      const fotoAsetLink = page.locator('li[role="presentation"] a', {
+        hasText: 'Foto Aset',
+      });
       await fotoAsetLink.click();
-      
+
       const documentIds = [
         '$.documents.asset.asset_front.document_id',
         '$.documents.asset.asset_rear.document_id',
@@ -442,26 +471,33 @@ const FOTO_DOKUMEN_DATA = [
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
         const fileInput = page.locator(`#${escapedId} input[type="file"]`);
-        await fileInput.setInputFiles(path.resolve(process.cwd(), 'assets/gas.png'));
+        await fileInput.setInputFiles(
+          path.resolve(process.cwd(), 'assets/gas.png')
+        );
         console.log(`Uploaded file to input: ${docId}`);
         await page.waitForTimeout(200);
       }
-    }
+    },
   },
-  
+
   {
     type: 'custom',
     callback: async (page) => {
-      const dokumenAsetLink = page.locator('li[role="presentation"] a', { hasText: 'Dokumen Aset' });
+      const dokumenAsetLink = page.locator('li[role="presentation"] a', {
+        hasText: 'Dokumen Aset',
+      });
       await dokumenAsetLink.click();
-      
+
       const documentConfigs = [
         { id: '$.documents.bpkb_page_1.document_id', file: 'assets/bpkb1.jpg' },
         { id: '$.documents.bpkb_page_2.document_id', file: 'assets/bpkb2.jpg' },
         { id: '$.documents.bpkb_page_3.document_id', file: 'assets/bpkb3.jpg' },
         { id: '$.documents.bpkb_page_4.document_id', file: 'assets/bpkb4.jpg' },
-        { id: '$.documents.chassis_number.document_id', file: 'assets/gas.png' },
-        { id: '$.documents.bpkb_invoice.document_id', file: 'assets/gas.png' }
+        {
+          id: '$.documents.chassis_number.document_id',
+          file: 'assets/gas.png',
+        },
+        { id: '$.documents.bpkb_invoice.document_id', file: 'assets/gas.png' },
       ];
 
       for (const doc of documentConfigs) {
@@ -471,16 +507,18 @@ const FOTO_DOKUMEN_DATA = [
         console.log(`Uploaded file to input: ${doc.id}`);
         await page.waitForTimeout(200);
       }
-    }
+    },
   },
-  
+
   {
     type: 'custom',
     callback: async (page) => {
       await page.waitForTimeout(10000);
-      const pribadiLink = page.locator('li[role="presentation"] a', { hasText: 'Pribadi' });
+      const pribadiLink = page.locator('li[role="presentation"] a', {
+        hasText: 'Pribadi',
+      });
       await pribadiLink.click();
-      
+
       const documentIds = [
         '$.documents.employment_evidence.document_id',
         '$.documents.npwp.document_id',
@@ -488,89 +526,158 @@ const FOTO_DOKUMEN_DATA = [
         '$.documents.marriage_certificate.document_id',
         '$.documents.divorce_certificate.document_id',
         '$.documents.death_certificate.document_id',
-        '$.documents.house_ownership.document_id'
+        '$.documents.house_ownership.document_id',
       ];
 
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
         const fileInput = page.locator(`#${escapedId} input[type="file"]`);
-        await fileInput.setInputFiles(path.resolve(process.cwd(), 'assets/gas.png'));
+        await fileInput.setInputFiles(
+          path.resolve(process.cwd(), 'assets/gas.png')
+        );
         console.log(`Uploaded file to input: ${docId}`);
         await page.waitForTimeout(200);
       }
-    }
+    },
   },
-  
+
   {
     type: 'custom',
     callback: async (page) => {
-      const perjanjianLink = page.locator('li[role="presentation"] a', { hasText: 'Perjanjian' });
+      const perjanjianLink = page.locator('li[role="presentation"] a', {
+        hasText: 'Perjanjian',
+      });
       await perjanjianLink.click();
-      
+
       const documentIds = [
         '$.documents.debtor_signature.document_id',
         '$.documents.bpkb_receipt_2.document_id',
         '$.documents.customer_receipt_2.document_id',
-        '$.documents.payment_receipt.document_id'
+        '$.documents.payment_receipt.document_id',
       ];
 
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
         const fileInput = page.locator(`#${escapedId} input[type="file"]`);
-        await fileInput.setInputFiles(path.resolve(process.cwd(), 'assets/gas.png'));
+        await fileInput.setInputFiles(
+          path.resolve(process.cwd(), 'assets/gas.png')
+        );
         console.log(`Uploaded file to input: ${docId}`);
         await page.waitForTimeout(200);
       }
-    }
-  }
+    },
+  },
 ];
 
 const ASET_KAPASITAS_DATA = [
-  { type: 'radio', name: '$.asset.unit_physical_condition_normal', value: 'true' },
-  { type: 'radio', name: '$.asset.is_motorcycle_component_complete', value: 'true' },
-  { type: 'radio', name: 'ltw.custom_asset_no_mark_of_accident_2W', value: 'YES' },
+  {
+    type: 'radio',
+    name: '$.asset.unit_physical_condition_normal',
+    value: 'true',
+  },
+  {
+    type: 'radio',
+    name: '$.asset.is_motorcycle_component_complete',
+    value: 'true',
+  },
+  {
+    type: 'radio',
+    name: 'ltw.custom_asset_no_mark_of_accident_2W',
+    value: 'YES',
+  },
   { type: 'radio', name: '$.asset.unit_able_to_turn_on', value: 'true' },
-  { type: 'radio', name: '$.asset.unit_type_and_physical_condition_appropriate', value: 'true' },
-  { type: 'radio', name: '$.asset.engine_and_chassis_number_with_document_appropriate', value: 'true' },
+  {
+    type: 'radio',
+    name: '$.asset.unit_type_and_physical_condition_appropriate',
+    value: 'true',
+  },
+  {
+    type: 'radio',
+    name: '$.asset.engine_and_chassis_number_with_document_appropriate',
+    value: 'true',
+  },
   { type: 'radio', name: '$.asset.asset_usage', value: 'NON_COMMERCIAL' },
-  { type: 'select', id: 'ltw.custom_customer_professional_occupation_code', value: 'Engineering' },
-  { type: 'select', id: 'ltw.custom_customer_professional_occupation_type_code', value: 'Employee' },
+  { type: 'radio', name: 'ltw.loan_structure.finance_purpose_type', value: 'C' },
+  {
+    type: 'select',
+    id: 'ltw.custom_customer_professional_occupation_code',
+    value: 'Engineering',
+  },
+  {
+    type: 'select',
+    id: 'ltw.custom_customer_professional_occupation_type_code',
+    value: 'Employee',
+  },
   {
     type: 'custom',
     callback: async (page) => {
       await page.locator(`.rupiah-text-input`).nth(0).fill('10000000');
       await page.locator(`.rupiah-text-input`).nth(1).fill('1000000');
-    }
-  }
+    },
+  },
 ];
 
 const INFO_LAINNYA_DATA = [
-  { type: 'input', id: '$.customer.personal.mother_maiden_name', value: 'Irene Adler' },
+  {
+    type: 'input',
+    id: '$.customer.personal.mother_maiden_name',
+    value: 'Irene Adler',
+  },
   { type: 'input', id: '$.customer.contact.email', value: 'test@gmail.com' },
   { type: 'radio', name: '$.customer.professional.npwp_type', value: 'NPWP' },
-  { type: 'select', id: 'ltw.custom_customer_professional_economic_sector', value: 'JASA' },
-  { type: 'select', id: 'ltw.custom_customer_professional_industry', value: 'KOPI' },
-  { type: 'input', id: '$.customer.emergency_contact.name', value: 'kontak darurat name' },
-  { type: 'select', id: '$.customer.emergency_contact.relation_with_customer', value: 'FAMILY' },
-  { type: 'input', selector: 'input[name="\\$.customer.emergency_contact.mobile_number"]', value: '81234567890' },
-  { type: 'input', id: '$.customer.emergency_contact.street_address', value: 'sample alamat rumah' },
+  {
+    type: 'select',
+    id: 'ltw.custom_customer_professional_economic_sector',
+    value: 'JASA',
+  },
+  {
+    type: 'select',
+    id: 'ltw.custom_customer_professional_industry',
+    value: 'KOPI',
+  },
+  {
+    type: 'input',
+    id: '$.customer.emergency_contact.name',
+    value: 'kontak darurat name',
+  },
+  {
+    type: 'select',
+    id: '$.customer.emergency_contact.relation_with_customer',
+    value: 'FAMILY',
+  },
+  {
+    type: 'input',
+    selector: 'input[name="\\$.customer.emergency_contact.mobile_number"]',
+    value: '81234567890',
+  },
+  {
+    type: 'input',
+    id: '$.customer.emergency_contact.street_address',
+    value: 'sample alamat rumah',
+  },
   { type: 'input', id: '$.customer.emergency_contact.rt', value: '000' },
   { type: 'input', id: '$.customer.emergency_contact.rw', value: '000' },
-  { type: 'file', selector: '#\\$\\.documents\\.ktp\\.document_id input[type="file"]', filePath: path.resolve(process.cwd(), 'assets/gas.png') },
+  {
+    type: 'file',
+    selector: '#\\$\\.documents\\.ktp\\.document_id input[type="file"]',
+    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
+  },
   {
     type: 'custom',
     callback: async (page) => {
-      const dropdownInput = page.locator('.searchable-dropdown__input-wrapper input').nth(1);
+      const dropdownInput = page
+        .locator('.searchable-dropdown__input-wrapper input')
+        .nth(1);
       await dropdownInput.click();
       await dropdownInput.fill('silalas');
-      
+
       const option = page.locator('.searchable-dropdown__option button', {
         hasText: 'Kelurahan Silalas, Kecamatan Medan Barat',
       });
       await option.waitFor({ state: 'visible', timeout: 5000 });
       await option.click();
-    }
-  }
+    },
+  },
 ];
 
 const PEMBIAYAAN_DATA = [
@@ -585,12 +692,17 @@ const PEMBIAYAAN_DATA = [
       } else {
         console.log('Rescoring modal not visible.');
       }
-    }
-  }
+    },
+  },
 ];
 
 const PENERIMAAN_BPKB_DATA = [
-  { type: 'radio', name: '$.process.survey_task.bpkb_submission.submission_method', value: 'BRANCH_DROPOFF', waitTimeout: 500 },
+  {
+    type: 'radio',
+    name: '$.process.survey_task.bpkb_submission.submission_method',
+    value: 'BRANCH_DROPOFF',
+    waitTimeout: 500,
+  },
   {
     type: 'custom',
     callback: async (page) => {
@@ -600,14 +712,16 @@ const PENERIMAAN_BPKB_DATA = [
       const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
       const year = tomorrow.getFullYear();
       const formattedDate = `${day}/${month}/${year}`;
-      
+
       await page
-        .locator('#appointment-date-time__date__ltw_survey_task_bpkb_submission_submission_appointment_with_default_time')
+        .locator(
+          '#appointment-date-time__date__ltw_survey_task_bpkb_submission_submission_appointment_with_default_time'
+        )
         .evaluate((el, date) => {
           el.setAttribute('data-date', date);
         }, formattedDate);
-    }
-  }
+    },
+  },
 ];
 
 // Mock setup functions
@@ -664,7 +778,8 @@ async function setupBpkbOcrMock(page) {
               machine_number: 'K15871110940',
               manufacture_year: '2019',
               other_document_number: 'BPKB D 181',
-              owner_address: 'KP . GEBANG RT 003 RW 003 KEL . SATRIA JAJA KEC . TAMBUN UTARA KABUPATEN BEKASI',
+              owner_address:
+                'KP . GEBANG RT 003 RW 003 KEL . SATRIA JAJA KEC . TAMBUN UTARA KABUPATEN BEKASI',
               owner_issued_date: '27-11-2019',
               owner_issued_in: 'JAKARTA',
               owner_name: 'ADE KARNI SADELI',
@@ -695,50 +810,74 @@ test('Task: input 6-digit PIN', async ({ page }) => {
   await fillFormFields(page, PIN_TEST_DATA);
 });
 
-test('Task: Fill Page Verifikasi', async ({ page }) => {
-  await navigateToAdmin(page);
-  await setupStnkOcrMock(page);
-  await selectLastProcessingTask(page);
-  await page.waitForSelector('#form-document-overlay', { state: 'detached' });
-  await fillFormFields(page, VERIFICATION_PAGE_DATA);
-  await submitForm(page);
-}, { timeout: 300000 });
+test(
+  'Task: Fill Page Verifikasi',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await setupStnkOcrMock(page);
+    await selectLastProcessingTask(page);
+    await page.waitForSelector('#form-document-overlay', { state: 'detached' });
+    await fillFormFields(page, VERIFICATION_PAGE_DATA);
+    await submitForm(page);
+  },
+  { timeout: 300000 }
+);
 
-test('Task: Fill Page Foto Aset & Dokumen', async ({ page }) => {
-  await navigateToAdmin(page);
-  await setupStnkOcrMock(page);
-  await setupBpkbOcrMock(page);
-  await selectLastProcessingTask(page);
-  await fillFormFields(page, FOTO_DOKUMEN_DATA);
-  await submitForm(page);
-}, { timeout: 300000 });
+test(
+  'Task: Fill Page Foto Aset & Dokumen',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await setupStnkOcrMock(page);
+    await setupBpkbOcrMock(page);
+    await selectLastProcessingTask(page);
+    await fillFormFields(page, FOTO_DOKUMEN_DATA);
+    await submitForm(page);
+  },
+  { timeout: 300000 }
+);
 
-test('Task: Fill Page Aset & Kapasitas', async ({ page }) => {
-  await navigateToAdmin(page);
-  await selectLastProcessingTask(page);
-  await fillFormFields(page, ASET_KAPASITAS_DATA);
-  await submitForm(page);
-}, { timeout: 30000 });
+test(
+  'Task: Fill Page Aset & Kapasitas',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await selectLastProcessingTask(page);
+    await fillFormFields(page, ASET_KAPASITAS_DATA);
+    await submitForm(page);
+  },
+  { timeout: 30000 }
+);
 
-test('Task: Fill Page Info Lainnya', async ({ page }) => {
-  await navigateToAdmin(page);
-  await selectLastProcessingTask(page);
-  await fillFormFields(page, INFO_LAINNYA_DATA);
-  await submitForm(page);
-}, { timeout: 30000 });
+test(
+  'Task: Fill Page Info Lainnya',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await selectLastProcessingTask(page);
+    await fillFormFields(page, INFO_LAINNYA_DATA);
+    await submitForm(page);
+  },
+  { timeout: 30000 }
+);
 
-test('Task: Fill Page Pembiayaan', async ({ page }) => {
-  await navigateToAdmin(page);
-  await selectLastProcessingTask(page);
-  await page.waitForTimeout(1000);
-  await fillFormFields(page, PEMBIAYAAN_DATA);
-  await submitForm(page);
-}, { timeout: 30000 });
+test(
+  'Task: Fill Page Pembiayaan',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await selectLastProcessingTask(page);
+    await page.waitForTimeout(1000);
+    await fillFormFields(page, PEMBIAYAAN_DATA);
+    await submitForm(page);
+  },
+  { timeout: 30000 }
+);
 
-test('Task: Fill Page Penerimaan BPKB', async ({ page }) => {
-  await navigateToAdmin(page);
-  await selectLastProcessingTask(page);
-  await page.waitForTimeout(500);
-  await fillFormFields(page, PENERIMAAN_BPKB_DATA);
-  await submitForm(page);
-}, { timeout: 30000 });
+test(
+  'Task: Fill Page Penerimaan BPKB',
+  async ({ page }) => {
+    await navigateToAdmin(page);
+    await selectLastProcessingTask(page);
+    await page.waitForTimeout(500);
+    await fillFormFields(page, PENERIMAAN_BPKB_DATA);
+    await submitForm(page);
+  },
+  { timeout: 30000 }
+);
