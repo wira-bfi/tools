@@ -5,6 +5,8 @@ const baseConfig = {
     "http://127.0.0.1:15672/api/exchanges/%2F/x.scheduling.appointments.work/publish",
   mq_user: "guest",
   mq_password: "guest",
+
+  arango_db_name: "lts",
 };
 
 export default baseConfig;
