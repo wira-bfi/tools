@@ -13,7 +13,7 @@ function StartApplication() {
 
   const payload = {
     id: workflowId,
-    name: 'dp-ndf-v0_2_0',
+    name: 'dp-ndf-v0_4_0',
   };
   const start = fetch(`${baseConfig.lgs_base_url}/application/start`, {
     method: 'POST',
@@ -32,7 +32,7 @@ const sendMq = async (workflowId, videoUrl) => {
 
   const routing_key = 'rk.lora-gateway-service.scheduling.appointments';
   const start = new Date();
-  start.setHours(18, 30, 0, 0);
+  start.setHours(23, 30, 0, 0);
 
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   // const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
@@ -190,8 +190,8 @@ test('Create a new survey 2w task', async ({ page }) => {
     '$.customer.ktp.nik': '3328182404970002',
     '$.customer.ktp.gender': 'M',
     '$.customer.personal.marital_status_code': 'S',
-    '$.documents.ktp.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
-    '$.documents.selfie.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
+    '$.documents.ktp.document_id': 'd7904320-304f-4fbc-a391-0b6f0d3370d4',
+    '$.documents.selfie.document_id': 'd7904320-304f-4fbc-a391-0b6f0d3370d4',
     '$.loan_structure.provisional_amount': 5000000,
     '$.loan_structure.product_offering': 11,
     '$.loan_structure.tenure': 12,
@@ -597,7 +597,11 @@ const ASET_KAPASITAS_DATA = [
     value: 'true',
   },
   { type: 'radio', name: '$.asset.asset_usage', value: 'NON_COMMERCIAL' },
-  { type: 'radio', name: 'ltw.loan_structure.finance_purpose_type', value: 'C' },
+  {
+    type: 'radio',
+    name: 'ltw.loan_structure.finance_purpose_type',
+    value: 'C',
+  },
   {
     type: 'select',
     id: 'ltw.custom_customer_professional_occupation_code',
@@ -607,6 +611,17 @@ const ASET_KAPASITAS_DATA = [
     type: 'select',
     id: 'ltw.custom_customer_professional_occupation_type_code',
     value: 'Employee',
+  },
+  {
+    type: 'custom',
+    callback: async (page) => {
+      await page.waitForTimeout(1000);
+    },
+  },
+  {
+    type: 'select',
+    id: '$.loan_structure.purpose.finance_purpose_id',
+    value: '2',
   },
   {
     type: 'custom',

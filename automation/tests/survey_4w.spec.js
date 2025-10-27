@@ -13,7 +13,7 @@ function StartApplication() {
 
   const payload = {
     id: workflowId,
-    name: 'dp-ndf-v0_2_0',
+    name: 'dp-ndf-v0_4_0',
   };
   const start = fetch(`${baseConfig.lgs_base_url}/application/start`, {
     method: 'POST',
@@ -32,7 +32,7 @@ const sendMq = async (workflowId, videoUrl) => {
 
   const routing_key = 'rk.lora-gateway-service.scheduling.appointments';
   const start = new Date();
-  start.setHours(18, 25, 0, 0);
+  start.setHours(22, 25, 0, 0);
 
   const end = new Date(start.getTime() + 30 * 60 * 1000);
   // const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
@@ -195,8 +195,8 @@ test('Create a new survey 4w task', async ({ page }) => {
     '$.customer.professional.education_code': 'S1',
     '$.customer.professional.monthly_income': '10000000',
     '$.customer.professional.occupation_type_code': 'M',
-    '$.documents.ktp.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
-    '$.documents.selfie.document_id': "d7904320-304f-4fbc-a391-0b6f0d3370d4",
+    '$.documents.ktp.document_id': 'd7904320-304f-4fbc-a391-0b6f0d3370d4',
+    '$.documents.selfie.document_id': 'd7904320-304f-4fbc-a391-0b6f0d3370d4',
     '$.loan_structure.original_amount': 12690000,
     '$.loan_structure.product_id': 1,
     '$.loan_structure.product_offering': 37,
@@ -359,6 +359,16 @@ const VERIFICATION_PAGE_DATA = [
     value: '000',
   },
   {
+    type: 'input',
+    id: '$.customer.personal.number_dependents_children',
+    value: '5',
+  },
+  {
+    type: 'input',
+    id: '$.customer.personal.number_dependents_other',
+    value: '0',
+  },
+  {
     type: 'custom',
     callback: async (page) => {
       const locationButton = page.locator('#address-location-button_null');
@@ -432,11 +442,6 @@ const VERIFICATION_PAGE_DATA = [
   },
   {
     type: 'radio',
-    name: 'ltw.custom_vehicle_guaranteed',
-    value: 'OWNED_BY_DEBTOR',
-  },
-  {
-    type: 'radio',
     name: 'ltw.custom_bpkb_ownership_period',
     value: 'MORE_THAN_24_MONTH',
   },
@@ -457,6 +462,8 @@ const FOTO_DOKUMEN_DATA = [
     '$.documents.asset.speedometer.document_id',
     '$.documents.asset.engine_number.document_id',
     '$.documents.asset.selfie_with_vehicle.document_id',
+    '$.documents.asset.asset_left_side.document_id',
+    '$.documents.asset.asset_right_side.document_id',
   ].map((id) => ({
     type: 'custom',
     callback: async (page) => {
@@ -517,7 +524,7 @@ const FOTO_DOKUMEN_DATA = [
 
       const documentIds = [
         '$.documents.employment_evidence.document_id',
-        '$.documents.npwp.document_id',
+        // '$.documents.npwp.document_id',
         '$.documents.alternate_identity_document.document_id',
         '$.documents.marriage_certificate.document_id',
         '$.documents.divorce_certificate.document_id',
@@ -584,7 +591,7 @@ const ASET_KAPASITAS_DATA = [
     value: 'NO',
   },
   { type: 'radio', name: '$.asset.unit_able_to_turn_on', value: 'true' },
-  { type: 'radio', name: '$.asset.unit_able_to_move_normally', value: 'true' },
+  // { type: 'radio', name: '$.asset.unit_able_to_move_normally', value: 'true' },
   {
     type: 'radio',
     name: '$.asset.unit_type_and_physical_condition_appropriate',
@@ -607,7 +614,21 @@ const ASET_KAPASITAS_DATA = [
     value: 'false',
   },
   { type: 'radio', name: '$.asset.asset_usage', value: 'NON_COMMERCIAL' },
-  { type: 'radio', name: 'ltw.loan_structure.finance_purpose_type', value: 'P' },
+  {
+    type: 'radio',
+    name: 'ltw.loan_structure.finance_purpose_type',
+    value: 'P',
+  },
+  {
+    type: 'radio',
+    name: '$.customer.professional.is_profession_valid',
+    value: 'true',
+  },
+  {
+    type: 'select',
+    id: '$.loan_structure.purpose.finance_purpose_id',
+    value: '13',
+  },
   {
     type: 'custom',
     callback: async (page) => {
@@ -624,17 +645,22 @@ const INFO_LAINNYA_DATA = [
     value: 'Irene Adler',
   },
   { type: 'input', id: '$.customer.contact.email', value: 'test@gmail.com' },
-  {
-    type: 'input',
-    id: '$.customer.personal.number_dependents_children',
-    value: '5',
-  },
-  {
-    type: 'input',
-    id: '$.customer.personal.number_dependents_other',
-    value: '0',
-  },
+  // {
+  //   type: 'input',
+  //   id: '$.customer.personal.number_dependents_children',
+  //   value: '5',
+  // },
+  // {
+  //   type: 'input',
+  //   id: '$.customer.personal.number_dependents_other',
+  //   value: '0',
+  // },
   { type: 'radio', name: '$.customer.professional.npwp_type', value: 'NPWP' },
+  {
+    type: 'radio',
+    name: '$.customer.domicile.is_name_bkr_equal',
+    value: 'true',
+  },
   {
     type: 'select',
     id: 'ltw.custom_customer_professional_economic_sector',
@@ -644,6 +670,11 @@ const INFO_LAINNYA_DATA = [
     type: 'select',
     id: 'ltw.custom_customer_professional_industry',
     value: 'KOPI',
+  },
+  {
+    type: 'select',
+    id: '$.customer.domicile.bkr_form',
+    value: 'RK_LISTRIK',
   },
   {
     type: 'input',
@@ -670,6 +701,11 @@ const INFO_LAINNYA_DATA = [
   {
     type: 'file',
     selector: '#\\$\\.documents\\.ktp\\.document_id input[type="file"]',
+    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
+  },
+  {
+    type: 'file',
+    selector: '#\\$\\.documents\\.npwp\\.document_id input[type="file"]',
     filePath: path.resolve(process.cwd(), 'assets/gas.png'),
   },
   {
@@ -712,6 +748,12 @@ const DATA_TAMBAHAN_DATA = [
     value: '2000',
   },
   { type: 'input', id: '$.customer.domicile.stay_since', value: '2000' },
+  { type: 'input', id: '$.asset.bpkb_owner_name', value: 'daniel samosir' },
+  {
+    type: 'radio',
+    name: 'ltw.custom_vehicle_guaranteed',
+    value: 'OWNED_BY_DEBTOR',
+  },
   {
     type: 'select',
     id: 'ltw.custom_customer_employment_status',
@@ -725,10 +767,10 @@ const DATA_TAMBAHAN_DATA = [
         .locator(`.carousel-thumbnail__actions input[type="file"]`)
         .nth(0);
       await locationInput.setInputFiles(gasFilePath);
-      const houseInput = page
-        .locator(`.carousel-thumbnail__actions input[type="file"]`)
-        .nth(1);
-      await houseInput.setInputFiles(gasFilePath);
+      // const houseInput = page
+      //   .locator(`.carousel-thumbnail__actions input[type="file"]`)
+      //   .nth(1);
+      // await houseInput.setInputFiles(gasFilePath);
     },
   },
 ];
@@ -994,17 +1036,17 @@ test(
   { timeout: 30000 }
 );
 
-test(
-  'Task: Fill Page Penjamin',
-  async ({ page }) => {
-    await navigateToAdmin(page);
-    await selectLastProcessingTask(page);
-    await page.waitForTimeout(1000);
-    await fillFormFields(page, PENJAMIN_DATA);
-    await submitForm(page);
-  },
-  { timeout: 30000 }
-);
+// test(
+//   'Task: Fill Page Penjamin',
+//   async ({ page }) => {
+//     await navigateToAdmin(page);
+//     await selectLastProcessingTask(page);
+//     await page.waitForTimeout(1000);
+//     await fillFormFields(page, PENJAMIN_DATA);
+//     await submitForm(page);
+//   },
+//   { timeout: 30000 }
+// );
 
 test(
   'Task: Fill Page Pembiayaan',
