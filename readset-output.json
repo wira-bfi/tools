@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-10-27T07:03:58.696Z",
+  "extractedAt": "2025-10-27T10:22:38.650Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/",
@@ -238,7 +238,12 @@
         "DocSurveyAppointmentSurveyType",
         "DocStatusReservationExpiry",
         "DocStatusApplication",
-        "DocLoanStructureRiskLevel"
+        "DocLoanStructureRiskLevel",
+        "DocChannelPartnerInternalName",
+        "DocChannelSoaId",
+        "DocChannelPartnerId",
+        "DocChannelMarketingId",
+        "DocProcessSurveyTaskBpkbSubmissionVerificatorNotes"
       ]
     },
     {
