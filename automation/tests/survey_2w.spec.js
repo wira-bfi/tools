@@ -295,7 +295,7 @@ async function fillFormFields(page, formData) {
       } else if (field.type === 'file') {
         const fileInput = field.selector
           ? page.locator(field.selector)
-          : page.locator(`#${escapeCssId(field.id)} input[type="file"]`);
+          : page.locator(`#${escapeCssId(field.id)} input[type="file"][capture="environment"]`);
         await fileInput.setInputFiles(field.filePath);
         console.log(`Uploaded file: ${field.id || field.selector}`);
         if (field.delay) await page.waitForTimeout(field.delay);
@@ -340,16 +340,16 @@ const PIN_TEST_DATA = [
 ];
 
 const VERIFICATION_PAGE_DATA = [
-  {
-    type: 'file',
-    id: '$.documents.ktp.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
-  },
-  {
-    type: 'file',
-    id: '$.documents.selfie.document_id',
-    filePath: path.resolve(process.cwd(), 'assets/gas.png'),
-  },
+  // {
+  //   type: 'file',
+  //   id: '$.documents.ktp.document_id',
+  //   filePath: path.resolve(process.cwd(), 'assets/gas.png'),
+  // },
+  // {
+  //   type: 'file',
+  //   id: '$.documents.selfie.document_id',
+  //   filePath: path.resolve(process.cwd(), 'assets/gas.png'),
+  // },
   {
     type: 'input',
     id: '$.customer.domicile.address.rt',
@@ -470,7 +470,7 @@ const FOTO_DOKUMEN_DATA = [
 
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
-        const fileInput = page.locator(`#${escapedId} input[type="file"]`);
+        const fileInput = page.locator(`#${escapedId} input[type="file"][capture="environment"]`);
         await fileInput.setInputFiles(
           path.resolve(process.cwd(), 'assets/gas.png')
         );
@@ -502,7 +502,7 @@ const FOTO_DOKUMEN_DATA = [
 
       for (const doc of documentConfigs) {
         const escapedId = escapeCssId(doc.id);
-        const fileInput = page.locator(`#${escapedId} input[type="file"]`);
+        const fileInput = page.locator(`#${escapedId} input[type="file"][capture="environment"]`);
         await fileInput.setInputFiles(path.resolve(process.cwd(), doc.file));
         console.log(`Uploaded file to input: ${doc.id}`);
         await page.waitForTimeout(200);
@@ -531,7 +531,7 @@ const FOTO_DOKUMEN_DATA = [
 
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
-        const fileInput = page.locator(`#${escapedId} input[type="file"]`);
+        const fileInput = page.locator(`#${escapedId} input[type="file"][capture="environment"]`);
         await fileInput.setInputFiles(
           path.resolve(process.cwd(), 'assets/gas.png')
         );
@@ -558,7 +558,7 @@ const FOTO_DOKUMEN_DATA = [
 
       for (const docId of documentIds) {
         const escapedId = escapeCssId(docId);
-        const fileInput = page.locator(`#${escapedId} input[type="file"]`);
+        const fileInput = page.locator(`#${escapedId} input[type="file"][capture="environment"]`);
         await fileInput.setInputFiles(
           path.resolve(process.cwd(), 'assets/gas.png')
         );
