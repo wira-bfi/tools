@@ -1,14 +1,14 @@
 {
-  "extractedAt": "2025-10-27T10:22:38.650Z",
+  "extractedAt": "2025-11-11T04:23:30.887Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/",
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 96,
-  "totalReadSets": 88,
-  "totalConstants": 706,
+  "totalFiles": 97,
+  "totalReadSets": 89,
+  "totalConstants": 722,
   "readSets": [
     {
       "type": "survey",
@@ -243,7 +243,18 @@
         "DocChannelSoaId",
         "DocChannelPartnerId",
         "DocChannelMarketingId",
-        "DocProcessSurveyTaskBpkbSubmissionVerificatorNotes"
+        "DocCustomerBankInformationAccountName",
+        "DocCustomerBankInformationAccountNumber",
+        "DocDocumentsAdditionalDocumentDocumentType",
+        "DocDocumentsAdditionalDocumentDocumentSequence",
+        "DocDocumentsAdditionalDocument2DocumentType",
+        "DocDocumentsAdditionalDocument2DocumentSequence",
+        "DocDocumentsAdditionalDocument3DocumentType",
+        "DocDocumentsAdditionalDocument3DocumentSequence",
+        "DocDocumentsAdditionalDocument4DocumentType",
+        "DocDocumentsAdditionalDocument4DocumentSequence",
+        "DocDocumentsAdditionalDocument5DocumentType",
+        "DocDocumentsAdditionalDocument5DocumentSequence"
       ]
     },
     {
@@ -307,7 +318,9 @@
         "DocCustomerContactMobileNumber",
         "DocLoanStructureNtfAmount",
         "DocChannelMarketingId",
-        "DocSurveyAppointmentPreferredTimezone"
+        "DocSurveyAppointmentPreferredTimezone",
+        "DocProcessSurveyTaskSurveyorEmployeeName",
+        "DocCustomerKtpGender"
       ]
     },
     {
@@ -472,7 +485,8 @@
     {
       "type": "update_reservation_on_appointment",
       "readSet": [
-        "DocSurveyAppointmentStartTime"
+        "DocSurveyAppointmentStartTime",
+        "DocSubmissionDate"
       ]
     },
     {
@@ -503,7 +517,8 @@
       "type": "getsurveybranchid",
       "readSet": [
         "DocLoanStructureProductId",
-        "DocCustomerDomicileAddressSubDistrictCode"
+        "DocCustomerDomicileAddressSubDistrictCode",
+        "DocChannelPartnerInternalName"
       ]
     },
     {
@@ -778,6 +793,13 @@
         "DocAssetBpkbOwnership",
         "DocAssetBpkbOwnershipPeriod",
         "DocAssetVehicleGuaranteed"
+      ]
+    },
+    {
+      "type": "check_result_aggregation_scoring_2_ndf4w",
+      "readSet": [
+        "DocLoanStructureRiskLevel",
+        "DocProcessRapindoAssetSearchPassed"
       ]
     },
     {
@@ -1194,8 +1216,7 @@
     {
       "type": "check_ktp_forgery",
       "readSet": [
-        "DocDocumentsKtpDocumentId",
-        "DocChannelKtpForgeryAuthority"
+        "DocDocumentsKtpDocumentId"
       ]
     },
     {
@@ -1323,7 +1344,8 @@
         "DocLoanStructureProductId",
         "DocAssetLicensePlate",
         "DocBranchBranchId",
-        "DocId"
+        "DocId",
+        "DocSubmissionDate"
       ]
     },
     {
@@ -1413,7 +1435,13 @@
         "DocChannelMarketingId",
         "DocAssetManufacturingYear",
         "DocAssetLicensePlate",
-        "DocProcessAssetPricingPrice"
+        "DocProcessAssetPricingPrice",
+        "DocAssetAssetCode",
+        "DocAssetBpkbOwnership",
+        "DocAssetBpkbStatus",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocChannelSoaId"
       ]
     },
     {
@@ -1596,6 +1624,21 @@
     "DocDisbursementDisbursementDate": "$.disbursement.disbursement_date",
     "DocDocumentsActiveSpkDocumentId": "$.documents.active_spk.document_id",
     "DocDocumentsActiveSpkDocumentType": "$.documents.active_spk.document_type",
+    "DocDocumentsAdditionalDocumentDocumentId": "$.documents.additional_document.document_id",
+    "DocDocumentsAdditionalDocumentDocumentSequence": "$.documents.additional_document.document_sequence",
+    "DocDocumentsAdditionalDocumentDocumentType": "$.documents.additional_document.document_type",
+    "DocDocumentsAdditionalDocument2DocumentId": "$.documents.additional_document_2.document_id",
+    "DocDocumentsAdditionalDocument2DocumentSequence": "$.documents.additional_document_2.document_sequence",
+    "DocDocumentsAdditionalDocument2DocumentType": "$.documents.additional_document_2.document_type",
+    "DocDocumentsAdditionalDocument3DocumentId": "$.documents.additional_document_3.document_id",
+    "DocDocumentsAdditionalDocument3DocumentSequence": "$.documents.additional_document_3.document_sequence",
+    "DocDocumentsAdditionalDocument3DocumentType": "$.documents.additional_document_3.document_type",
+    "DocDocumentsAdditionalDocument4DocumentId": "$.documents.additional_document_4.document_id",
+    "DocDocumentsAdditionalDocument4DocumentSequence": "$.documents.additional_document_4.document_sequence",
+    "DocDocumentsAdditionalDocument4DocumentType": "$.documents.additional_document_4.document_type",
+    "DocDocumentsAdditionalDocument5DocumentId": "$.documents.additional_document_5.document_id",
+    "DocDocumentsAdditionalDocument5DocumentSequence": "$.documents.additional_document_5.document_sequence",
+    "DocDocumentsAdditionalDocument5DocumentType": "$.documents.additional_document_5.document_type",
     "DocDocumentsAlternateIdentityDocumentDocumentId": "$.documents.alternate_identity_document.document_id",
     "DocDocumentsAlternateIdentityDocumentDocumentType": "$.documents.alternate_identity_document.document_type",
     "DocDocumentsAssetAssetFrontDocumentId": "$.documents.asset.asset_front.document_id",
@@ -2083,6 +2126,7 @@
     "DocProcessSurveyTaskBpkbSubmissionSubmissionDomicileAddressSubDistrictCode": "$.process.survey_task.bpkb_submission.submission_domicile_address.sub_district_code",
     "DocProcessSurveyTaskBpkbSubmissionSubmissionMethod": "$.process.survey_task.bpkb_submission.submission_method",
     "DocProcessSurveyTaskBpkbSubmissionVerificatorNotes": "$.process.survey_task.bpkb_submission.verificator_notes",
+    "DocProcessSurveyTaskEnvironmentCheckSurveyorEmployeeId": "$.process.survey_task.environment_check_surveyor_employee_id",
     "DocProcessSurveyTaskSurveyBranchId": "$.process.survey_task.survey_branch_id",
     "DocProcessSurveyTaskSurveyBranchName": "$.process.survey_task.survey_branch_name",
     "DocProcessSurveyTaskSurveyPosId": "$.process.survey_task.survey_pos_id",
