@@ -255,7 +255,8 @@
 
             const docrevtextarea = document.getElementById("docrev");
             docrevtextarea.addEventListener("input", function (event) {
-                dataToCompare = JSON.parse(event.target.value);
+                const rawData = JSON.parse(event.target.value);
+                dataToCompare = sanitizeKeys(rawData);
                 checkReadset(type, dataToCompare);
             });
 
@@ -264,6 +265,23 @@
                 type = event.target.value;
                 checkReadset(type, dataToCompare);
             });
+
+            function sanitizeKeys(obj) {
+              if (Array.isArray(obj)) {
+                return obj.map(sanitizeKeys);
+              }
+
+              if (obj !== null && typeof obj === "object") {
+                return Object.keys(obj).reduce((acc, key) => {
+                  // Remove special characters: [, ], *, etc.
+                  const cleanKey = key.replace(/[\[\]\*]/g, "");
+                  acc[cleanKey] = sanitizeKeys(obj[key]);
+                  return acc;
+                }, {});
+              }
+
+              return obj;
+            }
 
             function checkReadset(type, dataToCompare) {
                 const r = readsets.find((x) => x.type === type);
