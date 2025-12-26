@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-12-15T08:13:39.356Z",
+  "extractedAt": "2025-12-26T03:41:16.691Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/",
@@ -8,7 +8,7 @@
   ],
   "totalFiles": 99,
   "totalReadSets": 91,
-  "totalConstants": 739,
+  "totalConstants": 747,
   "readSets": [
     {
       "type": "survey",
@@ -136,7 +136,17 @@
         "DocProcessStatusTimestampsPreQualified",
         "DocBranchBranchName",
         "DocBranchBranchId",
-        "DocBranchPosId"
+        "DocBranchPosId",
+        "DocDocumentsAdditionalDocumentDocumentType",
+        "DocDocumentsAdditionalDocumentDocumentSequence",
+        "DocDocumentsAdditionalDocument2DocumentType",
+        "DocDocumentsAdditionalDocument2DocumentSequence",
+        "DocDocumentsAdditionalDocument3DocumentType",
+        "DocDocumentsAdditionalDocument3DocumentSequence",
+        "DocDocumentsAdditionalDocument4DocumentType",
+        "DocDocumentsAdditionalDocument4DocumentSequence",
+        "DocDocumentsAdditionalDocument5DocumentType",
+        "DocDocumentsAdditionalDocument5DocumentSequence"
       ]
     },
     {
@@ -478,10 +488,14 @@
       ]
     },
     {
-      "type": "update_reservation_on_appointment",
+      "type": "customer_disclaimer_consent_pdf",
       "readSet": [
-        "DocSurveyAppointmentStartTime",
-        "DocSubmissionDate"
+        "DocId",
+        "DocCustomerKtpName",
+        "DocCustomerKtpNik",
+        "DocCustomerContactMobileNumber",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerConsentThirdPartyDataAccess"
       ]
     },
     {
@@ -489,7 +503,8 @@
       "readSet": [
         "DocId",
         "DocChannelEkycAuthority",
-        "DocChannelMarketingId"
+        "DocChannelMarketingId",
+        "DocCustomerConsentThirdPartyDataAccess"
       ]
     },
     {
@@ -729,7 +744,8 @@
         "DocAssetUnitAbleToTurnOn",
         "DocAssetUnitNoClearMarkOfAccident",
         "DocAssetIsMotorcycleComponentComplete",
-        "DocProcessPdModelOverlayS1MaxFundingRatio"
+        "DocProcessPdModelOverlayS1MaxFundingRatio",
+        "DocAssetBpkbOwnership"
       ]
     },
     {
@@ -782,7 +798,6 @@
       "readSet": [
         "DocId",
         "DocCustomerDomicileOwnershipCode",
-        "DocCustomerProfessionalIsProfessionValid",
         "DocCustomerPersonalCharacter",
         "DocBranchBranchId",
         "DocAssetBpkbOwnership",
@@ -834,7 +849,8 @@
         "DocCustomerDomicileOwnershipCode",
         "DocBranchBranchId",
         "DocLoanStructureMonthlyInstallment",
-        "DocCustomerProfessionalMonthlyIncome"
+        "DocCustomerProfessionalMonthlyIncome",
+        "DocChannelMarketingId"
       ]
     },
     {
@@ -974,7 +990,8 @@
         "DocBranchBranchId",
         "DocProcessPdModelAliCloudPdScore",
         "DocProcessPefindoProfilePefindoDetailScoringType",
-        "DocChannelSoaId"
+        "DocChannelSoaId",
+        "DocChannelMarketingId"
       ]
     },
     {
@@ -1390,7 +1407,6 @@
         "DocAssetDebtorSpouseCanIdentifyCollateral",
         "DocProcessCreditCheckingNeighborhoodSource1AssetNegativeInfo",
         "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseUsesAssetMoreThanOnce",
-        "DocProcessCreditCheckingNeighborhoodSource1OccupationCode",
         "DocProcessCreditCheckingNeighborhoodSource1UnitLeftResidenceMoreThanOnce",
         "DocProcessCreditCheckingNeighborhoodSource1UnitSeenAtResidenceMoreThanOnce"
       ]
@@ -1722,6 +1738,9 @@
     "DocDocumentsConsumerEmploymentProofDocumentType": "$.documents.consumer_employment_proof.document_type",
     "DocDocumentsCrossDefaultContractDocumentId": "$.documents.cross_default_contract.document_id",
     "DocDocumentsCrossDefaultContractDocumentType": "$.documents.cross_default_contract.document_type",
+    "DocDocumentsCustomerDisclaimerConsentDocumentId": "$.documents.customer_disclaimer_consent.document_id",
+    "DocDocumentsCustomerDisclaimerConsentDocumentSequence": "$.documents.customer_disclaimer_consent.document_sequence",
+    "DocDocumentsCustomerDisclaimerConsentDocumentType": "$.documents.customer_disclaimer_consent.document_type",
     "DocDocumentsCustomerReceipt2DocumentId": "$.documents.customer_receipt_2.document_id",
     "DocDocumentsCustomerReceipt2DocumentType": "$.documents.customer_receipt_2.document_type",
     "DocDocumentsDeathCertificateDocumentId": "$.documents.death_certificate.document_id",
@@ -1957,8 +1976,11 @@
     "DocProcessBpkbOcrResultEngineNumber": "$.process.bpkb_ocr_result.engine_number",
     "DocProcessBpkbOcrResultLicensePlate": "$.process.bpkb_ocr_result.license_plate",
     "DocProcessBpkbOcrResultManufacturingYear": "$.process.bpkb_ocr_result.manufacturing_year",
+    "DocProcessBpkbOcrResultOcrProcessId": "$.process.bpkb_ocr_result.ocr_process_id",
+    "DocProcessBpkbOcrResultRegistrationYear": "$.process.bpkb_ocr_result.registration_year",
     "DocProcessBpkbOcrResultUnitColor": "$.process.bpkb_ocr_result.unit_color",
     "DocProcessBpkbOcrResultVehicleBrand": "$.process.bpkb_ocr_result.vehicle_brand",
+    "DocProcessBpkbOcrResultVehicleModel": "$.process.bpkb_ocr_result.vehicle_model",
     "DocProcessCalculateIncomePerMonthS1FinalIncome": "$.process.calculate_income_per_month.s1.final_income",
     "DocProcessCreditCheckingNeighborhoodSource1AssetNegativeInfo": "$.process.credit_checking.neighborhood.source_1.asset_negative_info",
     "DocProcessCreditCheckingNeighborhoodSource1BusinessSuitability": "$.process.credit_checking.neighborhood.source_1.business_suitability",
@@ -2128,11 +2150,14 @@
     "DocProcessStnkOcrResultEngineNumber": "$.process.stnk_ocr_result.engine_number",
     "DocProcessStnkOcrResultLicensePlate": "$.process.stnk_ocr_result.license_plate",
     "DocProcessStnkOcrResultManufacturingYear": "$.process.stnk_ocr_result.manufacturing_year",
+    "DocProcessStnkOcrResultOcrProcessId": "$.process.stnk_ocr_result.ocr_process_id",
+    "DocProcessStnkOcrResultRegistrationYear": "$.process.stnk_ocr_result.registration_year",
     "DocProcessStnkOcrResultStnkExpirationDate": "$.process.stnk_ocr_result.stnk_expiration_date",
     "DocProcessStnkOcrResultStnkNumber": "$.process.stnk_ocr_result.stnk_number",
     "DocProcessStnkOcrResultTaxExpirationDate": "$.process.stnk_ocr_result.tax_expiration_date",
     "DocProcessStnkOcrResultUnitColor": "$.process.stnk_ocr_result.unit_color",
     "DocProcessStnkOcrResultVehicleBrand": "$.process.stnk_ocr_result.vehicle_brand",
+    "DocProcessStnkOcrResultVehicleModel": "$.process.stnk_ocr_result.vehicle_model",
     "DocProcessSurveyCompletionTime": "$.process.survey.completion_time",
     "DocProcessSurveySurveyorLocationAccuracy": "$.process.survey.surveyor_location.accuracy",
     "DocProcessSurveySurveyorLocationLatitude": "$.process.survey.surveyor_location.latitude",
@@ -2169,7 +2194,6 @@
     "DocProcessVehicleVerificationScoreS1Result": "$.process.vehicle_verification_score.s1.result",
     "DocProcessVehicleVerificationScoreS1Score": "$.process.vehicle_verification_score.s1.score",
     "DocProcessVehicleVerificationScoreS1ScoreCategory": "$.process.vehicle_verification_score.s1.score_category",
-    "DocProcessWabCreateScheduleReminder1DaySentAt": "$.process.wab.create_schedule_reminder_1_day_sent_at",
     "DocProcessWabCreateScheduleReminder1HourSentAt": "$.process.wab.create_schedule_reminder_1_hour_sent_at",
     "DocProcessWtpCollectibilityStatusReason": "$.process.wtp.collectibility_status_reason",
     "DocProcessWtpS1Passed": "$.process.wtp.s1.passed",
