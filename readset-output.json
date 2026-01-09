@@ -1,5 +1,5 @@
 {
-  "extractedAt": "2025-12-26T03:41:16.691Z",
+  "extractedAt": "2026-01-09T09:13:38.582Z",
   "searchPaths": [
     "internal/process/tasking/",
     "internal/process/document/",
@@ -1097,7 +1097,6 @@
       "readSet": [
         "DocId",
         "DocAssetAssetCode",
-        "DocSurveyFinancingIsTakeOver",
         "DocAssetManufacturingYear",
         "DocLoanStructureProductOffering"
       ]
@@ -1317,7 +1316,8 @@
         "DocCustomerDomicileOwnershipCode",
         "DocBranchBranchId",
         "DocAssetVehicleGuaranteed",
-        "DocCustomerPersonalCharacter"
+        "DocCustomerPersonalCharacter",
+        "DocChannelMarketingId"
       ]
     },
     {
