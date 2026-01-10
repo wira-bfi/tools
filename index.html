@@ -81,7 +81,11 @@
         <!-- Cytoscape Graph -->
         <div class="lg:col-span-2 card bg-base-100 shadow-lg">
           <div class="card-body p-4">
-            <h2 class="card-title text-sm">Revision Graph</h2>
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="card-title text-sm">Revision Graph</h2>
+              <input type="text" id="graph-search" placeholder="Search node..."
+                class="input input-bordered input-sm w-48" />
+            </div>
             <div id="cy" class="border border-base-300 rounded-lg"></div>
           </div>
         </div>
@@ -91,7 +95,7 @@
           <div class="collapse collapse-arrow bg-base-100 shadow-lg">
             <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm">📖 Read Set</div>
-            <div class="collapse-content">
+            <div class="collapse-content pr-4">
               <div id="readSet" class="text-xs text-base-content/70 max-h-32 overflow-auto">
                 <p class="italic">Click a node to see read set</p>
               </div>
@@ -101,7 +105,7 @@
           <div class="collapse collapse-arrow bg-base-100 shadow-lg">
             <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm">✏️ Write Set</div>
-            <div class="collapse-content">
+            <div class="collapse-content pr-4">
               <div id="writeSet" class="text-xs text-base-content/70 max-h-32 overflow-auto">
                 <p class="italic">Click a node to see write set</p>
               </div>
@@ -111,9 +115,19 @@
           <div class="collapse collapse-arrow bg-base-100 shadow-lg">
             <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm">🔄 Data Changed</div>
-            <div class="collapse-content">
+            <div class="collapse-content pr-4">
               <div id="diffToLastDoc" class="text-xs text-base-content/70 max-h-32 overflow-auto">
                 <p class="italic">Click a node to see diff</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapse collapse-arrow bg-base-100 shadow-lg border-l-4 border-error">
+            <input type="checkbox" checked />
+            <div class="collapse-title font-medium text-sm">⚠️ Rollback Info</div>
+            <div class="collapse-content">
+              <div id="rollbackInfo" class="text-xs text-base-content/70 max-h-48 overflow-auto">
+                <p class="italic">Load data to see rollback analysis</p>
               </div>
             </div>
           </div>
@@ -411,6 +425,41 @@
         document.getElementById('document-search').addEventListener('input', (e) => {
           this.filterDocument(e.target.value);
         });
+
+        // Graph node search functionality
+        document.getElementById('graph-search').addEventListener('input', (e) => {
+          this.searchNodes(e.target.value);
+        });
+      },
+
+      searchNodes(query) {
+        if (!this.cy) return;
+
+        // Normalize query: replace spaces with underscores, lowercase
+        const normalizedQuery = query.toLowerCase().replace(/\s+/g, '_').trim();
+
+        // Reset all nodes
+        this.cy.nodes().removeClass('search-match search-dim');
+
+        if (!normalizedQuery) return;
+
+        // Find matching nodes (search in original ID)
+        const matchingNodes = this.cy.nodes().filter(node => {
+          const nodeId = node.id().toLowerCase();
+          return nodeId.includes(normalizedQuery);
+        });
+
+        if (matchingNodes.length > 0) {
+          // Dim non-matching nodes
+          this.cy.nodes().addClass('search-dim');
+          matchingNodes.removeClass('search-dim').addClass('search-match');
+
+          // Center on first match
+          this.cy.animate({
+            fit: { eles: matchingNodes, padding: 50 },
+            duration: 300
+          });
+        }
       },
 
       render() {
@@ -428,7 +477,226 @@
         const edges = this.buildEdges();
         const nodes = this.buildNodes();
 
+        // Analyze rollbacks
+        this.rollbackData = this.analyzeRollbacks();
+
         this.initCytoscape(nodes, edges);
+        this.displayRollbackSummary();
+      },
+
+      analyzeRollbacks() {
+        const req = this.requestData;
+        const cache = req[1].history.cache;
+        const nodes = req[1].history.nodes;
+
+        // Build flat list of all process executions with their index
+        const processExecutions = [];
+        nodes.forEach((nodeGroup, idx) => {
+          for (const processName of Object.keys(nodeGroup)) {
+            processExecutions.push({
+              index: idx,
+              name: processName,
+              readHash: nodeGroup[processName].read_hash,
+              writeHash: nodeGroup[processName].write_hash
+            });
+          }
+        });
+
+        // Find processes that appear multiple times with different read_hash (= rollback happened)
+        const processOccurrences = {};
+        processExecutions.forEach((exec, i) => {
+          if (!processOccurrences[exec.name]) {
+            processOccurrences[exec.name] = [];
+          }
+          processOccurrences[exec.name].push({ ...exec, execIndex: i });
+        });
+
+        const rollbackEvents = [];
+
+        for (const [processName, occurrences] of Object.entries(processOccurrences)) {
+          if (occurrences.length <= 1) continue; // No rollback if only one occurrence
+
+          // For each pair of consecutive occurrences
+          for (let i = 0; i < occurrences.length - 1; i++) {
+            const firstRun = occurrences[i];
+            const rerun = occurrences[i + 1];
+
+            // If read_hash is different, rollback occurred
+            if (firstRun.readHash !== rerun.readHash) {
+              // Find processes that ran between firstRun and rerun
+              const processesBetween = processExecutions.filter(
+                p => p.index > firstRun.index && p.index < rerun.index
+              );
+
+              // Find which process changed the input values
+              const firstReadData = cache[firstRun.readHash]?.value || {};
+              const rerunReadData = cache[rerun.readHash]?.value || {};
+
+              // Find changed values
+              const changedValues = {};
+              const allKeys = new Set([...Object.keys(firstReadData), ...Object.keys(rerunReadData)]);
+              for (const key of allKeys) {
+                const oldVal = JSON.stringify(firstReadData[key]);
+                const newVal = JSON.stringify(rerunReadData[key]);
+                if (oldVal !== newVal) {
+                  changedValues[key] = {
+                    oldValue: firstReadData[key],
+                    newValue: rerunReadData[key]
+                  };
+                }
+              }
+
+              // Find which process wrote the changed values (take the LAST one for accuracy)
+              let causingProcess = null;
+              const changedKeys = Object.keys(changedValues);
+
+              // Iterate in reverse to find the last process that wrote the changed values
+              for (let j = processesBetween.length - 1; j >= 0; j--) {
+                const proc = processesBetween[j];
+                const writeData = cache[proc.writeHash]?.value || {};
+                const writtenKeys = Object.keys(writeData);
+
+                // Check if this process wrote any of the changed keys
+                const overlap = writtenKeys.filter(k => changedKeys.includes(k));
+                if (overlap.length > 0) {
+                  // Get the actual values written
+                  const writtenValues = {};
+                  for (const key of overlap) {
+                    writtenValues[key] = writeData[key];
+                  }
+
+                  causingProcess = {
+                    name: proc.name,
+                    nodeIndex: proc.index,
+                    writeHash: proc.writeHash,
+                    fieldsWritten: overlap,
+                    writtenValues: writtenValues,
+                    allFieldsWritten: writtenKeys
+                  };
+                  break; // Take the last (most recent) process that caused the change
+                }
+              }
+
+              rollbackEvents.push({
+                rolledBackProcess: processName,
+                firstRunIndex: firstRun.index,
+                rerunIndex: rerun.index,
+                causingProcess: causingProcess,
+                changedInputValues: changedValues,
+                processesBetween: processesBetween.map(p => p.name)
+              });
+            }
+          }
+        }
+
+        // Sort by historical order (firstRunIndex)
+        rollbackEvents.sort((a, b) => a.firstRunIndex - b.firstRunIndex);
+
+        return rollbackEvents;
+      },
+
+      displayRollbackSummary() {
+        const container = document.getElementById('rollbackInfo');
+
+        if (!this.rollbackData || this.rollbackData.length === 0) {
+          container.innerHTML = '<p class="text-success">✅ No rollbacks detected</p>';
+          return;
+        }
+
+        // Group by causingProcess
+        const groupedByCause = {};
+        for (const rb of this.rollbackData) {
+          const causeName = rb.causingProcess?.name || '_unknown';
+          if (!groupedByCause[causeName]) {
+            groupedByCause[causeName] = {
+              causingProcess: rb.causingProcess,
+              events: []
+            };
+          }
+          groupedByCause[causeName].events.push(rb);
+        }
+
+        // Count unique causes
+        const causeCount = Object.keys(groupedByCause).length;
+
+        let html = `
+          <div class="mb-2">
+            <span class="badge badge-error">${this.rollbackData.length} rollback event(s)</span>
+            <span class="badge badge-warning ml-1">${causeCount} cause(s)</span>
+          </div>
+        `;
+
+        // Sort causes by nodeIndex (historical order)
+        const sortedCauses = Object.entries(groupedByCause).sort((a, b) => {
+          const idxA = a[1].causingProcess?.nodeIndex ?? 999999;
+          const idxB = b[1].causingProcess?.nodeIndex ?? 999999;
+          return idxA - idxB;
+        });
+
+        for (const [causeName, data] of sortedCauses) {
+          const { causingProcess, events } = data;
+
+          // Sort events by firstRunIndex
+          events.sort((a, b) => a.firstRunIndex - b.firstRunIndex);
+
+          html += `
+            <div class="mb-3 p-2 bg-base-200 rounded border-l-4 border-error">
+              <div class="font-semibold text-error">🔥 ${causeName === '_unknown' ? 'Unknown Cause' : causeName}</div>
+              ${causingProcess ? `<div class="text-xs opacity-70">at node index ${causingProcess.nodeIndex}</div>` : ''}
+              
+              ${causingProcess?.writtenValues ? `
+                <details class="mt-2 bg-error/10 p-2 rounded" open>
+                  <summary class="cursor-pointer text-xs font-medium text-error">📋 Fields written by this process (${causingProcess.fieldsWritten.length})</summary>
+                  <div class="text-xs mt-1 max-h-32 overflow-auto">
+                    ${Object.entries(causingProcess.writtenValues).map(([key, val]) => `
+                      <div class="mb-1 p-1 bg-base-300 rounded">
+                        <div class="opacity-70 truncate" title="${key}">${key}</div>
+                        <div class="text-success font-mono">${JSON.stringify(val)}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </details>
+              ` : ''}
+              
+              <div class="text-xs mt-2">Affected <span class="font-bold">${events.length}</span> process(es):</div>
+              
+              <div class="mt-2 space-y-2">
+                ${events.map(rb => {
+            const changedKeys = Object.keys(rb.changedInputValues || {});
+            return `
+                    <div class="p-2 bg-base-300 rounded">
+                      <div class="font-medium text-warning text-sm">🔄 ${rb.rolledBackProcess}</div>
+                      <div class="text-xs opacity-70">Node: ${rb.firstRunIndex} → ${rb.rerunIndex}</div>
+                      
+                      <details class="mt-1" open>
+                        <summary class="cursor-pointer text-xs">📝 Changed values (${changedKeys.length})</summary>
+                        <div class="text-xs ml-2 mt-1 max-h-48 overflow-auto">
+                          ${changedKeys.map(key => {
+              const change = rb.changedInputValues[key];
+              const oldStr = JSON.stringify(change.oldValue);
+              const newStr = JSON.stringify(change.newValue);
+              return `
+                              <div class="mb-1 p-1 bg-base-200 rounded">
+                                <div class="opacity-70 truncate" title="${key}">${key}</div>
+                                <div class="flex flex-wrap gap-1">
+                                  <span class="text-error">${oldStr || 'null'}</span>
+                                  <span>→</span>
+                                  <span class="text-success">${newStr || 'null'}</span>
+                                </div>
+                              </div>
+                            `;
+            }).join('')}
+                        </div>
+                      </details>
+                    </div>
+                  `;
+          }).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML = html;
       },
 
       mapNodeKeys(nodes) {
@@ -473,17 +741,53 @@
       },
 
       buildNodes() {
-        const allKeys = this.nodeKeysByNode.flat().map(n => n.name);
-        return allKeys.map(node => {
-          let nodeClass = '';
-          if (node.includes('set_data')) nodeClass = 'green-node';
-          else if (node.match(/^(survey|review)_\d$/)) nodeClass = 'yellow-node';
+        // Get processes affected by rollback
+        const rollbackTriggers = new Set();
+        const rollbackAffected = new Set();
+        if (this.rollbackData) {
+          for (const rb of this.rollbackData) {
+            if (rb.causingProcess?.name) {
+              rollbackTriggers.add(rb.causingProcess.name);
+            }
+            if (rb.rolledBackProcess) {
+              rollbackAffected.add(rb.rolledBackProcess);
+            }
+          }
+        }
 
-          return {
-            data: { id: node, label: node },
-            ...(nodeClass && { classes: nodeClass })
-          };
+        const nodes = [];
+        const nodeSpacingX = 160;
+        const nodeSpacingY = 130;
+
+        this.nodeKeysByNode.forEach((layer, layerIndex) => {
+          const layerSize = layer.length;
+          const layerStartY = -(layerSize - 1) * nodeSpacingY / 2; // Center vertically
+
+          layer.forEach((nodeData, nodeIndex) => {
+            const nodeName = nodeData.name;
+            const baseName = nodeName.replace(/_\d+$/, '');
+
+            let nodeClass = '';
+            if (nodeName.includes('set_data')) nodeClass = 'green-node';
+            else if (rollbackTriggers.has(baseName)) nodeClass = 'rollback-trigger-node';
+            else if (rollbackAffected.has(baseName)) nodeClass = 'rollback-affected-node';
+            else if (nodeName.match(/^(survey|review)_\d$/)) nodeClass = 'yellow-node';
+
+            // Create display label: replace underscores with newlines for wrapping
+            const displayLabel = nodeName.replace(/_/g, '\n');
+
+            nodes.push({
+              data: { id: nodeName, label: displayLabel },
+              position: {
+                x: layerIndex * nodeSpacingX + 50,
+                y: layerStartY + nodeIndex * nodeSpacingY + 300
+              },
+              ...(nodeClass && { classes: nodeClass })
+            });
+          });
         });
+
+        return nodes;
       },
 
       initCytoscape(nodes, edges) {
@@ -503,33 +807,35 @@
             selector: 'node',
             style: {
               'background-color': '#6366f1',
-              'background-opacity': 0.9,
+              'background-opacity': 0.95,
               'label': 'data(label)',
               'text-valign': 'center',
               'text-halign': 'center',
               'color': '#ffffff',
               'font-size': '9px',
-              'font-weight': '500',
+              'font-weight': '600',
               'font-family': 'system-ui, -apple-system, sans-serif',
-              'width': 65,
-              'height': 65,
-              'shape': 'ellipse',
-              'border-width': 0,
+              'width': 110,
+              'height': 90,
+              'shape': 'round-rectangle',
+              'border-width': 2,
+              'border-color': '#4f46e5',
               'text-wrap': 'wrap',
-              'text-max-width': '55px',
+              'text-max-width': '110px',
               'text-outline-width': 0,
               'overlay-padding': '6px',
               'z-index': 10,
               'transition-property': 'background-color, width, height',
-              'transition-duration': '0.2s'
+              'transition-duration': '0.15s'
             }
           },
           {
             selector: 'node:hover',
             style: {
               'background-color': '#4f46e5',
-              'width': 70,
-              'height': 70,
+              'border-color': '#6366f1',
+              'width': 95,
+              'height': 95,
               'cursor': 'pointer'
             }
           },
@@ -583,26 +889,49 @@
               'background-opacity': 0.9,
               'color': '#ffffff'
             }
+          },
+          {
+            selector: '.rollback-trigger-node',
+            style: {
+              'background-color': '#ef4444',
+              'background-opacity': 0.95,
+              'border-width': 3,
+              'border-color': '#fbbf24',
+              'border-style': 'dashed'
+            }
+          },
+          {
+            selector: '.rollback-affected-node',
+            style: {
+              'background-color': '#f97316',
+              'background-opacity': 0.9,
+              'border-width': 2,
+              'border-color': '#fbbf24'
+            }
+          },
+          {
+            selector: '.search-match',
+            style: {
+              'border-width': 4,
+              'border-color': '#22c55e',
+              'z-index': 100
+            }
+          },
+          {
+            selector: '.search-dim',
+            style: {
+              'opacity': 0.3
+            }
           }
         ];
       },
 
       getCytoscapeLayout() {
         return {
-          name: 'cose',
-          idealEdgeLength: 100,
-          nodeOverlap: 20,
+          name: 'preset', // Use fixed positions from node.position
           fit: true,
-          padding: 40,
-          nodeRepulsion: 6000000,
-          edgeElasticity: 200,
-          gravity: 50,
-          numIter: 1500,
-          randomize: false,
-          componentSpacing: 80,
-          nestingFactor: 1.2,
-          animate: true,
-          animationDuration: 500
+          padding: 30,
+          animate: false
         };
       },
 
@@ -612,7 +941,8 @@
           this.cy.elements().removeClass('selected highlighted');
           node.addClass('selected');
           node.connectedEdges().addClass('highlighted');
-          this.updateNodeInfo(node.data('label'));
+          // Use node.id() which contains the original name, not label (which has newlines)
+          this.updateNodeInfo(node.id());
         });
 
         this.cy.on('tap', (evt) => {
@@ -637,20 +967,39 @@
         const { doc, lastDiff, setData } = this.buildDocumentState(nodeLabel);
         this.setData = setData;
 
-        // Render panels
-        const format = (data) => `<pre class="whitespace-pre-wrap">${JSON.stringify(data, null, 2)}</pre>`;
+        // Format data as styled list like Rollback Info
+        const formatData = (data, title) => {
+          if (!data || Object.keys(data).length === 0) {
+            return '<p class="text-xs opacity-50 italic">No data</p>';
+          }
+
+          const entries = Object.entries(data.value || data);
+          return `
+            <div class="text-xs">
+              <div class="badge badge-sm mb-2">${entries.length} field(s)</div>
+              <div class="max-h-48 overflow-auto space-y-1">
+                ${entries.map(([key, val]) => `
+                  <div class="p-1 bg-base-200 rounded">
+                    <div class="opacity-70 truncate text-xs" title="${key}">${key}</div>
+                    <div class="text-success font-mono text-xs">${JSON.stringify(val)}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        };
 
         if (nodeLabel?.includes('set_data')) {
-          document.getElementById('readSet').innerHTML = '<p class="italic">No data</p>';
-          document.getElementById('writeSet').innerHTML = format(setData[nodeLabel] || {});
-          document.getElementById('diffToLastDoc').innerHTML = format(setData[nodeLabel] || {});
+          document.getElementById('readSet').innerHTML = '<p class="text-xs opacity-50 italic">No data</p>';
+          document.getElementById('writeSet').innerHTML = formatData(setData[nodeLabel] || {});
+          document.getElementById('diffToLastDoc').innerHTML = formatData(setData[nodeLabel] || {});
         } else if (nodeLabel && nodeObj) {
-          document.getElementById('readSet').innerHTML = format(req[1].history.cache[nodeObj.readHash] || {});
-          document.getElementById('writeSet').innerHTML = format(req[1].history.cache[nodeObj.writeHash] || {});
-          document.getElementById('diffToLastDoc').innerHTML = format(lastDiff);
+          document.getElementById('readSet').innerHTML = formatData(req[1].history.cache[nodeObj.readHash] || {});
+          document.getElementById('writeSet').innerHTML = formatData(req[1].history.cache[nodeObj.writeHash] || {});
+          document.getElementById('diffToLastDoc').innerHTML = formatData(lastDiff);
         }
 
-        document.getElementById('document').innerHTML = format(doc);
+        document.getElementById('document').innerHTML = formatData(doc);
       },
 
       buildDocumentState(nodeLabel) {
