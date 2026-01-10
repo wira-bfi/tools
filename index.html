@@ -999,6 +999,8 @@
           document.getElementById('diffToLastDoc').innerHTML = formatData(lastDiff);
         }
 
+        // Store for search functionality
+        this.documentData = doc;
         document.getElementById('document').innerHTML = formatData(doc);
       },
 
@@ -1085,32 +1087,53 @@
       },
 
       filterDocument(searchTerm) {
+        if (!this.documentData || Object.keys(this.documentData).length === 0) return;
+
         const docElement = document.getElementById('document');
-        const pre = docElement.querySelector('pre');
+        const search = searchTerm.trim().toLowerCase();
 
-        if (!pre || !pre.textContent) return;
-
-        try {
-          // Parse the JSON to get the original data
-          const jsonData = JSON.parse(pre.textContent);
-
-          if (searchTerm.trim() === '') {
-            // No search term, show original
-            docElement.innerHTML = `<pre class="whitespace-pre-wrap">${JSON.stringify(jsonData, null, 2)}</pre>`;
-            return;
-          }
-
-          // Filter the JSON data
-          const filtered = this.filterObject(jsonData, searchTerm.toLowerCase());
-
-          if (Object.keys(filtered).length === 0) {
-            docElement.innerHTML = `<pre class="whitespace-pre-wrap text-base-content/50">No matches found</pre>`;
-          } else {
-            docElement.innerHTML = `<pre class="whitespace-pre-wrap">${JSON.stringify(filtered, null, 2)}</pre>`;
-          }
-        } catch (err) {
-          console.error('Error filtering document:', err);
+        if (search === '') {
+          // No search term, show all
+          docElement.innerHTML = this.formatDataForDisplay(this.documentData);
+          return;
         }
+
+        // Filter the data
+        const filtered = {};
+        for (const [key, value] of Object.entries(this.documentData)) {
+          const keyMatch = key.toLowerCase().includes(search);
+          const valMatch = JSON.stringify(value).toLowerCase().includes(search);
+          if (keyMatch || valMatch) {
+            filtered[key] = value;
+          }
+        }
+
+        if (Object.keys(filtered).length === 0) {
+          docElement.innerHTML = '<p class="text-xs opacity-50 italic">No matches found</p>';
+        } else {
+          docElement.innerHTML = this.formatDataForDisplay(filtered);
+        }
+      },
+
+      formatDataForDisplay(data) {
+        if (!data || Object.keys(data).length === 0) {
+          return '<p class="text-xs opacity-50 italic">No data</p>';
+        }
+
+        const entries = Object.entries(data);
+        return `
+          <div class="text-xs">
+            <div class="badge badge-sm mb-2">${entries.length} field(s)</div>
+            <div class="max-h-48 overflow-auto space-y-1">
+              ${entries.map(([key, val]) => `
+                <div class="p-1 bg-base-200 rounded">
+                  <div class="opacity-70 truncate text-xs" title="${key}">${key}</div>
+                  <div class="text-success font-mono text-xs">${JSON.stringify(val)}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
       },
 
       filterObject(obj, searchTerm) {
