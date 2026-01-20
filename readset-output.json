@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-01-10T03:27:48.729Z",
+  "extractedAt": "2026-01-20T06:26:11.507Z",
   "gitInfo": {
-    "commitId": "ee6338b01d2979a4229416ac41d7bdfe42f204de",
-    "shortCommitId": "ee6338b",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/ee6338b01d2979a4229416ac41d7bdfe42f204de",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/ee6338b01d2979a4229416ac41d7bdfe42f204de"
+    "commitId": "a241a75019033a9a86d51a45947ded308dbb4678",
+    "shortCommitId": "a241a75",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/a241a75019033a9a86d51a45947ded308dbb4678",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/a241a75019033a9a86d51a45947ded308dbb4678"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -1322,8 +1322,7 @@
         "DocCustomerDomicileOwnershipCode",
         "DocBranchBranchId",
         "DocAssetVehicleGuaranteed",
-        "DocCustomerPersonalCharacter",
-        "DocChannelMarketingId"
+        "DocCustomerPersonalCharacter"
       ]
     },
     {

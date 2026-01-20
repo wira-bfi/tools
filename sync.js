@@ -1,10 +1,53 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const { execSync } = require('child_process');
 
 const args = process.argv.slice(2);
 const basePath = args[0] || '.';
 const outputFile = args[1] || 'readset-output.json';
+
+// GitHub repo URL (can be customized)
+const GITHUB_REPO = 'https://github.com/user/repo';
+
+function getGitInfo(repoPath) {
+  try {
+    const commitId = execSync('git rev-parse HEAD', { 
+      cwd: repoPath, 
+      encoding: 'utf8' 
+    }).trim();
+    
+    const shortCommitId = commitId.substring(0, 7);
+    
+    // Try to get remote URL for GitHub link
+    let githubUrl = GITHUB_REPO;
+    try {
+      const remoteUrl = execSync('git config --get remote.origin.url', {
+        cwd: repoPath,
+        encoding: 'utf8'
+      }).trim();
+      
+      // Convert git URL to GitHub URL
+      if (remoteUrl.includes('github.com')) {
+        githubUrl = remoteUrl
+          .replace(/^git@github\.com:/, 'https://github.com/')
+          .replace(/\.git$/, '');
+      }
+    } catch (e) {
+      // Use default GITHUB_REPO if can't get remote
+    }
+    
+    return {
+      commitId,
+      shortCommitId,
+      commitUrl: `${githubUrl}/commit/${commitId}`,
+      treeUrl: `${githubUrl}/tree/${commitId}`
+    };
+  } catch (error) {
+    console.warn('Warning: Could not get git info:', error.message);
+    return null;
+  }
+}
 
 const patterns = [
   path.join(basePath, 'internal/process/tasking/**/*.go'),
@@ -112,7 +155,7 @@ async function main() {
           allReadSets.push(...readSets);
         }
 
-        if (fileName === 'dp-ndf-v0_9_0.go') {
+        if (fileName === 'dp-ndf-v0_8_0.go') {
           const constants = extractConstants(content);
           Object.assign(allConstants, constants);
         }
@@ -121,8 +164,16 @@ async function main() {
       }
     }
 
+    // Get git info from target repo
+    const gitInfo = getGitInfo(basePath);
+    if (gitInfo) {
+      console.log(`Git commit: ${gitInfo.shortCommitId}`);
+      console.log(`GitHub: ${gitInfo.commitUrl}`);
+    }
+
     const outputData = {
       extractedAt: new Date().toISOString(),
+      gitInfo: gitInfo,
       searchPaths: [
         'internal/process/tasking/',
         'internal/process/document/',
