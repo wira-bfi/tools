@@ -250,7 +250,7 @@
 
       async init() {
         try {
-          const response = await fetch('readset-output.json');
+          const response = await fetch('public/readset-output.json');
           const data = await response.json();
 
           this.readsets = data.readSets;

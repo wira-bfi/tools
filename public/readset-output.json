@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-01-20T06:26:11.507Z",
+  "extractedAt": "2026-01-22T07:12:25.836Z",
   "gitInfo": {
-    "commitId": "a241a75019033a9a86d51a45947ded308dbb4678",
-    "shortCommitId": "a241a75",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/a241a75019033a9a86d51a45947ded308dbb4678",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/a241a75019033a9a86d51a45947ded308dbb4678"
+    "commitId": "9873a9862d6267d95ed50953e472c2d96e8bc18c",
+    "shortCommitId": "9873a98",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/9873a9862d6267d95ed50953e472c2d96e8bc18c",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/9873a9862d6267d95ed50953e472c2d96e8bc18c"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -12,9 +12,9 @@
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 99,
-  "totalReadSets": 91,
-  "totalConstants": 747,
+  "totalFiles": 106,
+  "totalReadSets": 97,
+  "totalConstants": 777,
   "readSets": [
     {
       "type": "survey",
@@ -319,6 +319,7 @@
         "DocStatusApplication",
         "DocAgreementNumber",
         "DocSubmissionDate",
+        "DocProcessSurveyTaskSurveyorEmployeeId",
         "DocSurveyAppointmentSurveyType",
         "DocSurveyAppointmentSurveyLocationType",
         "DocCustomerDomicileAddressStreetAddress",
@@ -344,6 +345,21 @@
       ]
     },
     {
+      "type": "rogetadditionaldataforgolive",
+      "readSet": [
+        "DocProcessCustomerInformationCifId",
+        "DocPreviousAgreementNumber"
+      ]
+    },
+    {
+      "type": "rocheckpreviousagreement",
+      "readSet": [
+        "DocStatusApplication",
+        "DocPreviousAgreementNumber",
+        "DocProcessReturningCustomerType"
+      ]
+    },
+    {
       "type": "returnassetdocument",
       "readSet": [
         "DocId"
@@ -365,6 +381,7 @@
     {
       "type": "golive_create_cif_guarantor",
       "readSet": [
+        "DocGuarantorName",
         "DocGuarantorNik",
         "DocGuarantorMobileNumber",
         "DocGuarantorBirthDate",
@@ -374,9 +391,11 @@
         "DocGuarantorOccupationCode",
         "DocGuarantorIndustry",
         "DocGuarantorMonthlyIncome",
+        "DocGuarantorStreetAddress",
         "DocGuarantorRt",
         "DocGuarantorRw",
         "DocGuarantorSubDistrictCode",
+        "DocGuarantorDomicileStreetAddress",
         "DocGuarantorDomicileRt",
         "DocGuarantorDomicileRw",
         "DocGuarantorDomicileSubDistrictCode"
@@ -426,8 +445,8 @@
       "readSet": [
         "DocStatusApplication",
         "DocLoanStructureLoanCalculatorId",
-        "DocSurveyAppointmentSurveyLocationType",
         "DocLoanStructurePurposeFinancePurposeId",
+        "DocBranchBranchId",
         "DocBranchPosId",
         "DocProcessSurveyTaskSurveyBranchId",
         "DocProcessSurveyTaskSurveyPosId",
@@ -438,26 +457,33 @@
         "DocChannelActivityId",
         "DocChannelMarketingId",
         "DocProcessSurveyTaskSurveyorEmployeeId",
+        "DocProcessReturningCustomerType",
         "DocProcessCustomerInformationCifId",
+        "DocLoanStructureNtfAmount",
         "DocLoanStructureCapitalizedNtfAmount",
         "DocLoanStructureInterestRate",
         "DocLoanStructureTenure",
+        "DocSupplierInformationConfinsBeneficiaryId",
         "DocCustomerKtpName",
         "DocCustomerBankInformationAccountNumber",
         "DocCustomerBankInformationAccountName",
         "DocCustomerBankInformationBankId",
+        "DocAssetAssetCode",
         "DocAssetAssetUsage",
+        "DocAssetUnitColor",
         "DocAssetLicensePlate",
         "DocAssetChassisNumber",
         "DocAssetEngineNumber",
         "DocAssetTaxExpirationDate",
         "DocAssetManufacturingYear",
+        "DocCustomerKtpStreetAddress",
         "DocCustomerKtpSubDistrictCode",
         "DocCustomerKtpNik",
         "DocCustomerKtpRt",
         "DocCustomerKtpRw",
         "DocCustomerKtpZipCode",
         "DocAssetBpkbOwnership",
+        "DocCustomerContactMobileNumber",
         "DocCustomerPersonalMaritalStatusCode",
         "DocCustomerPersonalMotherMaidenName",
         "DocCustomerProfessionalOccupationCode",
@@ -502,6 +528,37 @@
         "DocCustomerContactMobileNumber",
         "DocCustomerPersonalMaritalStatusCode",
         "DocCustomerConsentThirdPartyDataAccess"
+      ]
+    },
+    {
+      "type": "auto_esign_agreement_poa",
+      "readSet": [
+        "DocBranchBranchId",
+        "DocDocumentsPpkDocumentId",
+        "DocLoanStructureProductId",
+        "DocId"
+      ]
+    },
+    {
+      "type": "auto_esign_agreement_debtor",
+      "readSet": [
+        "DocId",
+        "DocDocumentsPpkDocumentId",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerKtpGender",
+        "DocCustomerDomicileAddressProvinceName",
+        "DocCustomerDomicileAddressCityName",
+        "DocCustomerDomicileAddressDistrictName",
+        "DocCustomerDomicileAddressSubDistrictName",
+        "DocCustomerDomicileAddressStreetAddress",
+        "DocCustomerContactMobileNumber",
+        "DocCustomerContactEmail",
+        "DocDocumentsKtpDocumentId",
+        "DocDocumentsSelfieDocumentId",
+        "DocCustomerConsentAutoSigningDeviceId"
       ]
     },
     {
@@ -560,6 +617,7 @@
         "DocCustomerKtpGender",
         "DocBranchBranchId",
         "DocLoanStructureProductId",
+        "DocProcessNegativeListCnvSpouseCrimeBadType",
         "DocProcessNegativeListCnvSpouseCrimeIsFound",
         "DocProcessNegativeListCnvSpouseNegativeListInternalBadType",
         "DocProcessNegativeListCnvSpouseNegativeListInternalIsFound",
@@ -621,6 +679,7 @@
         "DocCustomerKtpGender",
         "DocBranchBranchId",
         "DocLoanStructureProductId",
+        "DocProcessNegativeListCnvCustomerCrimeBadType",
         "DocProcessNegativeListCnvCustomerCrimeIsFound",
         "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
         "DocProcessNegativeListCnvCustomerNegativeListInternalIsFound",
@@ -688,6 +747,12 @@
       ]
     },
     {
+      "type": "get_final_ppk_document",
+      "readSet": [
+        "DocAgreementNumber"
+      ]
+    },
+    {
       "type": "get_customer_ktp_ocr",
       "readSet": [
         "DocDocumentsKtpDocumentId"
@@ -709,6 +774,13 @@
       "type": "get_administrative_tier",
       "readSet": [
         "DocCustomerDomicileAddressSubDistrictCode"
+      ]
+    },
+    {
+      "type": "earlyterminationcalculation",
+      "readSet": [
+        "DocPreviousAgreementNumber",
+        "DocLoanStructureProductId"
       ]
     },
     {
@@ -751,7 +823,8 @@
         "DocAssetUnitNoClearMarkOfAccident",
         "DocAssetIsMotorcycleComponentComplete",
         "DocProcessPdModelOverlayS1MaxFundingRatio",
-        "DocAssetBpkbOwnership"
+        "DocAssetBpkbOwnership",
+        "DocAssetTaxExpirationDate"
       ]
     },
     {
@@ -1322,7 +1395,8 @@
         "DocCustomerDomicileOwnershipCode",
         "DocBranchBranchId",
         "DocAssetVehicleGuaranteed",
-        "DocCustomerPersonalCharacter"
+        "DocCustomerPersonalCharacter",
+        "DocChannelMarketingId"
       ]
     },
     {
@@ -1577,6 +1651,9 @@
     "DocCustomerBankInformationAccountName": "$.customer.bank_information.account_name",
     "DocCustomerBankInformationAccountNumber": "$.customer.bank_information.account_number",
     "DocCustomerBankInformationBankId": "$.customer.bank_information.bank_id",
+    "DocCustomerConsentAutoSigning": "$.customer.consent.auto_signing",
+    "DocCustomerConsentAutoSigningDeviceId": "$.customer.consent.auto_signing_device_id",
+    "DocCustomerConsentAutoSigningDeviceType": "$.customer.consent.auto_signing_device_type",
     "DocCustomerConsentThirdPartyDataAccess": "$.customer.consent.third_party_data_access",
     "DocCustomerContactEmail": "$.customer.contact.email",
     "DocCustomerContactMobileNumber": "$.customer.contact.mobile_number",
@@ -1754,6 +1831,9 @@
     "DocDocumentsDebtorSignatureDocumentType": "$.documents.debtor_signature.document_type",
     "DocDocumentsDivorceCertificateDocumentId": "$.documents.divorce_certificate.document_id",
     "DocDocumentsDivorceCertificateDocumentType": "$.documents.divorce_certificate.document_type",
+    "DocDocumentsDraftAgreementDocumentId": "$.documents.draft_agreement.document_id",
+    "DocDocumentsDraftAgreementDocumentSequence": "$.documents.draft_agreement.document_sequence",
+    "DocDocumentsDraftAgreementDocumentType": "$.documents.draft_agreement.document_type",
     "DocDocumentsDrivingLicenseDocumentId": "$.documents.driving_license.document_id",
     "DocDocumentsDrivingLicenseDocumentType": "$.documents.driving_license.document_type",
     "DocDocumentsEmploymentEvidenceDocumentId": "$.documents.employment_evidence.document_id",
@@ -1830,6 +1910,8 @@
     "DocDocumentsOtherOutstandingPaymentProofDocumentType": "$.documents.other_outstanding_payment_proof.document_type",
     "DocDocumentsPaymentReceiptDocumentId": "$.documents.payment_receipt.document_id",
     "DocDocumentsPaymentReceiptDocumentType": "$.documents.payment_receipt.document_type",
+    "DocDocumentsPpkDocumentId": "$.documents.ppk.document_id",
+    "DocDocumentsPpkDocumentType": "$.documents.ppk.document_type",
     "DocDocumentsProductiveAssetBpkbCopyDocumentId": "$.documents.productive_asset_bpkb_copy.document_id",
     "DocDocumentsProductiveAssetBpkbCopyDocumentType": "$.documents.productive_asset_bpkb_copy.document_type",
     "DocDocumentsReleaseLetterDocumentId": "$.documents.release_letter.document_id",
@@ -1963,6 +2045,8 @@
     "DocNstQuantitativeLtvCodesArray": "$.nst.quantitative.ltv.codes[*]",
     "DocNstQuantitativeProvisionFeeCodesArray": "$.nst.quantitative.provision_fee.codes[*]",
     "DocNstQuantitativeRateCodesArray": "$.nst.quantitative.rate.codes[*]",
+    "DocPreviousAgreementNumber": "$.previous_agreement.number",
+    "DocPreviousAgreementStopPayment": "$.previous_agreement.stop_payment",
     "DocProcessAbilityToPayDirS1Dir": "$.process.ability_to_pay.dir.s1.dir",
     "DocProcessAbilityToPayDirS1Passed": "$.process.ability_to_pay.dir.s1.passed",
     "DocProcessAbilityToPayDsrS1Dsr": "$.process.ability_to_pay.dsr.s1.dsr",
@@ -2047,7 +2131,12 @@
     "DocProcessDetailEkycVendor": "$.process.detail_ekyc.vendor",
     "DocProcessDigitalLtvMaxNdf4wS1LtvMaxRatio": "$.process.digital_ltv_max_ndf4w.s1.ltv_max_ratio",
     "DocProcessDigitalLtvMaxNdf4wS1Result": "$.process.digital_ltv_max_ndf4w.s1.result",
+    "DocProcessEarlyTerminationMainPocketBalance": "$.process.early_termination.main_pocket_balance",
+    "DocProcessEarlyTerminationOutstandingPrincipalUndue": "$.process.early_termination.outstanding_principal_undue",
+    "DocProcessEarlyTerminationTotalAmountToBePaid": "$.process.early_termination.total_amount_to_be_paid",
     "DocProcessEnvironmentCheckCompletionTime": "$.process.environment_check.completion_time",
+    "DocProcessEsignDebtorProcessId": "$.process.esign.debtor.process_id",
+    "DocProcessEsignPoaProcessId": "$.process.esign.poa.process_id",
     "DocProcessFatalScoreS1Passed": "$.process.fatal_score.s1.passed",
     "DocProcessHardRacS1Passed": "$.process.hard_rac.s1.passed",
     "DocProcessHighRiskLtvMaxNdf4wS1LtvMaxRatio": "$.process.high_risk_ltv_max_ndf4w.s1.ltv_max_ratio",
@@ -2110,20 +2199,30 @@
     "DocProcessPefindoProfileMaxCollectionLast12Month": "$.process.pefindo_profile.max_collection_last_12_month",
     "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId": "$.process.pefindo_profile.pefindo_detail.customer.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailCustomerGrade": "$.process.pefindo_profile.pefindo_detail.customer.grade",
+    "DocProcessPefindoProfilePefindoDetailCustomerProcessEntityId": "$.process.pefindo_profile.pefindo_detail.customer.process_entity_id",
+    "DocProcessPefindoProfilePefindoDetailCustomerProcessId": "$.process.pefindo_profile.pefindo_detail.customer.process_id",
     "DocProcessPefindoProfilePefindoDetailCustomerStatusResult": "$.process.pefindo_profile.pefindo_detail.customer.status_result",
     "DocProcessPefindoProfilePefindoDetailGuarantor1DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_1.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor1Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_1.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor1ProcessEntityId": "$.process.pefindo_profile.pefindo_detail.guarantor_1.process_entity_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor1ProcessId": "$.process.pefindo_profile.pefindo_detail.guarantor_1.process_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor1StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_1.status_result",
     "DocProcessPefindoProfilePefindoDetailGuarantor2DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_2.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor2Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_2.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor2ProcessEntityId": "$.process.pefindo_profile.pefindo_detail.guarantor_2.process_entity_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor2ProcessId": "$.process.pefindo_profile.pefindo_detail.guarantor_2.process_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor2StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_2.status_result",
     "DocProcessPefindoProfilePefindoDetailGuarantor3DmsDocumentId": "$.process.pefindo_profile.pefindo_detail.guarantor_3.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor3Grade": "$.process.pefindo_profile.pefindo_detail.guarantor_3.grade",
+    "DocProcessPefindoProfilePefindoDetailGuarantor3ProcessEntityId": "$.process.pefindo_profile.pefindo_detail.guarantor_3.process_entity_id",
+    "DocProcessPefindoProfilePefindoDetailGuarantor3ProcessId": "$.process.pefindo_profile.pefindo_detail.guarantor_3.process_id",
     "DocProcessPefindoProfilePefindoDetailGuarantor3StatusResult": "$.process.pefindo_profile.pefindo_detail.guarantor_3.status_result",
     "DocProcessPefindoProfilePefindoDetailNtcReason": "$.process.pefindo_profile.pefindo_detail.ntc_reason",
     "DocProcessPefindoProfilePefindoDetailScoringType": "$.process.pefindo_profile.pefindo_detail.scoring_type",
     "DocProcessPefindoProfilePefindoDetailSpouseDmsDocumentId": "$.process.pefindo_profile.pefindo_detail.spouse.dms_document_id",
     "DocProcessPefindoProfilePefindoDetailSpouseGrade": "$.process.pefindo_profile.pefindo_detail.spouse.grade",
+    "DocProcessPefindoProfilePefindoDetailSpouseProcessEntityId": "$.process.pefindo_profile.pefindo_detail.spouse.process_entity_id",
+    "DocProcessPefindoProfilePefindoDetailSpouseProcessId": "$.process.pefindo_profile.pefindo_detail.spouse.process_id",
     "DocProcessPefindoProfilePefindoDetailSpouseStatusResult": "$.process.pefindo_profile.pefindo_detail.spouse.status_result",
     "DocProcessPefindoProfileTotalInstallment": "$.process.pefindo_profile.total_installment",
     "DocProcessPreFatalRacS1Passed": "$.process.pre_fatal_rac.s1.passed",
@@ -2135,6 +2234,8 @@
     "DocProcessReturningBficonnectId": "$.process.returning.bficonnect_id",
     "DocProcessReturningCustomerType": "$.process.returning.customer_type",
     "DocProcessReturningIsExistingCustomer": "$.process.returning.is_existing_customer",
+    "DocProcessRoCheckPreviousAgreementConfinsApplicationId": "$.process.ro_check_previous_agreement.confins_application_id",
+    "DocProcessRoCheckPreviousAgreementStatus": "$.process.ro_check_previous_agreement.status",
     "DocProcessSimpleSurveyScoreS1LtvMax": "$.process.simple_survey_score.s1.ltv_max",
     "DocProcessSimpleSurveyScoreS1Rate": "$.process.simple_survey_score.s1.rate",
     "DocProcessSimpleSurveyScoreS1Result": "$.process.simple_survey_score.s1.result",
@@ -2207,6 +2308,9 @@
     "DocSigningFollowupDebtorSigningExpiry": "$.signing_followup.debtor.signing_expiry",
     "DocSigningFollowupDebtorSigningType": "$.signing_followup.debtor.signing_type",
     "DocSigningFollowupDebtorStatus": "$.signing_followup.debtor.status",
+    "DocSigningFollowupPoaSignedAt": "$.signing_followup.poa.signed_at",
+    "DocSigningFollowupPoaSigningType": "$.signing_followup.poa.signing_type",
+    "DocSigningFollowupPoaStatus": "$.signing_followup.poa.status",
     "DocSlaActivityProcessBpkbReviewDuration": "$.sla_activity.process_bpkb_review.duration",
     "DocSlaActivityProcessBpkbReviewResourceId": "$.sla_activity.process_bpkb_review.resource_id",
     "DocSlaActivityProcessRcoValidationDuration": "$.sla_activity.process_rco_validation.duration",

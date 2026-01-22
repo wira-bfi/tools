@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "node dev-server.js",
     "sync-readset": "node sync.js",
     "test": "node test.js"
   },
@@ -11,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^5.2.1",
     "glob": "^11.0.3"
   }
 }

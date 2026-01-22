@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 
 const args = process.argv.slice(2);
 const basePath = args[0] || '.';
-const outputFile = args[1] || 'readset-output.json';
+const outputFile = args[1] || 'public/readset-output.json';
 
 // GitHub repo URL (can be customized)
 const GITHUB_REPO = 'https://github.com/user/repo';
@@ -95,7 +95,20 @@ function extractReadSet(content, filePath) {
   while ((match = readSetRegex.exec(content)) !== null) {
     const readSetContent = match[1];
 
-    const values = readSetContent
+    // First, remove comment-only lines
+    const cleanedContent = readSetContent
+      .split('\n')
+      .map((line) => {
+        const trimmed = line.trim();
+        // Remove lines that are only comments
+        if (trimmed.startsWith('//')) {
+          return '';
+        }
+        return line;
+      })
+      .join('\n');
+
+    const values = cleanedContent
       .split(',')
       .map((value) => value.trim())
       .filter((value) => value.length > 0)
@@ -155,7 +168,7 @@ async function main() {
           allReadSets.push(...readSets);
         }
 
-        if (fileName === 'dp-ndf-v0_8_0.go') {
+        if (fileName === 'dp-ndf-v0_9_0.go') {
           const constants = extractConstants(content);
           Object.assign(allConstants, constants);
         }

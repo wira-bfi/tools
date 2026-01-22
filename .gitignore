@@ -6,3 +6,7 @@ node_modules/
 *debug*
 header-modifier/
 ktp-daniel.jpeg
+*.sh
+*.zip
+*sample*
+*test*
