@@ -5,7 +5,8 @@ const { execSync } = require('child_process');
 
 const args = process.argv.slice(2);
 const basePath = args[0] || '.';
-const outputFile = args[1] || 'public/readset-output.json';
+const outputFile1 = args[1] || 'public/readset-output.json';
+const outputFile2 = args[1] || 'readset-output.json';
 
 // GitHub repo URL (can be customized)
 const GITHUB_REPO = 'https://github.com/user/repo';
@@ -200,7 +201,8 @@ async function main() {
       constants: allConstants,
     };
 
-    fs.writeFileSync(outputFile, JSON.stringify(outputData, null, 2));
+    fs.writeFileSync(outputFile1, JSON.stringify(outputData, null, 2));
+    fs.writeFileSync(outputFile2, JSON.stringify(outputData, null, 2));
   } catch (error) {
     console.error('Error:', error.message);
     process.exit(1);
