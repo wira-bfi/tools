@@ -169,7 +169,7 @@ async function main() {
           allReadSets.push(...readSets);
         }
 
-        if (fileName === 'dp-ndf-v0_9_0.go') {
+        if (fileName === 'dp-ndf-v0_10_0.go') {
           const constants = extractConstants(content);
           Object.assign(allConstants, constants);
         }

@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-01-22T07:12:25.836Z",
+  "extractedAt": "2026-02-02T03:29:14.348Z",
   "gitInfo": {
-    "commitId": "9873a9862d6267d95ed50953e472c2d96e8bc18c",
-    "shortCommitId": "9873a98",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/9873a9862d6267d95ed50953e472c2d96e8bc18c",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/9873a9862d6267d95ed50953e472c2d96e8bc18c"
+    "commitId": "fb65bb99027183861446578d0e653aa3831982dd",
+    "shortCommitId": "fb65bb9",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/fb65bb99027183861446578d0e653aa3831982dd",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/fb65bb99027183861446578d0e653aa3831982dd"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -12,9 +12,9 @@
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 106,
-  "totalReadSets": 97,
-  "totalConstants": 777,
+  "totalFiles": 108,
+  "totalReadSets": 99,
+  "totalConstants": 782,
   "readSets": [
     {
       "type": "survey",
@@ -134,6 +134,7 @@
         "DocChannelMarketingId",
         "DocChannelSoaId",
         "DocChannelPartnerId",
+        "DocChannelPartnerCustomerType",
         "DocCustomerProfessionalOccupationTypeCode",
         "DocProcessLoanEstimationMaxFundingRatio",
         "DocStatusReservationExpiry",
@@ -265,7 +266,8 @@
         "DocDocumentsAdditionalDocument5DocumentSequence",
         "DocProcessSurveyTaskEnvironmentCheckBranchId",
         "DocProcessSurveyTaskEnvironmentCheckPosId",
-        "DocProcessSurveyTaskEnvironmentCheckBranchName"
+        "DocProcessSurveyTaskEnvironmentCheckBranchName",
+        "DocProcessSurveyTaskSurveyPosId"
       ]
     },
     {
@@ -356,7 +358,8 @@
       "readSet": [
         "DocStatusApplication",
         "DocPreviousAgreementNumber",
-        "DocProcessReturningCustomerType"
+        "DocProcessReturningCustomerType",
+        "DocProcessRoGetAdditionalDataForGoliveIsCompleted"
       ]
     },
     {
@@ -456,7 +459,6 @@
         "DocChannelSoaId",
         "DocChannelActivityId",
         "DocChannelMarketingId",
-        "DocProcessSurveyTaskSurveyorEmployeeId",
         "DocProcessReturningCustomerType",
         "DocProcessCustomerInformationCifId",
         "DocLoanStructureNtfAmount",
@@ -557,15 +559,13 @@
         "DocCustomerContactMobileNumber",
         "DocCustomerContactEmail",
         "DocDocumentsKtpDocumentId",
-        "DocDocumentsSelfieDocumentId",
-        "DocCustomerConsentAutoSigningDeviceId"
+        "DocDocumentsSelfieDocumentId"
       ]
     },
     {
       "type": "submissionverification",
       "readSet": [
         "DocId",
-        "DocChannelEkycAuthority",
         "DocChannelMarketingId",
         "DocCustomerConsentThirdPartyDataAccess"
       ]
@@ -574,7 +574,8 @@
       "type": "set_survey_data_by_assignment_rule",
       "readSet": [
         "DocLoanStructureRiskLevel",
-        "DocLoanStructureProductId"
+        "DocLoanStructureProductId",
+        "DocChannelPartnerCustomerType"
       ]
     },
     {
@@ -698,6 +699,12 @@
       ]
     },
     {
+      "type": "getloancalculation",
+      "readSet": [
+        "DocLoanStructureLoanCalculatorId"
+      ]
+    },
+    {
       "type": "get_income_model_spouse",
       "readSet": [
         "DocId",
@@ -761,7 +768,8 @@
     {
       "type": "getcustomerinformationbynik",
       "readSet": [
-        "DocCustomerKtpNik"
+        "DocCustomerKtpNik",
+        "DocProcessReturningCustomerType"
       ]
     },
     {
@@ -781,6 +789,13 @@
       "readSet": [
         "DocPreviousAgreementNumber",
         "DocLoanStructureProductId"
+      ]
+    },
+    {
+      "type": "customer_score_2w",
+      "readSet": [
+        "DocId",
+        "DocCustomerProfessionalOccupationCode"
       ]
     },
     {
@@ -876,7 +891,6 @@
       "type": "check_simple_survey_score_ndf2w",
       "readSet": [
         "DocId",
-        "DocCustomerDomicileOwnershipCode",
         "DocCustomerPersonalCharacter",
         "DocBranchBranchId",
         "DocAssetBpkbOwnership",
@@ -894,7 +908,8 @@
     {
       "type": "check_result_aggregation_scoring_2_ndf2w",
       "readSet": [
-        "DocProcessVehicleVerificationScoreS1Result"
+        "DocProcessVehicleVerificationScoreS1Result",
+        "DocProcessCustomerScoreDigitalBusinessS1Passed"
       ]
     },
     {
@@ -1644,6 +1659,7 @@
     "DocChannelKtpForgeryAuthority": "$.channel.ktp_forgery_authority",
     "DocChannelKtpOcrRequired": "$.channel.ktp_ocr_required",
     "DocChannelMarketingId": "$.channel.marketing_id",
+    "DocChannelPartnerCustomerType": "$.channel.partner_customer_type",
     "DocChannelPartnerId": "$.channel.partner_id",
     "DocChannelPartnerInternalName": "$.channel.partner_internal_name",
     "DocChannelSigningProcessor": "$.channel.signing_processor",
@@ -1652,8 +1668,6 @@
     "DocCustomerBankInformationAccountNumber": "$.customer.bank_information.account_number",
     "DocCustomerBankInformationBankId": "$.customer.bank_information.bank_id",
     "DocCustomerConsentAutoSigning": "$.customer.consent.auto_signing",
-    "DocCustomerConsentAutoSigningDeviceId": "$.customer.consent.auto_signing_device_id",
-    "DocCustomerConsentAutoSigningDeviceType": "$.customer.consent.auto_signing_device_type",
     "DocCustomerConsentThirdPartyDataAccess": "$.customer.consent.third_party_data_access",
     "DocCustomerContactEmail": "$.customer.contact.email",
     "DocCustomerContactMobileNumber": "$.customer.contact.mobile_number",
@@ -1730,6 +1744,8 @@
     "DocCustomerProfessionalRt": "$.customer.professional.rt",
     "DocCustomerProfessionalRw": "$.customer.professional.rw",
     "DocCustomerProfessionalVariableIncome": "$.customer.professional.variable_income",
+    "DocCustomerSigningApplicationName": "$.customer.signing.application_name",
+    "DocCustomerSigningDeviceId": "$.customer.signing.device_id",
     "DocDisbursementAmount": "$.disbursement.amount",
     "DocDisbursementBankInformationSenderAccountName": "$.disbursement.bank_information.sender_account_name",
     "DocDisbursementBankInformationSenderAccountNumber": "$.disbursement.bank_information.sender_account_number",
@@ -1934,6 +1950,7 @@
     "DocDocumentsValidBusinessLegalityDocumentType": "$.documents.valid_business_legality.document_type",
     "DocDocumentsVehicleInspectionDocumentId": "$.documents.vehicle_inspection.document_id",
     "DocDocumentsVehicleInspectionDocumentType": "$.documents.vehicle_inspection.document_type",
+    "DocExperimentsWhatsappLocale": "$.experiments.whatsapp_locale",
     "DocGuarantorBirthDate": "$.guarantor.birth_date",
     "DocGuarantorBirthPlace": "$.guarantor.birth_place",
     "DocGuarantorCifId": "$.guarantor.cif_id",
@@ -2125,6 +2142,7 @@
     "DocProcessCustomerInformationStatus": "$.process.customer_information.status",
     "DocProcessCustomerKtpOcrResultMaritalStatus": "$.process.customer_ktp_ocr_result.marital_status",
     "DocProcessCustomerKtpOcrResultReligion": "$.process.customer_ktp_ocr_result.religion",
+    "DocProcessCustomerScoreDigitalBusinessS1Passed": "$.process.customer_score_digital_business.s1.passed",
     "DocProcessDetailEkycScore": "$.process.detail_ekyc.score",
     "DocProcessDetailEkycScoreThreshold": "$.process.detail_ekyc.score_threshold",
     "DocProcessDetailEkycValid": "$.process.detail_ekyc.valid",
@@ -2236,6 +2254,7 @@
     "DocProcessReturningIsExistingCustomer": "$.process.returning.is_existing_customer",
     "DocProcessRoCheckPreviousAgreementConfinsApplicationId": "$.process.ro_check_previous_agreement.confins_application_id",
     "DocProcessRoCheckPreviousAgreementStatus": "$.process.ro_check_previous_agreement.status",
+    "DocProcessRoGetAdditionalDataForGoliveIsCompleted": "$.process.ro_get_additional_data_for_golive.is_completed",
     "DocProcessSimpleSurveyScoreS1LtvMax": "$.process.simple_survey_score.s1.ltv_max",
     "DocProcessSimpleSurveyScoreS1Rate": "$.process.simple_survey_score.s1.rate",
     "DocProcessSimpleSurveyScoreS1Result": "$.process.simple_survey_score.s1.result",
@@ -2309,7 +2328,6 @@
     "DocSigningFollowupDebtorSigningType": "$.signing_followup.debtor.signing_type",
     "DocSigningFollowupDebtorStatus": "$.signing_followup.debtor.status",
     "DocSigningFollowupPoaSignedAt": "$.signing_followup.poa.signed_at",
-    "DocSigningFollowupPoaSigningType": "$.signing_followup.poa.signing_type",
     "DocSigningFollowupPoaStatus": "$.signing_followup.poa.status",
     "DocSlaActivityProcessBpkbReviewDuration": "$.sla_activity.process_bpkb_review.duration",
     "DocSlaActivityProcessBpkbReviewResourceId": "$.sla_activity.process_bpkb_review.resource_id",
@@ -2354,6 +2372,8 @@
     "DocSurveyFinancingAdditionalFeesOtherFeeArrearsNote": "$.survey_financing.additional_fees.other_fee_arrears_note",
     "DocSurveyFinancingAdditionalFeesStnkArrears": "$.survey_financing.additional_fees.stnk_arrears",
     "DocSurveyFinancingAdditionalFeesStnkArrearsNote": "$.survey_financing.additional_fees.stnk_arrears_note",
+    "DocSurveyFinancingAdditionalFeesSurveyFeeArrears": "$.survey_financing.additional_fees.survey_fee_arrears",
+    "DocSurveyFinancingAdditionalFeesSurveyFeeArrearsNote": "$.survey_financing.additional_fees.survey_fee_arrears_note",
     "DocSurveyFinancingAdditionalFeesTaxArrears": "$.survey_financing.additional_fees.tax_arrears",
     "DocSurveyFinancingAdditionalFeesTaxArrearsNote": "$.survey_financing.additional_fees.tax_arrears_note",
     "DocSurveyFinancingAdditionalFeesVehicleInvoiceArrears": "$.survey_financing.additional_fees.vehicle_invoice_arrears",
