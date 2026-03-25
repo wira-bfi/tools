@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-03-16T08:38:11.772Z",
+  "extractedAt": "2026-03-25T07:56:10.313Z",
   "gitInfo": {
-    "commitId": "bf6163112f6214c0704a1410eb513d2782f00ae9",
-    "shortCommitId": "bf61631",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/bf6163112f6214c0704a1410eb513d2782f00ae9",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/bf6163112f6214c0704a1410eb513d2782f00ae9"
+    "commitId": "e7cc90f645828b44b580582306ea83b866f5a86a",
+    "shortCommitId": "e7cc90f",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/e7cc90f645828b44b580582306ea83b866f5a86a",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/e7cc90f645828b44b580582306ea83b866f5a86a"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -12,9 +12,9 @@
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 112,
-  "totalReadSets": 103,
-  "totalConstants": 822,
+  "totalFiles": 124,
+  "totalReadSets": 115,
+  "totalConstants": 882,
   "readSets": [
     {
       "type": "survey",
@@ -574,12 +574,47 @@
       ]
     },
     {
+      "type": "risk_level_aggregation_scoring2",
+      "readSet": [
+        "DocProcessRiskLevelCheckExternalDataBlacklistNonMarried",
+        "DocProcessRiskLevelCheckExternalDataBlacklistMarried",
+        "DocProcessRiskLevelCheckSoftRacNdf4w",
+        "DocProcessRiskLevelCheckPdModelOverlayNdf4w",
+        "DocProcessRiskLevelCheckPdModelAlternativeOverlayPartnershipNdf4w",
+        "DocProcessRiskLevelCheckCreditChecking",
+        "DocProcessRiskLevelCheckVehicleVerificationScoreNdf4w",
+        "DocProcessRiskLevelCheckWtpNdf4w",
+        "DocProcessRiskLevelCheckSimpleSurveyScoreNdf4w"
+      ]
+    },
+    {
+      "type": "risk_level_aggregation_scoring1",
+      "readSet": [
+        "DocProcessRiskLevelCheckExternalDataBlacklistNonMarried",
+        "DocProcessRiskLevelCheckExternalDataBlacklistMarried",
+        "DocProcessRiskLevelCheckSoftRacNdf4w",
+        "DocProcessRiskLevelCheckPdModelOverlayNdf4w",
+        "DocProcessRiskLevelCheckPdModelAlternativeOverlayPartnershipNdf4w"
+      ]
+    },
+    {
       "type": "reservation_expiry_update",
       "readSet": [
         "DocBranchBranchId",
         "DocAssetLicensePlate",
         "DocStatusReservationExpiry",
         "DocId"
+      ]
+    },
+    {
+      "type": "matrixntbntc",
+      "readSet": [
+        "DocProcessPefindoProfilePefindoDetailCustomerStatusResult",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerKtpBirthPlace"
       ]
     },
     {
@@ -807,6 +842,13 @@
       ]
     },
     {
+      "type": "customer_score_ndf2w_v2",
+      "readSet": [
+        "DocId",
+        "DocCustomerProfessionalOccupationCode"
+      ]
+    },
+    {
       "type": "customer_score_2w",
       "readSet": [
         "DocId",
@@ -817,6 +859,7 @@
       "type": "check_wtp_ndf4w",
       "readSet": [
         "DocId",
+        "DocProcessRiskLevelScoring1",
         "DocCustomerDomicileOwnershipCode",
         "DocProcessPefindoProfileMaxCollectionLast12Month",
         "DocProcessPefindoProfileTotalInstallment",
@@ -838,7 +881,9 @@
         "DocProcessPdModelS1PdResult",
         "DocLoanStructureProvisionalAmount",
         "DocProcessObligorLatestExposure",
-        "DocSurveyAppointmentSurveyType"
+        "DocSurveyAppointmentSurveyType",
+        "DocProcessCreditCheckingS1Result",
+        "DocProcessRiskLevelScoring1"
       ]
     },
     {
@@ -861,9 +906,10 @@
       "type": "check_soft_rac_ndf4w",
       "readSet": [
         "DocId",
+        "DocLoanStructureProductId",
+        "DocProcessNegativeListS1Result",
         "DocCustomerKtpBirthDate",
         "DocCustomerDomicileOwnershipCode",
-        "DocLoanStructureProductId",
         "DocLoanStructureProvisionalAmount",
         "DocLoanStructureTenure",
         "DocLoanStructureCapitalizedNtfAmount",
@@ -899,7 +945,9 @@
         "DocProcessVehicleVerificationScoreS1ScoreCategory",
         "DocProcessWtpS1Score",
         "DocLoanStructureOriginalAmount",
-        "DocProcessAssetPricingPrice"
+        "DocProcessAssetPricingPrice",
+        "DocProcessWtpS1Passed",
+        "DocProcessRiskLevelScoring1"
       ]
     },
     {
@@ -919,6 +967,15 @@
         "DocLoanStructureRiskLevel",
         "DocProcessRapindoAssetSearchPassed",
         "DocProcessPefindoProfilePefindoDetailScoringType"
+      ]
+    },
+    {
+      "type": "check_result_aggregation_scoring_2_ndf2w_v2",
+      "readSet": [
+        "DocProcessAssetOwnershipS1Passed",
+        "DocProcessAssetValidationScoreS1Passed",
+        "DocProcessCustomerScoreDigitalBusinessS1Passed",
+        "DocLoanStructureRiskLevel"
       ]
     },
     {
@@ -1002,7 +1059,10 @@
         "DocAssetAssetCode",
         "DocAssetBpkbStatus",
         "DocAssetBpkbOwnership",
-        "DocLoanStructureCapitalizedNtfAmount"
+        "DocLoanStructureCapitalizedNtfAmount",
+        "DocProcessPefindoProfilePefindoDetailScoringType",
+        "DocProcessNegativeListS1Result",
+        "DocProcessSoftRacS1Passed"
       ]
     },
     {
@@ -1059,7 +1119,10 @@
         "DocAssetAssetCode",
         "DocAssetBpkbOwnership",
         "DocAssetBpkbStatus",
-        "DocId"
+        "DocId",
+        "DocProcessPefindoProfilePefindoDetailScoringType",
+        "DocProcessNegativeListS1Result",
+        "DocProcessSoftRacS1Passed"
       ]
     },
     {
@@ -1304,7 +1367,9 @@
         "DocCustomerKtpNik",
         "DocCustomerKtpName",
         "DocCustomerKtpBirthDate",
-        "DocCustomerKtpBirthPlace"
+        "DocCustomerKtpBirthPlace",
+        "DocCustomerBankInformationBankId",
+        "DocCustomerBankInformationAccountNumber"
       ]
     },
     {
@@ -1331,6 +1396,79 @@
         "DocAssetManufacturingYear",
         "DocChannelMarketingId",
         "DocAssetVehicleType"
+      ]
+    },
+    {
+      "type": "check_matrix_ntb_ntc_multi_spouse",
+      "readSet": [
+        "DocId",
+        "DocLoanStructureProductId",
+        "DocChannelSoaId",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocProcessUserEkycPassed",
+        "DocProcessMatrixNtbNtcSpouseArrayDobPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayGrade",
+        "DocProcessMatrixNtbNtcSpouseArrayNamePercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayNikPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoCheck",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoHistoryId",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoId",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoMatchingResult",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoTable",
+        "DocProcessMatrixNtbNtcSpouseArrayPobPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayScore"
+      ]
+    },
+    {
+      "type": "check_matrix_ntb_ntc_multi_customer_spouse",
+      "readSet": [
+        "DocId",
+        "DocLoanStructureProductId",
+        "DocChannelSoaId",
+        "DocCustomerPersonalMaritalStatusCode",
+        "DocProcessUserEkycPassed",
+        "DocProcessMatrixNtbNtcCustomerArrayDobPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayGrade",
+        "DocProcessMatrixNtbNtcCustomerArrayNamePercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayNikPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoCheck",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoHistoryId",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoId",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoMatchingResult",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoTable",
+        "DocProcessMatrixNtbNtcCustomerArrayPobPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayScore",
+        "DocProcessMatrixNtbNtcSpouseArrayDobPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayGrade",
+        "DocProcessMatrixNtbNtcSpouseArrayNamePercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayNikPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoCheck",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoHistoryId",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoId",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoMatchingResult",
+        "DocProcessMatrixNtbNtcSpouseArrayPefindoTable",
+        "DocProcessMatrixNtbNtcSpouseArrayPobPercentage",
+        "DocProcessMatrixNtbNtcSpouseArrayScore"
+      ]
+    },
+    {
+      "type": "check_matrix_ntb_ntc_multi_customer",
+      "readSet": [
+        "DocId",
+        "DocLoanStructureProductId",
+        "DocChannelSoaId",
+        "DocProcessUserEkycPassed",
+        "DocProcessMatrixNtbNtcCustomerArrayDobPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayGrade",
+        "DocProcessMatrixNtbNtcCustomerArrayNamePercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayNikPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoCheck",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoHistoryId",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoId",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoMatchingResult",
+        "DocProcessMatrixNtbNtcCustomerArrayPefindoTable",
+        "DocProcessMatrixNtbNtcCustomerArrayPobPercentage",
+        "DocProcessMatrixNtbNtcCustomerArrayScore"
       ]
     },
     {
@@ -1422,10 +1560,10 @@
       "type": "check_s1_hard_rac_ndf2w",
       "readSet": [
         "DocId",
-        "DocCustomerKtpBirthDate",
         "DocLoanStructureProvisionalAmount",
         "DocCustomerPersonalMaritalStatusCode",
-        "DocAssetManufacturingYear"
+        "DocAssetManufacturingYear",
+        "DocProcessReturningCustomerType"
       ]
     },
     {
@@ -1443,6 +1581,7 @@
       "type": "check_external_data_blacklist_non_married",
       "readSet": [
         "DocId",
+        "DocCustomerPersonalMaritalStatusCode",
         "DocProcessNegativeListCnvCustomerCrimeIsFound",
         "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
         "DocProcessNegativeListCnvCustomerPepIsFound",
@@ -1454,6 +1593,7 @@
       "type": "check_external_data_blacklist_married",
       "readSet": [
         "DocId",
+        "DocCustomerPersonalMaritalStatusCode",
         "DocProcessNegativeListCnvCustomerCrimeIsFound",
         "DocProcessNegativeListCnvCustomerNegativeListInternalBadType",
         "DocProcessNegativeListCnvCustomerPepIsFound",
@@ -1516,9 +1656,10 @@
       ]
     },
     {
-      "type": "check_credit_checking",
+      "type": "check_credit_checking_ndf4w",
       "readSet": [
         "DocId",
+        "DocProcessRiskLevelScoring1",
         "DocLoanStructureProductOffering",
         "DocCustomerProfessionalOccupationCode",
         "DocCustomerPersonalFundsOtherThanPurchase",
@@ -1528,6 +1669,17 @@
         "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseUsesAssetMoreThanOnce",
         "DocProcessCreditCheckingNeighborhoodSource1UnitLeftResidenceMoreThanOnce",
         "DocProcessCreditCheckingNeighborhoodSource1UnitSeenAtResidenceMoreThanOnce"
+      ]
+    },
+    {
+      "type": "check_credit_checking_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocAssetDebtorSpouseCanIdentifyCollateral",
+        "DocProcessCreditCheckingNeighborhoodSource1AssetNegativeInfo",
+        "DocProcessCreditCheckingNeighborhoodSource1ConsumerAffiliateWithOrganization",
+        "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseLivesInTheHouse",
+        "DocProcessCreditCheckingNeighborhoodSource1UnitLeftResidenceMoreThanOnce"
       ]
     },
     {
@@ -1548,12 +1700,57 @@
       ]
     },
     {
+      "type": "check_asset_validation_score_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocProcessPdModelOverlayS1MaxFundingRatio",
+        "DocProcessAssetOwnershipS1FundingRatio",
+        "DocAssetDebtorSpouseCanIdentifyCollateral",
+        "DocAssetUnitUnderConsumerControl",
+        "DocAssetUnitHasMarkOfAccident",
+        "DocAssetUnitAbleToTurnOn",
+        "DocAssetUnitIsModified",
+        "DocAssetIsMotorcycleComponentComplete"
+      ]
+    },
+    {
       "type": "check_asset_pricing",
       "readSet": [
         "DocLoanStructureProductId",
         "DocAssetAssetCode",
         "DocAssetManufacturingYear",
         "DocBranchBranchId"
+      ]
+    },
+    {
+      "type": "check_asset_ownership_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocLoanStructureLtv",
+        "DocAssetBpkbOwnership",
+        "DocAssetVehicleGuaranteed",
+        "DocAssetBpkbOwnershipPeriod",
+        "DocAssetTaxStatus",
+        "DocAssetTaxStatusHandledByBfi"
+      ]
+    },
+    {
+      "type": "check_asset_ownership_ndf2w",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchId",
+        "DocChannelMarketingId",
+        "DocCustomerDomicileOwnershipCode",
+        "DocCustomerDomicileStaySince",
+        "DocProcessPdModelOverlayS1MaxFundingRatio",
+        "DocAssetBpkbOwnership",
+        "DocAssetVehicleGuaranteed",
+        "DocAssetBpkbOwnershipPeriod",
+        "DocAssetTaxStatus",
+        "DocAssetTaxStatusHandledByBfi"
       ]
     },
     {
@@ -1665,11 +1862,14 @@
     "DocAssetStnkStatus": "$.asset.stnk_status",
     "DocAssetTaxExpirationDate": "$.asset.tax_expiration_date",
     "DocAssetTaxStatus": "$.asset.tax_status",
+    "DocAssetTaxStatusHandledByBfi": "$.asset.tax_status_handled_by_bfi",
     "DocAssetUnitAbleToMoveNormally": "$.asset.unit_able_to_move_normally",
     "DocAssetUnitAbleToTurnOn": "$.asset.unit_able_to_turn_on",
     "DocAssetUnitColor": "$.asset.unit_color",
+    "DocAssetUnitHasMarkOfAccident": "$.asset.unit_has_mark_of_accident",
     "DocAssetUnitInTheServiceStation": "$.asset.unit_in_the_service_station",
     "DocAssetUnitInteriorCondition": "$.asset.unit_interior_condition",
+    "DocAssetUnitIsModified": "$.asset.unit_is_modified",
     "DocAssetUnitNoClearMarkOfAccident": "$.asset.unit_no_clear_mark_of_accident",
     "DocAssetUnitPhysicalConditionNormal": "$.asset.unit_physical_condition_normal",
     "DocAssetUnitPurchasedForFamily": "$.asset.unit_purchased_for_family",
@@ -1995,6 +2195,7 @@
     "DocDocumentsValidBusinessLegalityDocumentType": "$.documents.valid_business_legality.document_type",
     "DocDocumentsVehicleInspectionDocumentId": "$.documents.vehicle_inspection.document_id",
     "DocDocumentsVehicleInspectionDocumentType": "$.documents.vehicle_inspection.document_type",
+    "DocExperimentsEnableNewScoringV2": "$.experiments.enable_new_scoring_v2",
     "DocExperimentsScoringModel": "$.experiments.scoring_model",
     "DocExperimentsWhatsappLocale": "$.experiments.whatsapp_locale",
     "DocGuarantorBirthDate": "$.guarantor.birth_date",
@@ -2119,8 +2320,14 @@
     "DocProcessAntiFraud1Code": "$.process.anti_fraud_1.code",
     "DocProcessAntiFraud1Status": "$.process.anti_fraud_1.status",
     "DocProcessAssetDuplicateCheckIsDuplicate": "$.process.asset_duplicate_check_is_duplicate",
+    "DocProcessAssetOwnershipS1FundingRatio": "$.process.asset_ownership.s1.funding_ratio",
+    "DocProcessAssetOwnershipS1Ltv": "$.process.asset_ownership.s1.ltv",
+    "DocProcessAssetOwnershipS1Passed": "$.process.asset_ownership.s1.passed",
     "DocProcessAssetPricingAreaPlId": "$.process.asset_pricing.area_pl_id",
     "DocProcessAssetPricingPrice": "$.process.asset_pricing.price",
+    "DocProcessAssetValidationScoreS1FinalFundingRatio": "$.process.asset_validation_score.s1.final_funding_ratio",
+    "DocProcessAssetValidationScoreS1Passed": "$.process.asset_validation_score.s1.passed",
+    "DocProcessAssetValidationScoreS1Score": "$.process.asset_validation_score.s1.score",
     "DocProcessBpkbOcrResultBpkbAddress": "$.process.bpkb_ocr_result.bpkb_address",
     "DocProcessBpkbOcrResultBpkbInvoiceNumber": "$.process.bpkb_ocr_result.bpkb_invoice_number",
     "DocProcessBpkbOcrResultBpkbNumber": "$.process.bpkb_ocr_result.bpkb_number",
@@ -2140,6 +2347,7 @@
     "DocProcessCreditCheckingNeighborhoodSource1BusinessSuitability": "$.process.credit_checking.neighborhood.source_1.business_suitability",
     "DocProcessCreditCheckingNeighborhoodSource1ConsumerAffiliateWithOrganization": "$.process.credit_checking.neighborhood.source_1.consumer_affiliate_with_organization",
     "DocProcessCreditCheckingNeighborhoodSource1ConsumerOftenAtHome": "$.process.credit_checking.neighborhood.source_1.consumer_often_at_home",
+    "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseLivesInTheHouse": "$.process.credit_checking.neighborhood.source_1.debtor_spouse_lives_in_the_house",
     "DocProcessCreditCheckingNeighborhoodSource1DebtorSpouseUsesAssetMoreThanOnce": "$.process.credit_checking.neighborhood.source_1.debtor_spouse_uses_asset_more_than_once",
     "DocProcessCreditCheckingNeighborhoodSource1FamilyReputation": "$.process.credit_checking.neighborhood.source_1.family_reputation",
     "DocProcessCreditCheckingNeighborhoodSource1HouseSuitability": "$.process.credit_checking.neighborhood.source_1.house_suitability",
@@ -2154,6 +2362,7 @@
     "DocProcessCreditCheckingNeighborhoodSource2BusinessSuitability": "$.process.credit_checking.neighborhood.source_2.business_suitability",
     "DocProcessCreditCheckingNeighborhoodSource2ConsumerAffiliateWithOrganization": "$.process.credit_checking.neighborhood.source_2.consumer_affiliate_with_organization",
     "DocProcessCreditCheckingNeighborhoodSource2ConsumerOftenAtHome": "$.process.credit_checking.neighborhood.source_2.consumer_often_at_home",
+    "DocProcessCreditCheckingNeighborhoodSource2DebtorSpouseLivesInTheHouse": "$.process.credit_checking.neighborhood.source_2.debtor_spouse_lives_in_the_house",
     "DocProcessCreditCheckingNeighborhoodSource2DebtorSpouseUsesAssetMoreThanOnce": "$.process.credit_checking.neighborhood.source_2.debtor_spouse_uses_asset_more_than_once",
     "DocProcessCreditCheckingNeighborhoodSource2FamilyReputation": "$.process.credit_checking.neighborhood.source_2.family_reputation",
     "DocProcessCreditCheckingNeighborhoodSource2HouseSuitability": "$.process.credit_checking.neighborhood.source_2.house_suitability",
@@ -2168,6 +2377,7 @@
     "DocProcessCreditCheckingNeighborhoodSource3BusinessSuitability": "$.process.credit_checking.neighborhood.source_3.business_suitability",
     "DocProcessCreditCheckingNeighborhoodSource3ConsumerAffiliateWithOrganization": "$.process.credit_checking.neighborhood.source_3.consumer_affiliate_with_organization",
     "DocProcessCreditCheckingNeighborhoodSource3ConsumerOftenAtHome": "$.process.credit_checking.neighborhood.source_3.consumer_often_at_home",
+    "DocProcessCreditCheckingNeighborhoodSource3DebtorSpouseLivesInTheHouse": "$.process.credit_checking.neighborhood.source_3.debtor_spouse_lives_in_the_house",
     "DocProcessCreditCheckingNeighborhoodSource3DebtorSpouseUsesAssetMoreThanOnce": "$.process.credit_checking.neighborhood.source_3.debtor_spouse_uses_asset_more_than_once",
     "DocProcessCreditCheckingNeighborhoodSource3FamilyReputation": "$.process.credit_checking.neighborhood.source_3.family_reputation",
     "DocProcessCreditCheckingNeighborhoodSource3HouseSuitability": "$.process.credit_checking.neighborhood.source_3.house_suitability",
@@ -2187,6 +2397,7 @@
     "DocProcessCustomerForgeryCheckVendor": "$.process.customer_forgery_check.vendor",
     "DocProcessCustomerInformationCifId": "$.process.customer_information.cif_id",
     "DocProcessCustomerInformationConfinsCustomerId": "$.process.customer_information.confins_customer_id",
+    "DocProcessCustomerInformationCustomerRating": "$.process.customer_information.customer_rating",
     "DocProcessCustomerInformationStatus": "$.process.customer_information.status",
     "DocProcessCustomerKtpOcrResultMaritalStatus": "$.process.customer_ktp_ocr_result.marital_status",
     "DocProcessCustomerKtpOcrResultReligion": "$.process.customer_ktp_ocr_result.religion",
@@ -2209,8 +2420,44 @@
     "DocProcessHighRiskLtvMaxNdf4wS1Result": "$.process.high_risk_ltv_max_ndf4w.s1.result",
     "DocProcessIncomeModelCustomerIncome": "$.process.income_model.customer.income",
     "DocProcessIncomeModelSpouseIncome": "$.process.income_model.spouse.income",
+    "DocProcessIpvTemplateMatchingResultBpkb1": "$.process.ipv_template_matching_result.bpkb_1",
+    "DocProcessIpvTemplateMatchingResultBpkb2": "$.process.ipv_template_matching_result.bpkb_2",
+    "DocProcessIpvTemplateMatchingResultBpkb3": "$.process.ipv_template_matching_result.bpkb_3",
+    "DocProcessIpvTemplateMatchingResultBpkb4": "$.process.ipv_template_matching_result.bpkb_4",
+    "DocProcessIpvTemplateMatchingResultBpkb5": "$.process.ipv_template_matching_result.bpkb_5",
+    "DocProcessIpvTemplateMatchingResultStnk": "$.process.ipv_template_matching_result.stnk",
+    "DocProcessIpvTemplateMatchingResultTaxNotice": "$.process.ipv_template_matching_result.tax_notice",
     "DocProcessLivingCostS1Result": "$.process.living_cost.s1.result",
     "DocProcessLoanEstimationMaxFundingRatio": "$.process.loan_estimation.max_funding_ratio",
+    "DocProcessMatrixNtbNtcCustomerArrayDobPercentage": "$.process.matrix_ntb_ntc.customer[*].dob_percentage",
+    "DocProcessMatrixNtbNtcCustomerArrayGrade": "$.process.matrix_ntb_ntc.customer[*].grade",
+    "DocProcessMatrixNtbNtcCustomerArrayMatchingResultModified": "$.process.matrix_ntb_ntc.customer[*].matching_result_modified",
+    "DocProcessMatrixNtbNtcCustomerArrayNamePercentage": "$.process.matrix_ntb_ntc.customer[*].name_percentage",
+    "DocProcessMatrixNtbNtcCustomerArrayNikPercentage": "$.process.matrix_ntb_ntc.customer[*].nik_percentage",
+    "DocProcessMatrixNtbNtcCustomerArrayPefindoCheck": "$.process.matrix_ntb_ntc.customer[*].pefindo_check",
+    "DocProcessMatrixNtbNtcCustomerArrayPefindoHistoryId": "$.process.matrix_ntb_ntc.customer[*].pefindo_history_id",
+    "DocProcessMatrixNtbNtcCustomerArrayPefindoId": "$.process.matrix_ntb_ntc.customer[*].pefindo_id",
+    "DocProcessMatrixNtbNtcCustomerArrayPefindoMatchingResult": "$.process.matrix_ntb_ntc.customer[*].pefindo_matching_result",
+    "DocProcessMatrixNtbNtcCustomerArrayPefindoTable": "$.process.matrix_ntb_ntc.customer[*].pefindo_table",
+    "DocProcessMatrixNtbNtcCustomerArrayPobPercentage": "$.process.matrix_ntb_ntc.customer[*].pob_percentage",
+    "DocProcessMatrixNtbNtcCustomerArrayScore": "$.process.matrix_ntb_ntc.customer[*].score",
+    "DocProcessMatrixNtbNtcCustomerArrayStatusPefindo": "$.process.matrix_ntb_ntc.customer[*].status_pefindo",
+    "DocProcessMatrixNtbNtcCustomerArraySubjectCheck": "$.process.matrix_ntb_ntc.customer[*].subject_check",
+    "DocProcessMatrixNtbNtcResult": "$.process.matrix_ntb_ntc.result",
+    "DocProcessMatrixNtbNtcSpouseArrayDobPercentage": "$.process.matrix_ntb_ntc.spouse[*].dob_percentage",
+    "DocProcessMatrixNtbNtcSpouseArrayGrade": "$.process.matrix_ntb_ntc.spouse[*].grade",
+    "DocProcessMatrixNtbNtcSpouseArrayMatchingResultModified": "$.process.matrix_ntb_ntc.spouse[*].matching_result_modified",
+    "DocProcessMatrixNtbNtcSpouseArrayNamePercentage": "$.process.matrix_ntb_ntc.spouse[*].name_percentage",
+    "DocProcessMatrixNtbNtcSpouseArrayNikPercentage": "$.process.matrix_ntb_ntc.spouse[*].nik_percentage",
+    "DocProcessMatrixNtbNtcSpouseArrayPefindoCheck": "$.process.matrix_ntb_ntc.spouse[*].pefindo_check",
+    "DocProcessMatrixNtbNtcSpouseArrayPefindoHistoryId": "$.process.matrix_ntb_ntc.spouse[*].pefindo_history_id",
+    "DocProcessMatrixNtbNtcSpouseArrayPefindoId": "$.process.matrix_ntb_ntc.spouse[*].pefindo_id",
+    "DocProcessMatrixNtbNtcSpouseArrayPefindoMatchingResult": "$.process.matrix_ntb_ntc.spouse[*].pefindo_matching_result",
+    "DocProcessMatrixNtbNtcSpouseArrayPefindoTable": "$.process.matrix_ntb_ntc.spouse[*].pefindo_table",
+    "DocProcessMatrixNtbNtcSpouseArrayPobPercentage": "$.process.matrix_ntb_ntc.spouse[*].pob_percentage",
+    "DocProcessMatrixNtbNtcSpouseArrayScore": "$.process.matrix_ntb_ntc.spouse[*].score",
+    "DocProcessMatrixNtbNtcSpouseArrayStatusPefindo": "$.process.matrix_ntb_ntc.spouse[*].status_pefindo",
+    "DocProcessMatrixNtbNtcSpouseArraySubjectCheck": "$.process.matrix_ntb_ntc.spouse[*].subject_check",
     "DocProcessNegativeListAssetBadType": "$.process.negative_list.asset.bad_type",
     "DocProcessNegativeListCnvCustomerCrimeBadType": "$.process.negative_list.cnv.customer.crime.bad_type",
     "DocProcessNegativeListCnvCustomerCrimeIsFound": "$.process.negative_list.cnv.customer.crime.is_found",
@@ -2315,6 +2562,16 @@
     "DocProcessRiskBasedPricingProvisionFeeRate": "$.process.risk_based_pricing.provision_fee_rate",
     "DocProcessRiskBasedPricingProvisionFeeType": "$.process.risk_based_pricing.provision_fee_type",
     "DocProcessRiskBasedPricingVersion": "$.process.risk_based_pricing.version",
+    "DocProcessRiskLevelCheckCreditChecking": "$.process.risk_level.check_credit_checking",
+    "DocProcessRiskLevelCheckExternalDataBlacklistMarried": "$.process.risk_level.check_external_data_blacklist_married",
+    "DocProcessRiskLevelCheckExternalDataBlacklistNonMarried": "$.process.risk_level.check_external_data_blacklist_non_married",
+    "DocProcessRiskLevelCheckPdModelAlternativeOverlayPartnershipNdf4w": "$.process.risk_level.check_pd_model_alternative_overlay_partnership_ndf4w",
+    "DocProcessRiskLevelCheckPdModelOverlayNdf4w": "$.process.risk_level.check_pd_model_overlay_ndf4w",
+    "DocProcessRiskLevelCheckSimpleSurveyScoreNdf4w": "$.process.risk_level.check_simple_survey_score_ndf4w",
+    "DocProcessRiskLevelCheckSoftRacNdf4w": "$.process.risk_level.check_soft_rac_ndf4w",
+    "DocProcessRiskLevelCheckVehicleVerificationScoreNdf4w": "$.process.risk_level.check_vehicle_verification_score_ndf4w",
+    "DocProcessRiskLevelCheckWtpNdf4w": "$.process.risk_level.check_wtp_ndf4w",
+    "DocProcessRiskLevelScoring1": "$.process.risk_level.scoring1",
     "DocProcessRoCheckPreviousAgreementConfinsApplicationId": "$.process.ro_check_previous_agreement.confins_application_id",
     "DocProcessRoCheckPreviousAgreementStatus": "$.process.ro_check_previous_agreement.status",
     "DocProcessRoGetAdditionalDataForGoliveIsCompleted": "$.process.ro_get_additional_data_for_golive.is_completed",
