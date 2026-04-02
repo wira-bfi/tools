@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-03-25T07:56:10.313Z",
+  "extractedAt": "2026-04-02T03:28:01.322Z",
   "gitInfo": {
-    "commitId": "e7cc90f645828b44b580582306ea83b866f5a86a",
-    "shortCommitId": "e7cc90f",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/e7cc90f645828b44b580582306ea83b866f5a86a",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/e7cc90f645828b44b580582306ea83b866f5a86a"
+    "commitId": "487615279f987c07ddf7d1cd21fc79bd7439f93b",
+    "shortCommitId": "4876152",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/487615279f987c07ddf7d1cd21fc79bd7439f93b",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/487615279f987c07ddf7d1cd21fc79bd7439f93b"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -12,9 +12,9 @@
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 124,
-  "totalReadSets": 115,
-  "totalConstants": 882,
+  "totalFiles": 129,
+  "totalReadSets": 120,
+  "totalConstants": 883,
   "readSets": [
     {
       "type": "survey",
@@ -568,8 +568,22 @@
     {
       "type": "set_survey_data_by_assignment_rule",
       "readSet": [
-        "DocLoanStructureRiskLevel",
+        "DocProcessRiskLevelScoring1",
         "DocLoanStructureProductId",
+        "DocChannelPartnerCustomerType"
+      ]
+    },
+    {
+      "type": "set_survey_data_by_assignment_rule_ndf4w",
+      "readSet": [
+        "DocProcessRiskLevelScoring1",
+        "DocChannelPartnerCustomerType"
+      ]
+    },
+    {
+      "type": "set_survey_data_by_assignment_rule_ndf2w",
+      "readSet": [
+        "DocLoanStructureRiskLevel",
         "DocChannelPartnerCustomerType"
       ]
     },
@@ -842,6 +856,13 @@
       ]
     },
     {
+      "type": "customer_score_ndf4w_v2",
+      "readSet": [
+        "DocId",
+        "DocCustomerProfessionalOccupationCode"
+      ]
+    },
+    {
       "type": "customer_score_ndf2w_v2",
       "readSet": [
         "DocId",
@@ -986,6 +1007,14 @@
       ]
     },
     {
+      "type": "check_rapindo_asset_search_v2_ndf4w",
+      "readSet": [
+        "DocAssetChassisNumber",
+        "DocLoanStructureRiskLevel",
+        "DocProcessDigitalLtvMaxNdf4wS1Result"
+      ]
+    },
+    {
       "type": "check_rapindo_asset_search_ndf4w",
       "readSet": [
         "DocAssetChassisNumber",
@@ -1049,8 +1078,6 @@
         "DocLoanStructureProvisionalAmount",
         "DocProcessAssetPricingPrice",
         "DocProcessObligorLatestExposure",
-        "DocProcessPefindoProfilePefindoDetailCustomerGrade",
-        "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId",
         "DocProcessPdModelRacS1Passed",
         "DocLoanStructureProductOffering",
         "DocChannelMarketingId",
@@ -1202,7 +1229,6 @@
         "DocLoanStructureLtv",
         "DocLoanStructureCapitalizedNtfAmount",
         "DocBranchBranchId",
-        "DocProcessPefindoProfilePefindoDetailCustomerDmsDocumentId",
         "DocProcessPefindoProfilePefindoDetailSpouseStatusResult"
       ]
     },
@@ -1697,6 +1723,21 @@
         "DocProcessLivingCostS1Result",
         "DocProcessIncomeModelCustomerIncome",
         "DocProcessPefindoProfileFinalInstallment"
+      ]
+    },
+    {
+      "type": "check_asset_validation_score_ndf4w",
+      "readSet": [
+        "DocId",
+        "DocAssetDebtorSpouseCanIdentifyCollateral",
+        "DocAssetUnitUnderConsumerControl",
+        "DocAssetUnitHasMarkOfAccident",
+        "DocAssetUnitAbleToTurnOn",
+        "DocAssetUnitIsModified",
+        "DocAssetUnitInteriorCondition",
+        "DocCustomerPersonalInstallmentHelperThanSpouse",
+        "DocProcessDigitalLtvMaxNdf4wS1LtvMaxRatio",
+        "DocProcessAssetOwnershipS1Ltv"
       ]
     },
     {
@@ -2326,6 +2367,7 @@
     "DocProcessAssetPricingAreaPlId": "$.process.asset_pricing.area_pl_id",
     "DocProcessAssetPricingPrice": "$.process.asset_pricing.price",
     "DocProcessAssetValidationScoreS1FinalFundingRatio": "$.process.asset_validation_score.s1.final_funding_ratio",
+    "DocProcessAssetValidationScoreS1FinalLtv": "$.process.asset_validation_score.s1.final_ltv",
     "DocProcessAssetValidationScoreS1Passed": "$.process.asset_validation_score.s1.passed",
     "DocProcessAssetValidationScoreS1Score": "$.process.asset_validation_score.s1.score",
     "DocProcessBpkbOcrResultBpkbAddress": "$.process.bpkb_ocr_result.bpkb_address",
