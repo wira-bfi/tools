@@ -1,10 +1,10 @@
 {
-  "extractedAt": "2026-04-02T03:28:01.322Z",
+  "extractedAt": "2026-04-22T04:09:11.034Z",
   "gitInfo": {
-    "commitId": "487615279f987c07ddf7d1cd21fc79bd7439f93b",
-    "shortCommitId": "4876152",
-    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/487615279f987c07ddf7d1cd21fc79bd7439f93b",
-    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/487615279f987c07ddf7d1cd21fc79bd7439f93b"
+    "commitId": "a33701e27f05b86852307fc61e6b0c13fde2a95e",
+    "shortCommitId": "a33701e",
+    "commitUrl": "https://github.com/bfi-finance/lora-partnership-ndf/commit/a33701e27f05b86852307fc61e6b0c13fde2a95e",
+    "treeUrl": "https://github.com/bfi-finance/lora-partnership-ndf/tree/a33701e27f05b86852307fc61e6b0c13fde2a95e"
   },
   "searchPaths": [
     "internal/process/tasking/",
@@ -12,9 +12,9 @@
     "internal/process/operation/",
     "internal/process/scoring/"
   ],
-  "totalFiles": 129,
-  "totalReadSets": 120,
-  "totalConstants": 883,
+  "totalFiles": 136,
+  "totalReadSets": 126,
+  "totalConstants": 903,
   "readSets": [
     {
       "type": "survey",
@@ -267,7 +267,8 @@
         "DocProcessSurveyTaskEnvironmentCheckBranchId",
         "DocProcessSurveyTaskEnvironmentCheckPosId",
         "DocProcessSurveyTaskEnvironmentCheckBranchName",
-        "DocProcessSurveyTaskSurveyPosId"
+        "DocProcessSurveyTaskSurveyPosId",
+        "DocLoanStructureNtfAmount"
       ]
     },
     {
@@ -501,13 +502,6 @@
         "DocCustomerProfessionalCompanySubDistrictCode",
         "DocCustomerProfessionalRt",
         "DocCustomerProfessionalRw",
-        "DocCustomerEmergencyContactMobileNumber",
-        "DocCustomerEmergencyContactName",
-        "DocCustomerEmergencyContactRelationWithCustomer",
-        "DocCustomerEmergencyContactStreetAddress",
-        "DocCustomerEmergencyContactSubDistrictCode",
-        "DocCustomerEmergencyContactRt",
-        "DocCustomerEmergencyContactRw",
         "DocAssetBpkbOwnerName",
         "DocAssetBpkbOwnerNik",
         "DocAssetBpkbAddress",
@@ -566,6 +560,20 @@
       ]
     },
     {
+      "type": "check_shopee_score",
+      "readSet": [
+        "DocId",
+        "DocChannelMarketingId",
+        "DocCustomerKtpNik",
+        "DocCustomerKtpName",
+        "DocCustomerKtpBirthDate",
+        "DocCustomerContactMobileNumber",
+        "DocLoanStructureProductId",
+        "DocProcessSoftRacS1Passed",
+        "DocProcessPreFatalRacS1Passed"
+      ]
+    },
+    {
       "type": "set_survey_data_by_assignment_rule",
       "readSet": [
         "DocProcessRiskLevelScoring1",
@@ -577,14 +585,16 @@
       "type": "set_survey_data_by_assignment_rule_ndf4w",
       "readSet": [
         "DocProcessRiskLevelScoring1",
-        "DocChannelPartnerCustomerType"
+        "DocChannelPartnerCustomerType",
+        "DocId"
       ]
     },
     {
       "type": "set_survey_data_by_assignment_rule_ndf2w",
       "readSet": [
         "DocLoanStructureRiskLevel",
-        "DocChannelPartnerCustomerType"
+        "DocChannelPartnerCustomerType",
+        "DocId"
       ]
     },
     {
@@ -599,6 +609,19 @@
         "DocProcessRiskLevelCheckVehicleVerificationScoreNdf4w",
         "DocProcessRiskLevelCheckWtpNdf4w",
         "DocProcessRiskLevelCheckSimpleSurveyScoreNdf4w"
+      ]
+    },
+    {
+      "type": "risk_level_aggregation_scoring2_v2",
+      "readSet": [
+        "DocProcessRiskLevelCheckExternalDataBlacklistNonMarried",
+        "DocProcessRiskLevelCheckExternalDataBlacklistMarried",
+        "DocProcessRiskLevelCheckSoftRacNdf4w",
+        "DocProcessRiskLevelCheckPdModelOverlayNdf4w",
+        "DocProcessRiskLevelCheckPdModelAlternativeOverlayPartnershipNdf4w",
+        "DocProcessRiskLevelCheckAssetOwnershipNdf4w",
+        "DocProcessRiskLevelCheckAssetValidationScoreNdf4w",
+        "DocProcessRiskLevelCustomerScoreNdf4wV2"
       ]
     },
     {
@@ -635,6 +658,13 @@
       "type": "get_spouse_ktp_ocr",
       "readSet": [
         "DocDocumentsSpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "getprocessingbranchro",
+      "readSet": [
+        "DocBranchBranchId",
+        "DocBranchPosId"
       ]
     },
     {
@@ -859,21 +889,24 @@
       "type": "customer_score_ndf4w_v2",
       "readSet": [
         "DocId",
-        "DocCustomerProfessionalOccupationCode"
+        "DocCustomerProfessionalOccupationCode",
+        "DocChannelMarketingId"
       ]
     },
     {
       "type": "customer_score_ndf2w_v2",
       "readSet": [
         "DocId",
-        "DocCustomerProfessionalOccupationCode"
+        "DocCustomerProfessionalOccupationCode",
+        "DocChannelMarketingId"
       ]
     },
     {
       "type": "customer_score_2w",
       "readSet": [
         "DocId",
-        "DocCustomerProfessionalOccupationCode"
+        "DocCustomerProfessionalOccupationCode",
+        "DocChannelMarketingId"
       ]
     },
     {
@@ -980,6 +1013,17 @@
         "DocAssetBpkbOwnership",
         "DocAssetBpkbOwnershipPeriod",
         "DocAssetVehicleGuaranteed"
+      ]
+    },
+    {
+      "type": "check_result_aggregation_scoring_2_ndf4w_v2",
+      "readSet": [
+        "DocProcessAbilityToPayDirS1Passed",
+        "DocProcessAbilityToPayDsrS1Passed",
+        "DocProcessAssetValidationScoreS1Passed",
+        "DocProcessAssetOwnershipS1Passed",
+        "DocProcessDigitalLtvMaxNdf4wS1Result",
+        "DocProcessRapindoAssetSearchPassed"
       ]
     },
     {
@@ -1425,6 +1469,16 @@
       ]
     },
     {
+      "type": "v2",
+      "readSet": [
+        "DocId",
+        "DocAssetManufacturingYear",
+        "DocChannelMarketingId",
+        "DocAssetVehicleType",
+        "DocAssetVehicleCategory"
+      ]
+    },
+    {
       "type": "check_matrix_ntb_ntc_multi_spouse",
       "readSet": [
         "DocId",
@@ -1633,6 +1687,14 @@
       ]
     },
     {
+      "type": "check_external_credit_checking",
+      "readSet": [
+        "DocCustomerContactMobileNumber",
+        "DocLoanStructureRiskLevel",
+        "DocProcessMatrixNtbNtcResult"
+      ]
+    },
+    {
       "type": "check_existing_customer",
       "readSet": [
         "DocCustomerKtpNik",
@@ -1730,7 +1792,7 @@
       "readSet": [
         "DocId",
         "DocAssetDebtorSpouseCanIdentifyCollateral",
-        "DocAssetUnitUnderConsumerControl",
+        "DocAssetUnitInTheServiceStation",
         "DocAssetUnitHasMarkOfAccident",
         "DocAssetUnitAbleToTurnOn",
         "DocAssetUnitIsModified",
@@ -1747,7 +1809,7 @@
         "DocProcessPdModelOverlayS1MaxFundingRatio",
         "DocProcessAssetOwnershipS1FundingRatio",
         "DocAssetDebtorSpouseCanIdentifyCollateral",
-        "DocAssetUnitUnderConsumerControl",
+        "DocAssetUnitInTheServiceStation",
         "DocAssetUnitHasMarkOfAccident",
         "DocAssetUnitAbleToTurnOn",
         "DocAssetUnitIsModified",
@@ -1904,6 +1966,7 @@
     "DocAssetTaxExpirationDate": "$.asset.tax_expiration_date",
     "DocAssetTaxStatus": "$.asset.tax_status",
     "DocAssetTaxStatusHandledByBfi": "$.asset.tax_status_handled_by_bfi",
+    "DocAssetTotalMileage": "$.asset.total_mileage",
     "DocAssetUnitAbleToMoveNormally": "$.asset.unit_able_to_move_normally",
     "DocAssetUnitAbleToTurnOn": "$.asset.unit_able_to_turn_on",
     "DocAssetUnitColor": "$.asset.unit_color",
@@ -1916,6 +1979,7 @@
     "DocAssetUnitPurchasedForFamily": "$.asset.unit_purchased_for_family",
     "DocAssetUnitTypeAndPhysicalConditionAppropriate": "$.asset.unit_type_and_physical_condition_appropriate",
     "DocAssetUnitUnderConsumerControl": "$.asset.unit_under_consumer_control",
+    "DocAssetVehicleCategory": "$.asset.vehicle_category",
     "DocAssetVehicleGuaranteed": "$.asset.vehicle_guaranteed",
     "DocAssetVehicleType": "$.asset.vehicle_type",
     "DocAssetWholeInteriorCondition": "$.asset.whole_interior_condition",
@@ -1932,6 +1996,7 @@
     "DocChannelPartnerCustomerType": "$.channel.partner_customer_type",
     "DocChannelPartnerId": "$.channel.partner_id",
     "DocChannelPartnerInternalName": "$.channel.partner_internal_name",
+    "DocChannelRoLoanType": "$.channel.ro_loan_type",
     "DocChannelSigningProcessor": "$.channel.signing_processor",
     "DocChannelSoaId": "$.channel.soa_id",
     "DocChannelSubmissionTime": "$.channel.submission_time",
@@ -2237,6 +2302,8 @@
     "DocDocumentsVehicleInspectionDocumentId": "$.documents.vehicle_inspection.document_id",
     "DocDocumentsVehicleInspectionDocumentType": "$.documents.vehicle_inspection.document_type",
     "DocExperimentsEnableNewScoringV2": "$.experiments.enable_new_scoring_v2",
+    "DocExperimentsEnableQueueSurvey": "$.experiments.enable_queue_survey",
+    "DocExperimentsExternalCreditChecking": "$.experiments.external_credit_checking",
     "DocExperimentsScoringModel": "$.experiments.scoring_model",
     "DocExperimentsWhatsappLocale": "$.experiments.whatsapp_locale",
     "DocGuarantorBirthDate": "$.guarantor.birth_date",
@@ -2316,11 +2383,13 @@
     "DocLoanStructureAssetInsurancePremium": "$.loan_structure.asset_insurance_premium",
     "DocLoanStructureBillingDate": "$.loan_structure.billing_date",
     "DocLoanStructureCapitalizedNtfAmount": "$.loan_structure.capitalized_ntf_amount",
+    "DocLoanStructureFirstDueDate": "$.loan_structure.first_due_date",
     "DocLoanStructureFundingRatio": "$.loan_structure.funding_ratio",
     "DocLoanStructureInitialRiskLevel": "$.loan_structure.initial_risk_level",
     "DocLoanStructureInsuranceType": "$.loan_structure.insurance_type",
     "DocLoanStructureInterestRate": "$.loan_structure.interest_rate",
     "DocLoanStructureIsCustomPricing": "$.loan_structure.is_custom_pricing",
+    "DocLoanStructureLastDueDate": "$.loan_structure.last_due_date",
     "DocLoanStructureLifeInsurancePremium": "$.loan_structure.life_insurance_premium",
     "DocLoanStructureLoanCalculatorId": "$.loan_structure.loan_calculator_id",
     "DocLoanStructureLtv": "$.loan_structure.ltv",
@@ -2456,6 +2525,9 @@
     "DocProcessEnvironmentCheckCompletionTime": "$.process.environment_check.completion_time",
     "DocProcessEsignDebtorProcessId": "$.process.esign.debtor.process_id",
     "DocProcessEsignPoaProcessId": "$.process.esign.poa.process_id",
+    "DocProcessExternalCreditCheckingGeneralScore": "$.process.external_credit_checking.general_score",
+    "DocProcessExternalCreditCheckingResult": "$.process.external_credit_checking.result",
+    "DocProcessExternalCreditCheckingScoreThreshold": "$.process.external_credit_checking.score_threshold",
     "DocProcessFatalScoreS1Passed": "$.process.fatal_score.s1.passed",
     "DocProcessHardRacS1Passed": "$.process.hard_rac.s1.passed",
     "DocProcessHighRiskLtvMaxNdf4wS1LtvMaxRatio": "$.process.high_risk_ltv_max_ndf4w.s1.ltv_max_ratio",
@@ -2604,6 +2676,8 @@
     "DocProcessRiskBasedPricingProvisionFeeRate": "$.process.risk_based_pricing.provision_fee_rate",
     "DocProcessRiskBasedPricingProvisionFeeType": "$.process.risk_based_pricing.provision_fee_type",
     "DocProcessRiskBasedPricingVersion": "$.process.risk_based_pricing.version",
+    "DocProcessRiskLevelCheckAssetOwnershipNdf4w": "$.process.risk_level.check_asset_ownership_ndf4w",
+    "DocProcessRiskLevelCheckAssetValidationScoreNdf4w": "$.process.risk_level.check_asset_validation_score_ndf4w",
     "DocProcessRiskLevelCheckCreditChecking": "$.process.risk_level.check_credit_checking",
     "DocProcessRiskLevelCheckExternalDataBlacklistMarried": "$.process.risk_level.check_external_data_blacklist_married",
     "DocProcessRiskLevelCheckExternalDataBlacklistNonMarried": "$.process.risk_level.check_external_data_blacklist_non_married",
@@ -2613,10 +2687,13 @@
     "DocProcessRiskLevelCheckSoftRacNdf4w": "$.process.risk_level.check_soft_rac_ndf4w",
     "DocProcessRiskLevelCheckVehicleVerificationScoreNdf4w": "$.process.risk_level.check_vehicle_verification_score_ndf4w",
     "DocProcessRiskLevelCheckWtpNdf4w": "$.process.risk_level.check_wtp_ndf4w",
+    "DocProcessRiskLevelCustomerScoreNdf4wV2": "$.process.risk_level.customer_score_ndf4w_v2",
     "DocProcessRiskLevelScoring1": "$.process.risk_level.scoring1",
     "DocProcessRoCheckPreviousAgreementConfinsApplicationId": "$.process.ro_check_previous_agreement.confins_application_id",
     "DocProcessRoCheckPreviousAgreementStatus": "$.process.ro_check_previous_agreement.status",
     "DocProcessRoGetAdditionalDataForGoliveIsCompleted": "$.process.ro_get_additional_data_for_golive.is_completed",
+    "DocProcessShopeeScoreGeneralScore": "$.process.shopee_score.general_score",
+    "DocProcessShopeeScoreScoreThreshold": "$.process.shopee_score.score_threshold",
     "DocProcessSimpleSurveyScoreS1LtvMax": "$.process.simple_survey_score.s1.ltv_max",
     "DocProcessSimpleSurveyScoreS1Rate": "$.process.simple_survey_score.s1.rate",
     "DocProcessSimpleSurveyScoreS1Result": "$.process.simple_survey_score.s1.result",
@@ -2668,6 +2745,7 @@
     "DocProcessSurveyTaskSurveyorEmployeeId": "$.process.survey_task.surveyor_employee_id",
     "DocProcessSurveyTaskSurveyorEmployeeName": "$.process.survey_task.surveyor_employee_name",
     "DocProcessSurveyTaskUnderwritingRevisionNotes": "$.process.survey_task.underwriting_revision_notes",
+    "DocProcessUnderwritingBranchPortfolio": "$.process.underwriting.branch_portfolio",
     "DocProcessUnderwritingCompletionTime": "$.process.underwriting.completion_time",
     "DocProcessUnscheduledTaskFollowupAppointmentEmployeeId": "$.process.unscheduled_task.followup_appointment_employee_id",
     "DocProcessUnscheduledTaskFollowupAppointmentEmployeeName": "$.process.unscheduled_task.followup_appointment_employee_name",
@@ -2684,6 +2762,7 @@
     "DocProcessVehicleVerificationScoreS1Score": "$.process.vehicle_verification_score.s1.score",
     "DocProcessVehicleVerificationScoreS1ScoreCategory": "$.process.vehicle_verification_score.s1.score_category",
     "DocProcessWabCreateScheduleReminder1HourSentAt": "$.process.wab.create_schedule_reminder_1_hour_sent_at",
+    "DocProcessWabDisbursedNotificationSentAt": "$.process.wab.disbursed_notification_sent_at",
     "DocProcessWtpCollectibilityStatusReason": "$.process.wtp.collectibility_status_reason",
     "DocProcessWtpS1Passed": "$.process.wtp.s1.passed",
     "DocProcessWtpS1Score": "$.process.wtp.s1.score",
@@ -2720,6 +2799,7 @@
     "DocSurveyAppointmentPostTravelDuration": "$.survey_appointment.post_travel_duration",
     "DocSurveyAppointmentPreTravelDuration": "$.survey_appointment.pre_travel_duration",
     "DocSurveyAppointmentPreferredTimezone": "$.survey_appointment.preferred_timezone",
+    "DocSurveyAppointmentQueueSurveyUrl": "$.survey_appointment.queue_survey_url",
     "DocSurveyAppointmentSchedulerAppointmentId": "$.survey_appointment.scheduler_appointment_id",
     "DocSurveyAppointmentStartTime": "$.survey_appointment.start_time",
     "DocSurveyAppointmentSurveyLocationOptionsArray": "$.survey_appointment.survey_location_options[*]",
@@ -2728,6 +2808,7 @@
     "DocSurveyAppointmentSurveyResourceType": "$.survey_appointment.survey_resource_type",
     "DocSurveyAppointmentSurveyType": "$.survey_appointment.survey_type",
     "DocSurveyAppointmentVideoLink": "$.survey_appointment.video_link",
+    "DocSurveyAppointmentVirtualSurveyModeArray": "$.survey_appointment.virtual_survey_mode[*]",
     "DocSurveyFinancingAdditionalFeesBbnArrears": "$.survey_financing.additional_fees.bbn_arrears",
     "DocSurveyFinancingAdditionalFeesBbnArrearsNote": "$.survey_financing.additional_fees.bbn_arrears_note",
     "DocSurveyFinancingAdditionalFeesInstallmentArrears": "$.survey_financing.additional_fees.installment_arrears",
@@ -2744,6 +2825,7 @@
     "DocSurveyFinancingAdditionalFeesVehicleInvoiceArrearsNote": "$.survey_financing.additional_fees.vehicle_invoice_arrears_note",
     "DocSurveyFinancingAdditionalFeesVehicleUnblockArrears": "$.survey_financing.additional_fees.vehicle_unblock_arrears",
     "DocSurveyFinancingAdditionalFeesVehicleUnblockArrearsNote": "$.survey_financing.additional_fees.vehicle_unblock_arrears_note",
+    "DocSurveyFinancingFixedSurveyFee": "$.survey_financing.fixed_survey_fee",
     "DocSurveyFinancingIsTakeOver": "$.survey_financing.is_take_over",
     "DocSurveyFinancingTakeOverContractNumber": "$.survey_financing.take_over.contract_number",
     "DocSurveyFinancingTakeOverContractOnBehalf": "$.survey_financing.take_over.contract_on_behalf",

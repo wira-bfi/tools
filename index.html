@@ -155,7 +155,25 @@
     <div id="panel-readset" class="hidden">
       <div class="card bg-base-100 shadow-lg">
         <div class="card-body p-4 space-y-4">
-          <div class="flex flex-col gap-1 text-sm text-base-content/70">
+          <div id="readset-load-error" class="alert alert-warning hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <h3 class="font-bold">Readset data load issue</h3>
+              <div id="readset-load-error-message" class="text-xs"></div>
+            </div>
+          </div>
+          <div class="form-control w-full">
+            <label class="label">
+              <span class="label-text">System</span>
+            </label>
+            <select id="system-select" class="select select-bordered w-full"></select>
+          </div>
+
+          <div class="flex flex-col gap-1 text-sm text-base-content/70" id="sync-info-container">
             <div class="flex items-center gap-2">
               <span class="badge badge-ghost">Last sync:</span>
               <span id="last-sync-time">-</span>
@@ -192,6 +210,32 @@
 
           <div id="readset-checker" class="p-4 bg-base-200 rounded-lg min-h-24">
             <p class="italic text-sm text-base-content/70">Enter doc revision to check...</p>
+          </div>
+
+          <!-- Activity Details (workflow source only) -->
+          <div id="precondition-section" class="hidden space-y-4">
+            <div class="divider">Activity Details</div>
+            <div class="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" checked />
+              <div class="collapse-title text-sm font-bold">Preconditions</div>
+              <div class="collapse-content">
+                <div id="precondition-result" class="text-xs"></div>
+              </div>
+            </div>
+            <div class="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" />
+              <div class="collapse-title text-sm font-bold">Write Set</div>
+              <div class="collapse-content">
+                <div id="activity-writeset" class="text-xs"></div>
+              </div>
+            </div>
+            <div class="collapse collapse-arrow bg-base-200">
+              <input type="checkbox" />
+              <div class="collapse-title text-sm font-bold">Depends On</div>
+              <div class="collapse-content">
+                <div id="activity-depends" class="text-xs"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -243,35 +287,205 @@
     // ReadSet Checker Module
     // ============================================
     const ReadSetChecker = {
+      // Go-source datasets (existing behavior)
+      goDatasets: {},
+      availableSystems: [],
+      currentSystem: null,
+
+      // Workflow datasets (new)
+      workflowVersions: [],
+      workflowCache: {},       // version -> parsed JSON
+
+      // Unified state
+      sourceType: null,        // 'go' or 'workflow'
+      sourceKey: null,         // e.g. 'ndf' or 'dp-ndf-v0_15_0'
       readsets: [],
       constants: {},
       dataToCompare: {},
       currentType: null,
+      currentActivity: null,   // full activity object (workflow mode)
+      loadErrors: [],
+      isWorkflowSource: false,
 
       async init() {
         try {
-          const response = await fetch('readset-output.json');
-          const data = await response.json();
+          // Load Go-source readsets
+          const goSources = [
+            { key: 'ndf', url: 'readset-output-ndf.json' },
+            { key: 'ssf', url: 'readset-output-ssf.json' }
+          ];
 
-          this.readsets = data.readSets;
-          this.constants = data.constants;
+          const goResults = await Promise.allSettled(
+            goSources.map((source) =>
+              fetch(source.url).then((response) => {
+                if (!response.ok) {
+                  throw new Error(`${source.key.toUpperCase()} data not found`);
+                }
+                return response.json().then((data) => ({ key: source.key, data }));
+              })
+            )
+          );
 
-          document.getElementById('last-sync-time').textContent = data.extractedAt;
-
-          // Display git info if available
-          if (data.gitInfo) {
-            const gitContainer = document.getElementById('git-info-container');
-            const gitLink = document.getElementById('git-commit-link');
-            gitContainer.style.display = 'flex';
-            gitLink.textContent = data.gitInfo.shortCommitId;
-            gitLink.href = data.gitInfo.commitUrl;
-            gitLink.title = data.gitInfo.commitId;
+          for (const result of goResults) {
+            if (result.status === 'fulfilled') {
+              this.goDatasets[result.value.key] = result.value.data;
+            } else {
+              this.loadErrors.push(result.reason?.message || 'Failed to load readset data');
+            }
           }
 
-          this.populateDocTypes(data.readSets);
+          this.availableSystems = Object.keys(this.goDatasets);
+
+          // Load workflow manifest
+          try {
+            const manifestResp = await fetch('workflow/index.json');
+            if (manifestResp.ok) {
+              this.workflowVersions = await manifestResp.json();
+            }
+          } catch (e) {
+            this.loadErrors.push('Workflow manifest not found');
+          }
+
+          this.updateLoadErrors();
+
+          if (this.availableSystems.length === 0 && this.workflowVersions.length === 0) {
+            this.showError('No readset data available');
+            return;
+          }
+
+          this.initSourceSelector();
           this.bindEvents();
+
+          // Default to first available source
+          if (this.availableSystems.length > 0) {
+            this.setSource('go', this.availableSystems[0]);
+          } else if (this.workflowVersions.length > 0) {
+            this.setSource('workflow', this.workflowVersions[0]);
+          }
         } catch (error) {
           console.error('Failed to load readset data:', error);
+        }
+      },
+
+      updateLoadErrors() {
+        const container = document.getElementById('readset-load-error');
+        const message = document.getElementById('readset-load-error-message');
+        if (!container || !message) return;
+
+        if (this.loadErrors.length === 0) {
+          container.classList.add('hidden');
+          message.textContent = '';
+          return;
+        }
+
+        container.classList.remove('hidden');
+        message.textContent = this.loadErrors.join(' | ');
+      },
+
+      initSourceSelector() {
+        const systemSelect = document.getElementById('system-select');
+        let options = '';
+
+        // Go source options
+        if (this.availableSystems.length > 0) {
+          options += '<optgroup label="Go Source">';
+          for (const key of this.availableSystems) {
+            options += `<option value="go:${key}">${key.toUpperCase()}</option>`;
+          }
+          options += '</optgroup>';
+        }
+
+        // Workflow version options
+        if (this.workflowVersions.length > 0) {
+          options += '<optgroup label="Workflow">';
+          for (const version of this.workflowVersions) {
+            options += `<option value="workflow:${version}">${version}</option>`;
+          }
+          options += '</optgroup>';
+        }
+
+        systemSelect.innerHTML = options;
+      },
+
+      async setSource(type, key) {
+        this.sourceType = type;
+        this.sourceKey = key;
+        this.isWorkflowSource = type === 'workflow';
+
+        // Update system select value
+        const systemSelect = document.getElementById('system-select');
+        systemSelect.value = `${type}:${key}`;
+
+        // Toggle sync info visibility
+        const syncInfoContainer = document.getElementById('sync-info-container');
+        const precondSection = document.getElementById('precondition-section');
+
+        syncInfoContainer.classList.toggle('hidden', type === 'workflow');
+
+        if (type === 'go') {
+          this.setGoSystem(key);
+          precondSection.classList.add('hidden');
+        } else {
+          await this.setWorkflowVersion(key);
+        }
+      },
+
+      setGoSystem(systemKey) {
+        if (!this.goDatasets[systemKey]) return;
+
+        this.currentSystem = systemKey;
+        const data = this.goDatasets[systemKey];
+
+        this.readsets = data.readSets || [];
+        this.constants = data.constants || {};
+
+        document.getElementById('last-sync-time').textContent = data.extractedAt || '-';
+        this.updateGitInfo(data.gitInfo);
+
+        this.populateDocTypes(this.readsets);
+        this.check();
+      },
+
+      async setWorkflowVersion(version) {
+        // Load from cache or fetch
+        if (!this.workflowCache[version]) {
+          try {
+            const resp = await fetch(`workflow/${version}.json`);
+            if (!resp.ok) throw new Error(`Failed to load ${version}`);
+            this.workflowCache[version] = await resp.json();
+          } catch (e) {
+            this.showError(`Failed to load workflow ${version}: ${e.message}`);
+            return;
+          }
+        }
+
+        const activities = this.workflowCache[version];
+
+        // Transform to readset format — paths are already $.xpath, no constants needed
+        this.readsets = activities.map(a => ({
+          type: a.name,
+          readSet: a.read_set || [],
+          optionalReadSet: a.optional_read_set || [],
+          writeSet: a.write_set || [],
+          precondition: a.precondition || null,
+          dependsOn: a.depends_on || []
+        }));
+        this.constants = {};
+
+        this.populateDocTypes(this.readsets);
+        this.check();
+      },
+
+      updateGitInfo(gitInfo) {
+        const gitContainer = document.getElementById('git-info-container');
+        const gitLink = document.getElementById('git-commit-link');
+        if (gitInfo && gitContainer && gitLink) {
+          gitContainer.style.display = 'flex';
+          gitLink.textContent = gitInfo.shortCommitId;
+          gitLink.href = gitInfo.commitUrl;
+          gitLink.title = gitInfo.commitId;
+        } else if (gitContainer) {
+          gitContainer.style.display = 'none';
         }
       },
 
@@ -280,16 +494,16 @@
         this.currentType = readSets[0]?.type;
 
         const searchInput = document.getElementById('doctype-search');
-        const dropdown = document.getElementById('doctype-dropdown');
         const hiddenInput = document.getElementById('doctype');
 
-        // Set initial value
         if (this.currentType) {
           searchInput.value = this.currentType;
           hiddenInput.value = this.currentType;
+        } else {
+          searchInput.value = '';
+          hiddenInput.value = '';
         }
 
-        // Render dropdown options
         this.renderDropdownOptions(this.allTypes);
       },
 
@@ -301,6 +515,13 @@
       },
 
       bindEvents() {
+        // System selector (unified: go + workflow)
+        document.getElementById('system-select').addEventListener('change', (e) => {
+          const [type, ...keyParts] = e.target.value.split(':');
+          const key = keyParts.join(':');
+          this.setSource(type, key);
+        });
+
         document.getElementById('docrev').addEventListener('input', (e) => {
           try {
             const rawData = JSON.parse(e.target.value);
@@ -315,13 +536,11 @@
         const dropdown = document.getElementById('doctype-dropdown');
         const hiddenInput = document.getElementById('doctype');
 
-        // Show dropdown on focus
         searchInput.addEventListener('focus', () => {
           dropdown.classList.remove('hidden');
           this.renderDropdownOptions(this.allTypes);
         });
 
-        // Filter options on input
         searchInput.addEventListener('input', (e) => {
           const query = e.target.value.toLowerCase();
           const filtered = this.allTypes.filter(type =>
@@ -331,7 +550,6 @@
           dropdown.classList.remove('hidden');
         });
 
-        // Handle option selection
         dropdown.addEventListener('click', (e) => {
           if (e.target.classList.contains('doctype-option')) {
             const value = e.target.dataset.value;
@@ -343,14 +561,12 @@
           }
         });
 
-        // Hide dropdown on click outside
         document.addEventListener('click', (e) => {
           if (!e.target.closest('.dropdown')) {
             dropdown.classList.add('hidden');
           }
         });
 
-        // Keyboard navigation
         searchInput.addEventListener('keydown', (e) => {
           if (e.key === 'Escape') {
             dropdown.classList.add('hidden');
@@ -376,46 +592,547 @@
         const readset = this.readsets.find(r => r.type === this.currentType);
         if (!readset) return;
 
-        const missingData = readset.readSet.filter(v => {
-          const path = this.constants[v];
-          return jsonpath.query(this.dataToCompare, path).length === 0;
-        }).map(v => this.constants[v]);
+        this.currentActivity = readset;
 
-        this.showResult(missingData);
+        const missingMappings = [];
+        const missingData = [];
+        const presentData = [];
+
+        for (const key of readset.readSet) {
+          let path;
+          if (this.isWorkflowSource) {
+            path = key; // already a $.path
+          } else {
+            path = this.constants[key];
+            if (!path || typeof path !== 'string') {
+              missingMappings.push(key);
+              continue;
+            }
+          }
+          try {
+            const sanitizedPath = path.replace(/\[\*\]/g, '');
+            if (jsonpath.query(this.dataToCompare, sanitizedPath).length === 0) {
+              missingData.push(path);
+            } else {
+              presentData.push(path);
+            }
+          } catch (err) {
+            missingMappings.push(this.isWorkflowSource ? path : key);
+          }
+        }
+
+        // Check optional read set (workflow mode only)
+        const missingOptional = [];
+        const presentOptional = [];
+        if (this.isWorkflowSource && readset.optionalReadSet) {
+          for (const path of readset.optionalReadSet) {
+            try {
+              const sanitizedPath = path.replace(/\[\*\]/g, '');
+              if (jsonpath.query(this.dataToCompare, sanitizedPath).length === 0) {
+                missingOptional.push(path);
+              } else {
+                presentOptional.push(path);
+              }
+            } catch (err) {
+              // skip
+            }
+          }
+        }
+
+        this.showResult(missingData, missingMappings, presentData, missingOptional, presentOptional);
+
+        // Show activity details for workflow source
+        if (this.isWorkflowSource) {
+          this.showActivityDetails(readset);
+        }
       },
 
-      showResult(missingData) {
+      showResult(missingData, missingMappings = [], presentData = [], missingOptional = [], presentOptional = []) {
         const container = document.getElementById('readset-checker');
-        if (missingData.length === 0) {
-          container.innerHTML = `
-                        <div class="alert alert-success">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>All fields present!</span>
-                        </div>`;
+        const totalRequired = presentData.length + missingData.length + missingMappings.length;
+        const totalOptional = missingOptional.length + presentOptional.length;
+
+        let html = '';
+
+        // ── Required fields section ──
+        if (missingData.length === 0 && missingMappings.length === 0) {
+          html += `
+            <div class="alert alert-success py-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="font-bold">✅ All ${totalRequired} required field(s) present</span>
+            </div>`;
         } else {
-          container.innerHTML = `
-                        <div class="alert alert-warning">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <div>
-                                <h3 class="font-bold">Missing ${missingData.length} field(s)</h3>
-                                <pre class="text-xs mt-2 overflow-auto">${JSON.stringify(missingData, null, 2)}</pre>
-                            </div>
-                        </div>`;
+          html += `
+            <div class="alert alert-error py-3 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span class="font-bold">❌ Missing ${missingData.length} of ${totalRequired} required field(s)</span>
+            </div>
+            <div class="bg-base-200 rounded-lg p-3 mb-2">
+              <div class="text-xs font-bold mb-1 text-error">Missing required fields:</div>
+              <div class="space-y-1">
+                ${missingData.map(p => `<div class="font-mono text-xs p-1 bg-error/10 rounded text-error">${this.escapeHtml(p)}</div>`).join('')}
+              </div>
+            </div>`;
+
+          if (missingMappings.length > 0) {
+            html += `
+              <div class="bg-base-200 rounded-lg p-3 mb-2">
+                <div class="text-xs font-bold mb-1 text-warning">Missing ${missingMappings.length} constant mapping(s):</div>
+                <div class="space-y-1">
+                  ${missingMappings.map(k => `<div class="font-mono text-xs p-1 bg-warning/10 rounded">${this.escapeHtml(k)}</div>`).join('')}
+                </div>
+              </div>`;
+          }
         }
+
+        // ── Present fields (collapsible) ──
+        if (presentData.length > 0) {
+          html += `
+            <details class="bg-base-200 rounded-lg p-3 mb-2">
+              <summary class="cursor-pointer text-xs font-bold text-success">✅ ${presentData.length} required field(s) present</summary>
+              <div class="mt-2 space-y-1">
+                ${presentData.map(p => `<div class="font-mono text-xs p-1 bg-success/10 rounded text-success">${this.escapeHtml(p)}</div>`).join('')}
+              </div>
+            </details>`;
+        }
+
+        // ── Optional fields section (workflow mode only) ──
+        if (this.isWorkflowSource && totalOptional > 0) {
+          if (missingOptional.length === 0) {
+            html += `
+              <div class="alert alert-info py-2 mt-2">
+                <span class="text-sm">ℹ️ All ${totalOptional} optional field(s) present</span>
+              </div>`;
+          } else {
+            html += `
+              <div class="bg-base-200 rounded-lg p-3 mt-2">
+                <div class="text-xs font-bold mb-1 text-warning">⚠️ ${missingOptional.length} of ${totalOptional} optional field(s) missing:</div>
+                <div class="space-y-1">
+                  ${missingOptional.map(p => `<div class="font-mono text-xs p-1 bg-warning/10 rounded">${this.escapeHtml(p)}</div>`).join('')}
+                </div>
+              </div>`;
+          }
+
+          if (presentOptional.length > 0) {
+            html += `
+              <details class="bg-base-200 rounded-lg p-3 mt-1">
+                <summary class="cursor-pointer text-xs font-bold text-info">ℹ️ ${presentOptional.length} optional field(s) present</summary>
+                <div class="mt-2 space-y-1">
+                  ${presentOptional.map(p => `<div class="font-mono text-xs p-1 bg-info/10 rounded">${this.escapeHtml(p)}</div>`).join('')}
+                </div>
+              </details>`;
+          }
+        }
+
+        container.innerHTML = html;
+      },
+
+      // ============================================
+      // Activity Details (workflow source only)
+      // ============================================
+      showActivityDetails(activity) {
+        const section = document.getElementById('precondition-section');
+        section.classList.remove('hidden');
+
+        this.renderPreconditions(activity);
+        this.renderWriteSet(activity);
+        this.renderDependsOn(activity);
+      },
+
+      renderWriteSet(activity) {
+        const container = document.getElementById('activity-writeset');
+        const writeSet = activity.writeSet || [];
+        if (writeSet.length === 0) {
+          container.innerHTML = '<p class="opacity-50 italic">No write set</p>';
+          return;
+        }
+        container.innerHTML = `
+          <div class="badge badge-sm mb-2">${writeSet.length} field(s)</div>
+          <div class="space-y-1">
+            ${writeSet.map(f => `<div class="p-1 bg-base-200 rounded font-mono">${this.escapeHtml(f)}</div>`).join('')}
+          </div>`;
+      },
+
+      renderDependsOn(activity) {
+        const container = document.getElementById('activity-depends');
+        const deps = activity.dependsOn || [];
+        if (deps.length === 0) {
+          container.innerHTML = '<p class="opacity-50 italic">No dependencies</p>';
+          return;
+        }
+        container.innerHTML = `
+          <div class="badge badge-sm mb-2">${deps.length} dependency(ies)</div>
+          <div class="space-y-1">
+            ${deps.map(d => `
+              <div class="p-2 bg-base-200 rounded flex items-center gap-2">
+                <span class="badge badge-xs ${d.edge_type === 'PRECONDITION' ? 'badge-warning' : 'badge-info'}">${this.escapeHtml(d.edge_type)}</span>
+                <span class="font-medium">${this.escapeHtml(d.activity)}</span>
+                <span class="opacity-50 font-mono text-xs">${this.escapeHtml(d.field)}</span>
+              </div>
+            `).join('')}
+          </div>`;
+      },
+
+      // ============================================
+      // Precondition Rendering & Evaluation
+      // ============================================
+      renderPreconditions(activity) {
+        const container = document.getElementById('precondition-result');
+        const precond = activity.precondition;
+
+        if (!precond) {
+          container.innerHTML = '<p class="opacity-50 italic">No preconditions</p>';
+          return;
+        }
+
+        const hasData = Object.keys(this.dataToCompare).length > 0;
+        let html = '';
+
+        // Evaluate & render condition tree if present
+        if (precond.conditions) {
+          const evalResult = hasData ? this.evaluateCondition(precond.conditions) : null;
+
+          // Overall status badge
+          if (evalResult !== null) {
+            if (evalResult.result === true) {
+              html += '<div class="alert alert-success py-2 mb-3"><span class="text-sm font-bold">✅ Preconditions PASSED</span></div>';
+            } else if (evalResult.result === false) {
+              html += '<div class="alert alert-error py-2 mb-3"><span class="text-sm font-bold">❌ Preconditions FAILED</span></div>';
+            } else {
+              html += '<div class="alert alert-warning py-2 mb-3"><span class="text-sm font-bold">⚠️ Preconditions INDETERMINATE — behavioral conditions cannot be evaluated</span></div>';
+            }
+          }
+
+          // Condition tree
+          html += '<div class="mb-3">' + this.renderConditionTree(precond.conditions, 0, hasData) + '</div>';
+        } else {
+          html += '<div class="alert alert-info py-2 mb-3"><span class="text-sm">ℹ️ No conditional logic — only field presence required</span></div>';
+        }
+
+        // Field set info (always show if present)
+        if (precond.field_set && precond.field_set.length > 0) {
+          html += `
+            <details class="bg-base-200 rounded-lg p-3" open>
+              <summary class="cursor-pointer text-xs font-bold">Precondition field set (${precond.field_set.length} field${precond.field_set.length !== 1 ? 's' : ''})</summary>
+              <div class="mt-2 space-y-1">
+                ${precond.field_set.map(f => {
+                  let fieldStatus = '';
+                  if (hasData) {
+                    try {
+                      const val = jsonpath.query(this.dataToCompare, f.replace(/\[\*\]/g, ''));
+                      fieldStatus = val.length > 0
+                        ? `<span class="text-success font-mono ml-2">= <strong>${this.escapeHtml(JSON.stringify(val[0]))}</strong></span>`
+                        : '<span class="text-error ml-2 font-bold">⊘ missing</span>';
+                    } catch(e) {
+                      fieldStatus = '<span class="text-warning ml-2">? error</span>';
+                    }
+                  }
+                  return `<div class="p-1 bg-base-100 rounded font-mono text-xs">${this.escapeHtml(f)}${fieldStatus}</div>`;
+                }).join('')}
+              </div>
+            </details>`;
+        }
+
+        container.innerHTML = html || '<p class="opacity-50 italic">No preconditions</p>';
+      },
+
+      /**
+       * Evaluate a condition node against the current dataToCompare.
+       * Returns { result: true|false|null, reason: string }
+       * null = indeterminate (behavioral)
+       */
+      evaluateCondition(cond) {
+        if (!cond) return { result: null, reason: 'No condition' };
+
+        switch (cond.type) {
+          case 'simple':
+            return this.evaluateSimple(cond);
+          case 'presence':
+            return this.evaluatePresence(cond);
+          case 'behavioral':
+            return { result: null, reason: cond.description || 'Behavioral (code-level)' };
+          case 'and':
+            return this.evaluateAnd(cond);
+          case 'or':
+            return this.evaluateOr(cond);
+          default:
+            return { result: null, reason: `Unknown type: ${cond.type}` };
+        }
+      },
+
+      evaluateSimple(cond) {
+        const field = cond.field;
+        if (!field) return { result: null, reason: 'No field' };
+
+        try {
+          const sanitizedPath = field.replace(/\[\*\]/g, '');
+          const values = jsonpath.query(this.dataToCompare, sanitizedPath);
+          const expected = String(cond.value);
+
+          if (values.length === 0) {
+            // Missing field: != always true (missing ≠ anything), == always false
+            if (cond.op === '!=') {
+              return { result: true, reason: `${field} not present → != "${expected}" is true` };
+            }
+            return { result: false, reason: `${field} not present` };
+          }
+
+          const actual = String(values[0]);
+          let match;
+
+          // "true"/"false" values represent Go boolean expressions (truthiness check)
+          if (expected === 'true' || expected === 'false') {
+            const isTruthy = actual !== '' && actual !== '0' && actual !== 'false' && actual !== 'null' && actual !== 'undefined';
+            const expectedTruthy = expected === 'true';
+            switch (cond.op) {
+              case '==': match = isTruthy === expectedTruthy; break;
+              case '!=': match = isTruthy !== expectedTruthy; break;
+              default:   return { result: null, reason: `Boolean check doesn't support op: ${cond.op}` };
+            }
+            return {
+              result: match,
+              reason: `${field}: truthy(${actual}) = ${isTruthy} ${cond.op} ${expected} → ${match}`
+            };
+          }
+
+          switch (cond.op) {
+            case '==': match = actual === expected; break;
+            case '!=': match = actual !== expected; break;
+            case '>':  match = Number(actual) > Number(expected); break;
+            case '<':  match = Number(actual) < Number(expected); break;
+            case '>=': match = Number(actual) >= Number(expected); break;
+            case '<=': match = Number(actual) <= Number(expected); break;
+            default:   return { result: null, reason: `Unknown op: ${cond.op}` };
+          }
+
+          return {
+            result: match,
+            reason: `${field}: ${actual} ${cond.op} ${expected} → ${match}`
+          };
+        } catch (e) {
+          return { result: null, reason: `Error evaluating ${field}: ${e.message}` };
+        }
+      },
+
+      evaluatePresence(cond) {
+        const field = cond.field;
+        if (!field) return { result: null, reason: 'No field' };
+
+        try {
+          const sanitizedPath = field.replace(/\[\*\]/g, '');
+          const values = jsonpath.query(this.dataToCompare, sanitizedPath);
+          const isPresent = values.length > 0 && values[0] !== null && values[0] !== undefined;
+
+          // negate: true means "field should NOT be present"
+          const expected = cond.negate ? !isPresent : isPresent;
+          return {
+            result: expected,
+            reason: `${field} ${cond.negate ? 'not ' : ''}present: ${isPresent} → ${expected}`
+          };
+        } catch (e) {
+          return { result: null, reason: `Error: ${e.message}` };
+        }
+      },
+
+      evaluateAnd(cond) {
+        if (!cond.children || cond.children.length === 0) {
+          return { result: true, reason: 'Empty AND (vacuous truth)' };
+        }
+
+        let hasIndeterminate = false;
+        const childResults = [];
+
+        for (const child of cond.children) {
+          const res = this.evaluateCondition(child);
+          childResults.push(res);
+          if (res.result === false) {
+            return { result: false, reason: 'AND: child failed', children: childResults };
+          }
+          if (res.result === null) hasIndeterminate = true;
+        }
+
+        return {
+          result: hasIndeterminate ? null : true,
+          reason: hasIndeterminate ? 'AND: indeterminate (some behavioral)' : 'AND: all passed',
+          children: childResults
+        };
+      },
+
+      evaluateOr(cond) {
+        if (!cond.children || cond.children.length === 0) {
+          return { result: false, reason: 'Empty OR' };
+        }
+
+        let hasIndeterminate = false;
+        const childResults = [];
+
+        for (const child of cond.children) {
+          const res = this.evaluateCondition(child);
+          childResults.push(res);
+          if (res.result === true) {
+            return { result: true, reason: 'OR: child passed', children: childResults };
+          }
+          if (res.result === null) hasIndeterminate = true;
+        }
+
+        return {
+          result: hasIndeterminate ? null : false,
+          reason: hasIndeterminate ? 'OR: indeterminate (some behavioral)' : 'OR: all failed',
+          children: childResults
+        };
+      },
+
+      /**
+       * Render condition tree as nested HTML with pass/fail indicators
+       */
+      renderConditionTree(cond, depth, hasData) {
+        if (!cond) return '';
+
+        const indent = depth > 0 ? 'ml-4 border-l-2 border-base-300 pl-3' : '';
+        const evalResult = hasData ? this.evaluateCondition(cond) : null;
+        const bgClass = this.getResultBgClass(evalResult);
+        const borderClass = this.getResultBorderClass(evalResult);
+
+        switch (cond.type) {
+          case 'simple': {
+            const icon = this.getStatusIcon(evalResult);
+            const isBooleanCheck = String(cond.value) === 'true' || String(cond.value) === 'false';
+            let detail = '';
+
+            if (hasData && cond.field) {
+              try {
+                const vals = jsonpath.query(this.dataToCompare, cond.field.replace(/\[\*\]/g, ''));
+                if (vals.length > 0) {
+                  const actualStr = this.escapeHtml(JSON.stringify(vals[0]));
+                  detail = `<div class="text-xs mt-1 opacity-70">actual: <strong class="text-info">${actualStr}</strong></div>`;
+                } else {
+                  detail = '<div class="text-xs mt-1 text-error font-bold">⊘ field not found</div>';
+                }
+              } catch(e) { /* skip */ }
+            }
+
+            // Readable condition description
+            let condLabel;
+            if (isBooleanCheck) {
+              const want = String(cond.value) === 'true';
+              const opIsEq = cond.op === '==';
+              const meaning = (opIsEq === want) ? 'is truthy (non-empty)' : 'is falsy (empty)';
+              condLabel = `<span class="font-mono text-xs font-bold">${this.escapeHtml(cond.field)}</span>
+                <span class="badge badge-xs badge-ghost ml-1">boolean</span>
+                <span class="opacity-80 ml-1">${meaning}</span>`;
+            } else {
+              condLabel = `<span class="font-mono text-xs font-bold">${this.escapeHtml(cond.field)}</span>
+                <span class="opacity-80 font-bold mx-1">${this.escapeHtml(cond.op)}</span>
+                <span class="font-mono text-xs bg-base-300 px-1 rounded">${this.escapeHtml(String(cond.value))}</span>`;
+            }
+
+            return `
+              <div class="${indent} p-2 my-1 rounded-lg border ${borderClass} ${bgClass}">
+                <div class="flex items-center gap-1 flex-wrap">${icon} ${condLabel}</div>
+                ${detail}
+              </div>`;
+          }
+
+          case 'presence': {
+            const icon = this.getStatusIcon(evalResult);
+            const label = cond.negate ? 'should NOT exist' : 'should EXIST';
+            let detail = '';
+            if (hasData && cond.field) {
+              try {
+                const vals = jsonpath.query(this.dataToCompare, cond.field.replace(/\[\*\]/g, ''));
+                const isPresent = vals.length > 0 && vals[0] !== null && vals[0] !== undefined;
+                detail = isPresent
+                  ? `<div class="text-xs mt-1 opacity-70">found: <strong class="text-info">${this.escapeHtml(JSON.stringify(vals[0]))}</strong></div>`
+                  : '<div class="text-xs mt-1 opacity-70">⊘ missing</div>';
+              } catch(e) { /* skip */ }
+            }
+            return `
+              <div class="${indent} p-2 my-1 rounded-lg border ${borderClass} ${bgClass}">
+                <div class="flex items-center gap-1 flex-wrap">
+                  ${icon} <span class="font-mono text-xs font-bold">${this.escapeHtml(cond.field)}</span>
+                  <span class="badge badge-xs badge-ghost ml-1">presence</span>
+                  <span class="opacity-80 ml-1">${label}</span>
+                </div>
+                ${detail}
+              </div>`;
+          }
+
+          case 'behavioral': {
+            return `
+              <div class="${indent} p-2 my-1 rounded-lg border border-base-300 bg-base-200 opacity-70">
+                ⚠️ <span class="badge badge-xs badge-warning">behavioral</span>
+                <span class="italic text-xs ml-1">${this.escapeHtml(cond.description || 'code-level — cannot evaluate client-side')}</span>
+              </div>`;
+          }
+
+          case 'and':
+          case 'or': {
+            const icon = this.getStatusIcon(evalResult);
+            const label = cond.type.toUpperCase();
+            const childCount = (cond.children || []).length;
+            const passedCount = hasData ? (cond.children || []).filter(c => {
+              const r = this.evaluateCondition(c);
+              return r && r.result === true;
+            }).length : 0;
+            const summary = hasData ? `<span class="opacity-50 ml-1">${passedCount}/${childCount} passed</span>` : '';
+            const children = (cond.children || []).map(c => this.renderConditionTree(c, depth + 1, hasData)).join('');
+            return `
+              <div class="${indent} my-1">
+                <div class="font-bold text-sm p-2 rounded-t-lg ${bgClass} border ${borderClass} border-b-0">
+                  ${icon} <span class="badge badge-sm ${label === 'AND' ? 'badge-primary' : 'badge-secondary'}">${label}</span>
+                  <span class="text-xs opacity-70 ml-1">${childCount} condition${childCount !== 1 ? 's' : ''}</span>
+                  ${summary}
+                </div>
+                <div class="border ${borderClass} border-t-0 rounded-b-lg p-1">
+                  ${children}
+                </div>
+              </div>`;
+          }
+
+          default:
+            return `<div class="${indent} p-1 my-1 opacity-50">Unknown: ${this.escapeHtml(cond.type)}</div>`;
+        }
+      },
+
+      getResultBgClass(evalResult) {
+        if (!evalResult) return 'bg-base-200';
+        if (evalResult.result === true) return 'bg-success/5';
+        if (evalResult.result === false) return 'bg-error/5';
+        return 'bg-warning/5';
+      },
+
+      getResultBorderClass(evalResult) {
+        if (!evalResult) return 'border-base-300';
+        if (evalResult.result === true) return 'border-success/30';
+        if (evalResult.result === false) return 'border-error/30';
+        return 'border-warning/30';
+      },
+
+      getStatusIcon(evalResult) {
+        if (!evalResult) return '⬜';
+        if (evalResult.result === true) return '✅';
+        if (evalResult.result === false) return '❌';
+        return '⚠️';
+      },
+
+      escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
       },
 
       showError(message) {
         document.getElementById('readset-checker').innerHTML = `
-                    <div class="alert alert-error">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>${message}</span>
-                    </div>`;
+          <div class="alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>${message}</span>
+          </div>`;
       }
     };
 

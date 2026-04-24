@@ -1,0 +1,1105 @@
+{
+  "system": "ssf",
+  "extractedAt": "2026-02-05T09:14:07.113Z",
+  "gitInfo": {
+    "commitId": "d9affe7668d5bed65b202d34308ef6fafd8edce0",
+    "shortCommitId": "d9affe7",
+    "commitUrl": "https://github.com/bfi-finance/lora-mou-ssf/commit/d9affe7668d5bed65b202d34308ef6fafd8edce0",
+    "treeUrl": "https://github.com/bfi-finance/lora-mou-ssf/tree/d9affe7668d5bed65b202d34308ef6fafd8edce0"
+  },
+  "searchPaths": [
+    "internal/process/tasking/",
+    "internal/process/document/",
+    "internal/process/operation/",
+    "internal/process/scoring/"
+  ],
+  "totalFiles": 67,
+  "totalReadSets": 62,
+  "totalConstants": 247,
+  "readSets": [
+    {
+      "type": "survey",
+      "readSet": [
+        "DocId"
+      ]
+    },
+    {
+      "type": "review",
+      "readSet": [
+        "DocId",
+        "DocBranchId",
+        "DocBranchBranchName",
+        "DocCustomerName",
+        "DocCustomerProfile",
+        "DocLoanStructureRequestedPlafondAmount",
+        "DocLeadCreatedAt",
+        "DocShowroomMainInfoName",
+        "DocStatusApplication",
+        "DocDocumentsCreditCheckDataSurveyDocumentId",
+        "DocDocumentsCreditCheckDataSurveyDocumentType",
+        "DocDocumentsApprovalEvidence1DocumentType",
+        "DocDocumentsApprovalEvidence2DocumentType",
+        "DocDocumentsApprovalEvidence3DocumentType"
+      ]
+    },
+    {
+      "type": "issue_esign_mou",
+      "readSet": [
+        "DocCustomerName",
+        "DocProcessMouNumber",
+        "DocProcessConsentDocumentId",
+        "DocCustomerProfile"
+      ]
+    },
+    {
+      "type": "getbranchinformation",
+      "readSet": [
+        "DocBranchId"
+      ]
+    },
+    {
+      "type": "getbranchadminfees",
+      "readSet": [
+        "DocBranchId"
+      ]
+    },
+    {
+      "type": "create_mou",
+      "readSet": [
+        "DocId",
+        "DocCustomerCifId",
+        "DocLoanStructureTotalPlafondAmount",
+        "DocLoanStructureEndDate",
+        "DocBranchId",
+        "DocLoanStructureEffectiveRate"
+      ]
+    },
+    {
+      "type": "create_cif_company",
+      "readSet": [
+        "DocCustomerName",
+        "DocCustomerCompanyPersonInChargeKtpName",
+        "DocCustomerNpwpNumber",
+        "DocCustomerCompanyPersonInChargePhoneNumber",
+        "DocCustomerCompanyPersonInChargeEmail",
+        "DocCustomerCompanyShareholder1RelationshipCode",
+        "DocCustomerCompanyShareholder1KtpNik",
+        "DocCustomerCompanyShareholder1KtpName",
+        "DocCustomerCompanyShareholder1KtpAddress",
+        "DocCustomerCompanyShareholder1KtpRt",
+        "DocCustomerCompanyShareholder1KtpRw",
+        "DocCustomerCompanyShareholder1KtpSubDistrictCode",
+        "DocCustomerCompanyShareholder1PhoneNumber",
+        "DocCustomerCompanyShareholder1KtpBirthDate",
+        "DocCustomerCompanyShareholder1KtpGender",
+        "DocCustomerCompanyShareholder1Position",
+        "DocCustomerCompanyShareholder1SharePercentage",
+        "DocDocumentsNpwpDocumentId",
+        "DocCustomerCompanyLineOfBusinessIndustry",
+        "DocCustomerCompanyBusinessScale",
+        "DocCustomerCompanyLineOfBusinessCompanyType",
+        "DocCustomerCompanyEstablishedYear",
+        "DocShowroomMainInfoEmployeeCount",
+        "DocShowroomMainInfoAddressSubDistrictCode",
+        "DocShowroomMainInfoAddressStreet",
+        "DocShowroomMainInfoAddressRt",
+        "DocShowroomMainInfoAddressRw"
+      ]
+    },
+    {
+      "type": "create_cif",
+      "readSet": [
+        "DocCustomerIndividualKtpName",
+        "DocCustomerIndividualKtpNik",
+        "DocCustomerNpwpType",
+        "DocCustomerNpwpNumber",
+        "DocCustomerIndividualKtpGender",
+        "DocCustomerIndividualKtpBirthDate",
+        "DocCustomerIndividualKtpBirthPlace",
+        "DocCustomerIndividualPhoneNumber",
+        "DocCustomerIndividualKtpReligionCode",
+        "DocCustomerIndividualEducationCode",
+        "DocCustomerIndividualMotherMaidenName",
+        "DocCustomerIndividualKtpMaritalStatusCode",
+        "DocCustomerIndividualEmergencyContact1RelationshipCode",
+        "DocCustomerIndividualEmergencyContact1Name",
+        "DocCustomerIndividualEmergencyContact1PhoneNumber",
+        "DocCustomerIndividualEmergencyContact1AddressStreet",
+        "DocCustomerIndividualEmergencyContact1AddressSubDistrictCode",
+        "DocCustomerIndividualEmergencyContact1AddressRt",
+        "DocCustomerIndividualEmergencyContact1AddressRw",
+        "DocCustomerIndividualEmploymentOccupationCode",
+        "DocCustomerIndividualEmploymentIndustry",
+        "DocCustomerIndividualEmploymentMonthlyIncome",
+        "DocCustomerIndividualEmploymentSinceYear",
+        "DocCustomerIndividualDomicileStreet",
+        "DocCustomerIndividualDomicileSubDistrictCode",
+        "DocCustomerIndividualDomicileRt",
+        "DocCustomerIndividualDomicileRw",
+        "DocCustomerIndividualKtpAddress",
+        "DocCustomerIndividualKtpSubDistrictCode",
+        "DocCustomerIndividualKtpRt",
+        "DocCustomerIndividualKtpRw",
+        "DocShowroomMainInfoAddressStreet",
+        "DocShowroomMainInfoAddressSubDistrictCode",
+        "DocShowroomMainInfoAddressRt",
+        "DocShowroomMainInfoAddressRw",
+        "DocCustomerIndividualOwnershipCode",
+        "DocCustomerIndividualStaySince",
+        "DocCustomerIndividualHomeLocation",
+        "DocCustomerIndividualHomePrice",
+        "DocDocumentsKtpDocumentType",
+        "DocDocumentsKtpDocumentId"
+      ]
+    },
+    {
+      "type": "create_and_upload_mou_agreement_doc",
+      "readSet": [
+        "DocId",
+        "DocBranchBranchCity",
+        "DocLoanStructureTotalPlafondAmount",
+        "DocLoanStructureEndDate",
+        "DocLoanStructureAdminFee1",
+        "DocLoanStructureAdminFee2",
+        "DocLoanStructureAdminFee3",
+        "DocLoanStructureAdminFee4",
+        "DocLoanStructureMaxPlafondPercentage",
+        "DocLoanStructureLateFeeRate",
+        "DocLoanStructurePenaltyRate",
+        "DocLoanStructureInterestRate",
+        "DocBranchBranchManagerName",
+        "DocBranchBranchManagerTitle",
+        "DocProcessAuthorizerName",
+        "DocProcessAuthorizerNik",
+        "DocProcessAuthorizerPhoneNumber",
+        "DocProcessAuthorizerAddress",
+        "DocProcessAuthorizer2Name",
+        "DocProcessAuthorizer2Nik",
+        "DocProcessAuthorizer2PhoneNumber",
+        "DocProcessAuthorizer2Address",
+        "DocProcessAuthorizer3Name",
+        "DocProcessAuthorizer3Nik",
+        "DocProcessAuthorizer3PhoneNumber",
+        "DocProcessAuthorizer3Address",
+        "DocCustomerName",
+        "DocShowroomMainInfoName",
+        "DocCustomerBillingAddressStreet",
+        "DocCustomerBillingAddressRt",
+        "DocCustomerBillingAddressRw",
+        "DocCustomerBillingAddressSubDistrictCode",
+        "DocCustomerBillingAddressZipCode"
+      ]
+    },
+    {
+      "type": "get_obligor_summary",
+      "readSet": [
+        "DocCustomerProfile"
+      ]
+    },
+    {
+      "type": "gather_customer_consent_personal",
+      "readSet": [
+        "DocId",
+        "DocBranchId",
+        "DocProductId",
+        "DocCustomerProfile",
+        "DocCustomerType",
+        "DocShowroomMainInfoName",
+        "DocCustomerIndividualPhoneNumber",
+        "DocCustomerIndividualKtpNik"
+      ]
+    },
+    {
+      "type": "gather_customer_consent_company",
+      "readSet": [
+        "DocId",
+        "DocBranchId",
+        "DocProductId",
+        "DocCustomerType",
+        "DocShowroomMainInfoName",
+        "DocCustomerCompanyPersonInChargePhoneNumber",
+        "DocCustomerCompanyPersonInChargeKtpNik",
+        "DocCustomerCompanyShareholder1KtpNik",
+        "DocCustomerCompanyShareholder1PhoneNumber"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_personal_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerIndividualSpouseKtpName",
+        "DocCustomerIndividualSpouseKtpNik",
+        "DocCustomerIndividualSpouseKtpBirthDate",
+        "DocCustomerIndividualSpouseKtpBirthPlace",
+        "DocDocumentsSpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_personal",
+      "readSet": [
+        "DocId",
+        "DocCustomerIndividualKtpName",
+        "DocCustomerIndividualKtpNik",
+        "DocCustomerIndividualKtpBirthDate",
+        "DocCustomerIndividualKtpBirthPlace",
+        "DocDocumentsKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_9_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder9SpouseKtpName",
+        "DocCustomerCompanyShareholder9SpouseKtpNik",
+        "DocCustomerCompanyShareholder9SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder9SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder9SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_9",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder9KtpName",
+        "DocCustomerCompanyShareholder9KtpNik",
+        "DocCustomerCompanyShareholder9KtpBirthDate",
+        "DocCustomerCompanyShareholder9KtpBirthPlace",
+        "DocDocumentsCompanyShareholder9KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_8_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder8SpouseKtpName",
+        "DocCustomerCompanyShareholder8SpouseKtpNik",
+        "DocCustomerCompanyShareholder8SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder8SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder8SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_8",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder8KtpName",
+        "DocCustomerCompanyShareholder8KtpNik",
+        "DocCustomerCompanyShareholder8KtpBirthDate",
+        "DocCustomerCompanyShareholder8KtpBirthPlace",
+        "DocDocumentsCompanyShareholder8KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_7_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder7SpouseKtpName",
+        "DocCustomerCompanyShareholder7SpouseKtpNik",
+        "DocCustomerCompanyShareholder7SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder7SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder7SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_7",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder7KtpName",
+        "DocCustomerCompanyShareholder7KtpNik",
+        "DocCustomerCompanyShareholder7KtpBirthDate",
+        "DocCustomerCompanyShareholder7KtpBirthPlace",
+        "DocDocumentsCompanyShareholder7KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_6_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder6SpouseKtpName",
+        "DocCustomerCompanyShareholder6SpouseKtpNik",
+        "DocCustomerCompanyShareholder6SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder6SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder6SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_6",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder6KtpName",
+        "DocCustomerCompanyShareholder6KtpNik",
+        "DocCustomerCompanyShareholder6KtpBirthDate",
+        "DocCustomerCompanyShareholder6KtpBirthPlace",
+        "DocDocumentsCompanyShareholder6KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_5_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder5SpouseKtpName",
+        "DocCustomerCompanyShareholder5SpouseKtpNik",
+        "DocCustomerCompanyShareholder5SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder5SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder5SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_5",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder5KtpName",
+        "DocCustomerCompanyShareholder5KtpNik",
+        "DocCustomerCompanyShareholder5KtpBirthDate",
+        "DocCustomerCompanyShareholder5KtpBirthPlace",
+        "DocDocumentsCompanyShareholder5KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_4_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder4SpouseKtpName",
+        "DocCustomerCompanyShareholder4SpouseKtpNik",
+        "DocCustomerCompanyShareholder4SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder4SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder4SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_4",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder4KtpName",
+        "DocCustomerCompanyShareholder4KtpNik",
+        "DocCustomerCompanyShareholder4KtpBirthDate",
+        "DocCustomerCompanyShareholder4KtpBirthPlace",
+        "DocDocumentsCompanyShareholder4KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_3_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder3SpouseKtpName",
+        "DocCustomerCompanyShareholder3SpouseKtpNik",
+        "DocCustomerCompanyShareholder3SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder3SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder3SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_3",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder3KtpName",
+        "DocCustomerCompanyShareholder3KtpNik",
+        "DocCustomerCompanyShareholder3KtpBirthDate",
+        "DocCustomerCompanyShareholder3KtpBirthPlace",
+        "DocDocumentsCompanyShareholder3KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_2_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder2SpouseKtpName",
+        "DocCustomerCompanyShareholder2SpouseKtpNik",
+        "DocCustomerCompanyShareholder2SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder2SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder2SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_2",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder2KtpName",
+        "DocCustomerCompanyShareholder2KtpNik",
+        "DocCustomerCompanyShareholder2KtpBirthDate",
+        "DocCustomerCompanyShareholder2KtpBirthPlace",
+        "DocDocumentsCompanyShareholder2KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_1_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder1SpouseKtpName",
+        "DocCustomerCompanyShareholder1SpouseKtpNik",
+        "DocCustomerCompanyShareholder1SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder1SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder1SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_10_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder10SpouseKtpName",
+        "DocCustomerCompanyShareholder10SpouseKtpNik",
+        "DocCustomerCompanyShareholder10SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder10SpouseKtpBirthPlace",
+        "DocDocumentsCompanyShareholder10SpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_10",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder10KtpName",
+        "DocCustomerCompanyShareholder10KtpNik",
+        "DocCustomerCompanyShareholder10KtpBirthDate",
+        "DocCustomerCompanyShareholder10KtpBirthPlace",
+        "DocDocumentsCompanyShareholder10KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_shareholder_1",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyShareholder1KtpName",
+        "DocCustomerCompanyShareholder1KtpNik",
+        "DocCustomerCompanyShareholder1KtpBirthDate",
+        "DocCustomerCompanyShareholder1KtpBirthPlace",
+        "DocDocumentsCompanyShareholder1KtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_pic_spouse",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyPersonInChargeSpouseKtpName",
+        "DocCustomerCompanyPersonInChargeSpouseKtpNik",
+        "DocCustomerCompanyPersonInChargeSpouseKtpBirthDate",
+        "DocCustomerCompanyPersonInChargeSpouseKtpBirthPlace",
+        "DocDocumentsPersonInChargeSpouseKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_pefindo_scoring_company_pic",
+      "readSet": [
+        "DocId",
+        "DocCustomerCompanyPersonInChargeKtpName",
+        "DocCustomerCompanyPersonInChargeKtpNik",
+        "DocCustomerCompanyPersonInChargeKtpBirthDate",
+        "DocCustomerCompanyPersonInChargeKtpBirthPlace",
+        "DocDocumentsPersonInChargeKtpDocumentId"
+      ]
+    },
+    {
+      "type": "check_obligor_personal",
+      "readSet": [
+        "DocCustomerIndividualKtpName",
+        "DocCustomerIndividualKtpNik",
+        "DocCustomerIndividualKtpBirthDate",
+        "DocCustomerIndividualKtpGender"
+      ]
+    },
+    {
+      "type": "check_obligor_company",
+      "readSet": [
+        "DocCustomerNpwpNumber",
+        "DocCustomerNpwpType",
+        "DocCustomerName"
+      ]
+    },
+    {
+      "type": "check_negative_list_personal_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerIndividualKtpMaritalStatusCode",
+        "DocCustomerIndividualSpouseKtpNik",
+        "DocCustomerIndividualSpouseKtpName",
+        "DocCustomerIndividualSpouseKtpBirthDate",
+        "DocCustomerIndividualSpouseKtpBirthPlace",
+        "DocProcessConsentApproverCustomerIndividualStatus"
+      ]
+    },
+    {
+      "type": "check_negative_list_personal",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerIndividualKtpNik",
+        "DocCustomerIndividualKtpName",
+        "DocCustomerIndividualKtpBirthDate",
+        "DocCustomerIndividualKtpBirthPlace",
+        "DocProcessConsentApproverCustomerIndividualStatus"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_9_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder9KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder9SpouseKtpNik",
+        "DocCustomerCompanyShareholder9SpouseKtpName",
+        "DocCustomerCompanyShareholder9SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder9SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder9Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_9",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder9KtpNik",
+        "DocCustomerCompanyShareholder9KtpName",
+        "DocCustomerCompanyShareholder9KtpBirthDate",
+        "DocCustomerCompanyShareholder9KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder9Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_8_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder8KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder8SpouseKtpNik",
+        "DocCustomerCompanyShareholder8SpouseKtpName",
+        "DocCustomerCompanyShareholder8SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder8SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder8Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_8",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder8KtpNik",
+        "DocCustomerCompanyShareholder8KtpName",
+        "DocCustomerCompanyShareholder8KtpBirthDate",
+        "DocCustomerCompanyShareholder8KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder8Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_7_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder7KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder7SpouseKtpNik",
+        "DocCustomerCompanyShareholder7SpouseKtpName",
+        "DocCustomerCompanyShareholder7SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder7SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder7Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_7",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder7KtpNik",
+        "DocCustomerCompanyShareholder7KtpName",
+        "DocCustomerCompanyShareholder7KtpBirthDate",
+        "DocCustomerCompanyShareholder7KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder7Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_6_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder6KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder6SpouseKtpNik",
+        "DocCustomerCompanyShareholder6SpouseKtpName",
+        "DocCustomerCompanyShareholder6SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder6SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder6Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_6",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder6KtpNik",
+        "DocCustomerCompanyShareholder6KtpName",
+        "DocCustomerCompanyShareholder6KtpBirthDate",
+        "DocCustomerCompanyShareholder6KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder6Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_5_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder5KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder5SpouseKtpNik",
+        "DocCustomerCompanyShareholder5SpouseKtpName",
+        "DocCustomerCompanyShareholder5SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder5SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder5Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_5",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder5KtpNik",
+        "DocCustomerCompanyShareholder5KtpName",
+        "DocCustomerCompanyShareholder5KtpBirthDate",
+        "DocCustomerCompanyShareholder5KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder5Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_4_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder4KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder4SpouseKtpNik",
+        "DocCustomerCompanyShareholder4SpouseKtpName",
+        "DocCustomerCompanyShareholder4SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder4SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder4Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_4",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder4KtpNik",
+        "DocCustomerCompanyShareholder4KtpName",
+        "DocCustomerCompanyShareholder4KtpBirthDate",
+        "DocCustomerCompanyShareholder4KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder4Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_3_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder3KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder3SpouseKtpNik",
+        "DocCustomerCompanyShareholder3SpouseKtpName",
+        "DocCustomerCompanyShareholder3SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder3SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder3Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_3",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder3KtpNik",
+        "DocCustomerCompanyShareholder3KtpName",
+        "DocCustomerCompanyShareholder3KtpBirthDate",
+        "DocCustomerCompanyShareholder3KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder3Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_2_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder2KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder2SpouseKtpNik",
+        "DocCustomerCompanyShareholder2SpouseKtpName",
+        "DocCustomerCompanyShareholder2SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder2SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder2Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_2",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder2KtpNik",
+        "DocCustomerCompanyShareholder2KtpName",
+        "DocCustomerCompanyShareholder2KtpBirthDate",
+        "DocCustomerCompanyShareholder2KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder2Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_1_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder1KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder1SpouseKtpNik",
+        "DocCustomerCompanyShareholder1SpouseKtpName",
+        "DocCustomerCompanyShareholder1SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder1SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder1Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_10_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder10KtpMaritalStatusCode",
+        "DocCustomerCompanyShareholder10SpouseKtpNik",
+        "DocCustomerCompanyShareholder10SpouseKtpName",
+        "DocCustomerCompanyShareholder10SpouseKtpBirthDate",
+        "DocCustomerCompanyShareholder10SpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder10Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_10",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder10KtpNik",
+        "DocCustomerCompanyShareholder10KtpName",
+        "DocCustomerCompanyShareholder10KtpBirthDate",
+        "DocCustomerCompanyShareholder10KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder10Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_shareholder_1",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyShareholder1KtpNik",
+        "DocCustomerCompanyShareholder1KtpName",
+        "DocCustomerCompanyShareholder1KtpBirthDate",
+        "DocCustomerCompanyShareholder1KtpBirthPlace",
+        "DocProcessConsentApproverCompanyShareholder1Status"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_person_in_charge_spouse",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyPersonInChargeKtpMaritalStatusCode",
+        "DocCustomerCompanyPersonInChargeSpouseKtpNik",
+        "DocCustomerCompanyPersonInChargeSpouseKtpName",
+        "DocCustomerCompanyPersonInChargeSpouseKtpBirthDate",
+        "DocCustomerCompanyPersonInChargeSpouseKtpBirthPlace",
+        "DocProcessConsentApproverCompanyPersonInChargeStatus"
+      ]
+    },
+    {
+      "type": "check_negative_list_company_person_in_charge",
+      "readSet": [
+        "DocId",
+        "DocSoaId",
+        "DocCustomerProfile",
+        "DocBranchId",
+        "DocCustomerCompanyPersonInChargeKtpNik",
+        "DocCustomerCompanyPersonInChargeKtpName",
+        "DocCustomerCompanyPersonInChargeKtpBirthDate",
+        "DocCustomerCompanyPersonInChargeKtpBirthPlace",
+        "DocProcessConsentApproverCompanyPersonInChargeStatus"
+      ]
+    }
+  ],
+  "constants": {
+    "DocBranchBranchCity": "$.branch.branch_city",
+    "DocBranchBranchManagerName": "$.branch.branch_manager.name",
+    "DocBranchBranchManagerTitle": "$.branch.branch_manager.title",
+    "DocBranchBranchName": "$.branch.branch_name",
+    "DocBranchId": "$.branch.id",
+    "DocCustomerBillingAddressRt": "$.customer.billing.address.rt",
+    "DocCustomerBillingAddressRw": "$.customer.billing.address.rw",
+    "DocCustomerBillingAddressStreet": "$.customer.billing.address.street",
+    "DocCustomerBillingAddressSubDistrictCode": "$.customer.billing.address.sub_district_code",
+    "DocCustomerBillingAddressZipCode": "$.customer.billing.address.zip_code",
+    "DocCustomerCifId": "$.customer.cif_id",
+    "DocCustomerCompanyBusinessScale": "$.customer.company.business_scale",
+    "DocCustomerCompanyEstablishedYear": "$.customer.company.established_year",
+    "DocCustomerCompanyLineOfBusinessCompanyType": "$.customer.company.line_of_business.company_type",
+    "DocCustomerCompanyLineOfBusinessIndustry": "$.customer.company.line_of_business.industry",
+    "DocCustomerCompanyPersonInChargeEmail": "$.customer.company.person_in_charge.email",
+    "DocCustomerCompanyPersonInChargeKtpBirthDate": "$.customer.company.person_in_charge.ktp.birth_date",
+    "DocCustomerCompanyPersonInChargeKtpBirthPlace": "$.customer.company.person_in_charge.ktp.birth_place",
+    "DocCustomerCompanyPersonInChargeKtpMaritalStatusCode": "$.customer.company.person_in_charge.ktp.marital_status_code",
+    "DocCustomerCompanyPersonInChargeKtpName": "$.customer.company.person_in_charge.ktp.name",
+    "DocCustomerCompanyPersonInChargeKtpNik": "$.customer.company.person_in_charge.ktp.nik",
+    "DocCustomerCompanyPersonInChargePhoneNumber": "$.customer.company.person_in_charge.phone_number",
+    "DocCustomerCompanyPersonInChargeSpouseKtpBirthDate": "$.customer.company.person_in_charge.spouse.ktp.birth_date",
+    "DocCustomerCompanyPersonInChargeSpouseKtpBirthPlace": "$.customer.company.person_in_charge.spouse.ktp.birth_place",
+    "DocCustomerCompanyPersonInChargeSpouseKtpName": "$.customer.company.person_in_charge.spouse.ktp.name",
+    "DocCustomerCompanyPersonInChargeSpouseKtpNik": "$.customer.company.person_in_charge.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder1KtpAddress": "$.customer.company.shareholder_1.ktp.address",
+    "DocCustomerCompanyShareholder1KtpBirthDate": "$.customer.company.shareholder_1.ktp.birth_date",
+    "DocCustomerCompanyShareholder1KtpBirthPlace": "$.customer.company.shareholder_1.ktp.birth_place",
+    "DocCustomerCompanyShareholder1KtpGender": "$.customer.company.shareholder_1.ktp.gender",
+    "DocCustomerCompanyShareholder1KtpMaritalStatusCode": "$.customer.company.shareholder_1.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder1KtpName": "$.customer.company.shareholder_1.ktp.name",
+    "DocCustomerCompanyShareholder1KtpNik": "$.customer.company.shareholder_1.ktp.nik",
+    "DocCustomerCompanyShareholder1KtpRt": "$.customer.company.shareholder_1.ktp.rt",
+    "DocCustomerCompanyShareholder1KtpRw": "$.customer.company.shareholder_1.ktp.rw",
+    "DocCustomerCompanyShareholder1KtpSubDistrictCode": "$.customer.company.shareholder_1.ktp.sub_district_code",
+    "DocCustomerCompanyShareholder1PhoneNumber": "$.customer.company.shareholder_1.phone_number",
+    "DocCustomerCompanyShareholder1Position": "$.customer.company.shareholder_1.position",
+    "DocCustomerCompanyShareholder1RelationshipCode": "$.customer.company.shareholder_1.relationship_code",
+    "DocCustomerCompanyShareholder1SharePercentage": "$.customer.company.shareholder_1.share_percentage",
+    "DocCustomerCompanyShareholder1SpouseKtpBirthDate": "$.customer.company.shareholder_1.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder1SpouseKtpBirthPlace": "$.customer.company.shareholder_1.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder1SpouseKtpName": "$.customer.company.shareholder_1.spouse.ktp.name",
+    "DocCustomerCompanyShareholder1SpouseKtpNik": "$.customer.company.shareholder_1.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder10KtpBirthDate": "$.customer.company.shareholder_10.ktp.birth_date",
+    "DocCustomerCompanyShareholder10KtpBirthPlace": "$.customer.company.shareholder_10.ktp.birth_place",
+    "DocCustomerCompanyShareholder10KtpMaritalStatusCode": "$.customer.company.shareholder_10.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder10KtpName": "$.customer.company.shareholder_10.ktp.name",
+    "DocCustomerCompanyShareholder10KtpNik": "$.customer.company.shareholder_10.ktp.nik",
+    "DocCustomerCompanyShareholder10SpouseKtpBirthDate": "$.customer.company.shareholder_10.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder10SpouseKtpBirthPlace": "$.customer.company.shareholder_10.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder10SpouseKtpName": "$.customer.company.shareholder_10.spouse.ktp.name",
+    "DocCustomerCompanyShareholder10SpouseKtpNik": "$.customer.company.shareholder_10.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder2KtpBirthDate": "$.customer.company.shareholder_2.ktp.birth_date",
+    "DocCustomerCompanyShareholder2KtpBirthPlace": "$.customer.company.shareholder_2.ktp.birth_place",
+    "DocCustomerCompanyShareholder2KtpMaritalStatusCode": "$.customer.company.shareholder_2.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder2KtpName": "$.customer.company.shareholder_2.ktp.name",
+    "DocCustomerCompanyShareholder2KtpNik": "$.customer.company.shareholder_2.ktp.nik",
+    "DocCustomerCompanyShareholder2SpouseKtpBirthDate": "$.customer.company.shareholder_2.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder2SpouseKtpBirthPlace": "$.customer.company.shareholder_2.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder2SpouseKtpName": "$.customer.company.shareholder_2.spouse.ktp.name",
+    "DocCustomerCompanyShareholder2SpouseKtpNik": "$.customer.company.shareholder_2.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder3KtpBirthDate": "$.customer.company.shareholder_3.ktp.birth_date",
+    "DocCustomerCompanyShareholder3KtpBirthPlace": "$.customer.company.shareholder_3.ktp.birth_place",
+    "DocCustomerCompanyShareholder3KtpMaritalStatusCode": "$.customer.company.shareholder_3.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder3KtpName": "$.customer.company.shareholder_3.ktp.name",
+    "DocCustomerCompanyShareholder3KtpNik": "$.customer.company.shareholder_3.ktp.nik",
+    "DocCustomerCompanyShareholder3SpouseKtpBirthDate": "$.customer.company.shareholder_3.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder3SpouseKtpBirthPlace": "$.customer.company.shareholder_3.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder3SpouseKtpName": "$.customer.company.shareholder_3.spouse.ktp.name",
+    "DocCustomerCompanyShareholder3SpouseKtpNik": "$.customer.company.shareholder_3.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder4KtpBirthDate": "$.customer.company.shareholder_4.ktp.birth_date",
+    "DocCustomerCompanyShareholder4KtpBirthPlace": "$.customer.company.shareholder_4.ktp.birth_place",
+    "DocCustomerCompanyShareholder4KtpMaritalStatusCode": "$.customer.company.shareholder_4.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder4KtpName": "$.customer.company.shareholder_4.ktp.name",
+    "DocCustomerCompanyShareholder4KtpNik": "$.customer.company.shareholder_4.ktp.nik",
+    "DocCustomerCompanyShareholder4SpouseKtpBirthDate": "$.customer.company.shareholder_4.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder4SpouseKtpBirthPlace": "$.customer.company.shareholder_4.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder4SpouseKtpName": "$.customer.company.shareholder_4.spouse.ktp.name",
+    "DocCustomerCompanyShareholder4SpouseKtpNik": "$.customer.company.shareholder_4.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder5KtpBirthDate": "$.customer.company.shareholder_5.ktp.birth_date",
+    "DocCustomerCompanyShareholder5KtpBirthPlace": "$.customer.company.shareholder_5.ktp.birth_place",
+    "DocCustomerCompanyShareholder5KtpMaritalStatusCode": "$.customer.company.shareholder_5.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder5KtpName": "$.customer.company.shareholder_5.ktp.name",
+    "DocCustomerCompanyShareholder5KtpNik": "$.customer.company.shareholder_5.ktp.nik",
+    "DocCustomerCompanyShareholder5SpouseKtpBirthDate": "$.customer.company.shareholder_5.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder5SpouseKtpBirthPlace": "$.customer.company.shareholder_5.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder5SpouseKtpName": "$.customer.company.shareholder_5.spouse.ktp.name",
+    "DocCustomerCompanyShareholder5SpouseKtpNik": "$.customer.company.shareholder_5.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder6KtpBirthDate": "$.customer.company.shareholder_6.ktp.birth_date",
+    "DocCustomerCompanyShareholder6KtpBirthPlace": "$.customer.company.shareholder_6.ktp.birth_place",
+    "DocCustomerCompanyShareholder6KtpMaritalStatusCode": "$.customer.company.shareholder_6.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder6KtpName": "$.customer.company.shareholder_6.ktp.name",
+    "DocCustomerCompanyShareholder6KtpNik": "$.customer.company.shareholder_6.ktp.nik",
+    "DocCustomerCompanyShareholder6SpouseKtpBirthDate": "$.customer.company.shareholder_6.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder6SpouseKtpBirthPlace": "$.customer.company.shareholder_6.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder6SpouseKtpName": "$.customer.company.shareholder_6.spouse.ktp.name",
+    "DocCustomerCompanyShareholder6SpouseKtpNik": "$.customer.company.shareholder_6.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder7KtpBirthDate": "$.customer.company.shareholder_7.ktp.birth_date",
+    "DocCustomerCompanyShareholder7KtpBirthPlace": "$.customer.company.shareholder_7.ktp.birth_place",
+    "DocCustomerCompanyShareholder7KtpMaritalStatusCode": "$.customer.company.shareholder_7.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder7KtpName": "$.customer.company.shareholder_7.ktp.name",
+    "DocCustomerCompanyShareholder7KtpNik": "$.customer.company.shareholder_7.ktp.nik",
+    "DocCustomerCompanyShareholder7SpouseKtpBirthDate": "$.customer.company.shareholder_7.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder7SpouseKtpBirthPlace": "$.customer.company.shareholder_7.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder7SpouseKtpName": "$.customer.company.shareholder_7.spouse.ktp.name",
+    "DocCustomerCompanyShareholder7SpouseKtpNik": "$.customer.company.shareholder_7.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder8KtpBirthDate": "$.customer.company.shareholder_8.ktp.birth_date",
+    "DocCustomerCompanyShareholder8KtpBirthPlace": "$.customer.company.shareholder_8.ktp.birth_place",
+    "DocCustomerCompanyShareholder8KtpMaritalStatusCode": "$.customer.company.shareholder_8.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder8KtpName": "$.customer.company.shareholder_8.ktp.name",
+    "DocCustomerCompanyShareholder8KtpNik": "$.customer.company.shareholder_8.ktp.nik",
+    "DocCustomerCompanyShareholder8SpouseKtpBirthDate": "$.customer.company.shareholder_8.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder8SpouseKtpBirthPlace": "$.customer.company.shareholder_8.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder8SpouseKtpName": "$.customer.company.shareholder_8.spouse.ktp.name",
+    "DocCustomerCompanyShareholder8SpouseKtpNik": "$.customer.company.shareholder_8.spouse.ktp.nik",
+    "DocCustomerCompanyShareholder9KtpBirthDate": "$.customer.company.shareholder_9.ktp.birth_date",
+    "DocCustomerCompanyShareholder9KtpBirthPlace": "$.customer.company.shareholder_9.ktp.birth_place",
+    "DocCustomerCompanyShareholder9KtpMaritalStatusCode": "$.customer.company.shareholder_9.ktp.marital_status_code",
+    "DocCustomerCompanyShareholder9KtpName": "$.customer.company.shareholder_9.ktp.name",
+    "DocCustomerCompanyShareholder9KtpNik": "$.customer.company.shareholder_9.ktp.nik",
+    "DocCustomerCompanyShareholder9SpouseKtpBirthDate": "$.customer.company.shareholder_9.spouse.ktp.birth_date",
+    "DocCustomerCompanyShareholder9SpouseKtpBirthPlace": "$.customer.company.shareholder_9.spouse.ktp.birth_place",
+    "DocCustomerCompanyShareholder9SpouseKtpName": "$.customer.company.shareholder_9.spouse.ktp.name",
+    "DocCustomerCompanyShareholder9SpouseKtpNik": "$.customer.company.shareholder_9.spouse.ktp.nik",
+    "DocCustomerIndividualDomicileRt": "$.customer.individual.domicile.rt",
+    "DocCustomerIndividualDomicileRw": "$.customer.individual.domicile.rw",
+    "DocCustomerIndividualDomicileStreet": "$.customer.individual.domicile.street",
+    "DocCustomerIndividualDomicileSubDistrictCode": "$.customer.individual.domicile.sub_district_code",
+    "DocCustomerIndividualEducationCode": "$.customer.individual.education_code",
+    "DocCustomerIndividualEmergencyContact1AddressRt": "$.customer.individual.emergency_contact_1.address.rt",
+    "DocCustomerIndividualEmergencyContact1AddressRw": "$.customer.individual.emergency_contact_1.address.rw",
+    "DocCustomerIndividualEmergencyContact1AddressStreet": "$.customer.individual.emergency_contact_1.address.street",
+    "DocCustomerIndividualEmergencyContact1AddressSubDistrictCode": "$.customer.individual.emergency_contact_1.address.sub_district_code",
+    "DocCustomerIndividualEmergencyContact1Name": "$.customer.individual.emergency_contact_1.name",
+    "DocCustomerIndividualEmergencyContact1PhoneNumber": "$.customer.individual.emergency_contact_1.phone_number",
+    "DocCustomerIndividualEmergencyContact1RelationshipCode": "$.customer.individual.emergency_contact_1.relationship_code",
+    "DocCustomerIndividualEmploymentIndustry": "$.customer.individual.employment.industry",
+    "DocCustomerIndividualEmploymentMonthlyIncome": "$.customer.individual.employment.monthly_income",
+    "DocCustomerIndividualEmploymentOccupationCode": "$.customer.individual.employment.occupation_code",
+    "DocCustomerIndividualEmploymentSinceYear": "$.customer.individual.employment.since_year",
+    "DocCustomerIndividualHomeLocation": "$.customer.individual.home_location",
+    "DocCustomerIndividualHomePrice": "$.customer.individual.home_price",
+    "DocCustomerIndividualKtpAddress": "$.customer.individual.ktp.address",
+    "DocCustomerIndividualKtpBirthDate": "$.customer.individual.ktp.birth_date",
+    "DocCustomerIndividualKtpBirthPlace": "$.customer.individual.ktp.birth_place",
+    "DocCustomerIndividualKtpGender": "$.customer.individual.ktp.gender",
+    "DocCustomerIndividualKtpMaritalStatusCode": "$.customer.individual.ktp.marital_status_code",
+    "DocCustomerIndividualKtpName": "$.customer.individual.ktp.name",
+    "DocCustomerIndividualKtpNik": "$.customer.individual.ktp.nik",
+    "DocCustomerIndividualKtpReligionCode": "$.customer.individual.ktp.religion_code",
+    "DocCustomerIndividualKtpRt": "$.customer.individual.ktp.rt",
+    "DocCustomerIndividualKtpRw": "$.customer.individual.ktp.rw",
+    "DocCustomerIndividualKtpSubDistrictCode": "$.customer.individual.ktp.sub_district_code",
+    "DocCustomerIndividualMotherMaidenName": "$.customer.individual.mother_maiden_name",
+    "DocCustomerIndividualOwnershipCode": "$.customer.individual.ownership_code",
+    "DocCustomerIndividualPhoneNumber": "$.customer.individual.phone_number",
+    "DocCustomerIndividualSpouseKtpBirthDate": "$.customer.individual.spouse.ktp.birth_date",
+    "DocCustomerIndividualSpouseKtpBirthPlace": "$.customer.individual.spouse.ktp.birth_place",
+    "DocCustomerIndividualSpouseKtpName": "$.customer.individual.spouse.ktp.name",
+    "DocCustomerIndividualSpouseKtpNik": "$.customer.individual.spouse.ktp.nik",
+    "DocCustomerIndividualStaySince": "$.customer.individual.stay_since",
+    "DocCustomerName": "$.customer.name",
+    "DocCustomerNpwpNumber": "$.customer.npwp.number",
+    "DocCustomerNpwpType": "$.customer.npwp.type",
+    "DocCustomerProfile": "$.customer.profile",
+    "DocCustomerType": "$.customer.type",
+    "DocDocumentsApprovalEvidence1DocumentType": "$.documents.approval_evidence_1.document_type",
+    "DocDocumentsApprovalEvidence2DocumentType": "$.documents.approval_evidence_2.document_type",
+    "DocDocumentsApprovalEvidence3DocumentType": "$.documents.approval_evidence_3.document_type",
+    "DocDocumentsCompanyShareholder10KtpDocumentId": "$.documents.company_shareholder_10_ktp.document_id",
+    "DocDocumentsCompanyShareholder10SpouseKtpDocumentId": "$.documents.company_shareholder_10_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder1KtpDocumentId": "$.documents.company_shareholder_1_ktp.document_id",
+    "DocDocumentsCompanyShareholder1SpouseKtpDocumentId": "$.documents.company_shareholder_1_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder2KtpDocumentId": "$.documents.company_shareholder_2_ktp.document_id",
+    "DocDocumentsCompanyShareholder2SpouseKtpDocumentId": "$.documents.company_shareholder_2_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder3KtpDocumentId": "$.documents.company_shareholder_3_ktp.document_id",
+    "DocDocumentsCompanyShareholder3SpouseKtpDocumentId": "$.documents.company_shareholder_3_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder4KtpDocumentId": "$.documents.company_shareholder_4_ktp.document_id",
+    "DocDocumentsCompanyShareholder4SpouseKtpDocumentId": "$.documents.company_shareholder_4_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder5KtpDocumentId": "$.documents.company_shareholder_5_ktp.document_id",
+    "DocDocumentsCompanyShareholder5SpouseKtpDocumentId": "$.documents.company_shareholder_5_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder6KtpDocumentId": "$.documents.company_shareholder_6_ktp.document_id",
+    "DocDocumentsCompanyShareholder6SpouseKtpDocumentId": "$.documents.company_shareholder_6_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder7KtpDocumentId": "$.documents.company_shareholder_7_ktp.document_id",
+    "DocDocumentsCompanyShareholder7SpouseKtpDocumentId": "$.documents.company_shareholder_7_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder8KtpDocumentId": "$.documents.company_shareholder_8_ktp.document_id",
+    "DocDocumentsCompanyShareholder8SpouseKtpDocumentId": "$.documents.company_shareholder_8_spouse_ktp.document_id",
+    "DocDocumentsCompanyShareholder9KtpDocumentId": "$.documents.company_shareholder_9_ktp.document_id",
+    "DocDocumentsCompanyShareholder9SpouseKtpDocumentId": "$.documents.company_shareholder_9_spouse_ktp.document_id",
+    "DocDocumentsCreditCheckDataSurveyDocumentId": "$.documents.credit_check_data_survey.document_id",
+    "DocDocumentsCreditCheckDataSurveyDocumentType": "$.documents.credit_check_data_survey.document_type",
+    "DocDocumentsKtpDocumentId": "$.documents.ktp.document_id",
+    "DocDocumentsKtpDocumentType": "$.documents.ktp.document_type",
+    "DocDocumentsNpwpDocumentId": "$.documents.npwp.document_id",
+    "DocDocumentsPersonInChargeKtpDocumentId": "$.documents.person_in_charge_ktp.document_id",
+    "DocDocumentsPersonInChargeSpouseKtpDocumentId": "$.documents.person_in_charge_spouse_ktp.document_id",
+    "DocDocumentsSpouseKtpDocumentId": "$.documents.spouse_ktp.document_id",
+    "DocId": "$.id",
+    "DocLeadCreatedAt": "$.lead.created_at",
+    "DocLoanStructureAdminFee1": "$.loan_structure.admin_fee_1",
+    "DocLoanStructureAdminFee2": "$.loan_structure.admin_fee_2",
+    "DocLoanStructureAdminFee3": "$.loan_structure.admin_fee_3",
+    "DocLoanStructureAdminFee4": "$.loan_structure.admin_fee_4",
+    "DocLoanStructureEffectiveRate": "$.loan_structure.effective_rate",
+    "DocLoanStructureEndDate": "$.loan_structure.end_date",
+    "DocLoanStructureInterestRate": "$.loan_structure.interest_rate",
+    "DocLoanStructureLateFeeRate": "$.loan_structure.late_fee_rate",
+    "DocLoanStructureMaxPlafondPercentage": "$.loan_structure.max_plafond_percentage",
+    "DocLoanStructurePenaltyRate": "$.loan_structure.penalty_rate",
+    "DocLoanStructureRequestedPlafondAmount": "$.loan_structure.requested_plafond_amount",
+    "DocLoanStructureTotalPlafondAmount": "$.loan_structure.total_plafond_amount",
+    "DocProcessAuthorizerAddress": "$.process.authorizer.address",
+    "DocProcessAuthorizerName": "$.process.authorizer.name",
+    "DocProcessAuthorizerNik": "$.process.authorizer.nik",
+    "DocProcessAuthorizerPhoneNumber": "$.process.authorizer.phone_number",
+    "DocProcessAuthorizer2Address": "$.process.authorizer_2.address",
+    "DocProcessAuthorizer2Name": "$.process.authorizer_2.name",
+    "DocProcessAuthorizer2Nik": "$.process.authorizer_2.nik",
+    "DocProcessAuthorizer2PhoneNumber": "$.process.authorizer_2.phone_number",
+    "DocProcessAuthorizer3Address": "$.process.authorizer_3.address",
+    "DocProcessAuthorizer3Name": "$.process.authorizer_3.name",
+    "DocProcessAuthorizer3Nik": "$.process.authorizer_3.nik",
+    "DocProcessAuthorizer3PhoneNumber": "$.process.authorizer_3.phone_number",
+    "DocProcessConsentApproverCompanyPersonInChargeStatus": "$.process.consent.approver_company_person_in_charge.status",
+    "DocProcessConsentApproverCompanyShareholder1Status": "$.process.consent.approver_company_shareholder_1.status",
+    "DocProcessConsentApproverCompanyShareholder10Status": "$.process.consent.approver_company_shareholder_10.status",
+    "DocProcessConsentApproverCompanyShareholder2Status": "$.process.consent.approver_company_shareholder_2.status",
+    "DocProcessConsentApproverCompanyShareholder3Status": "$.process.consent.approver_company_shareholder_3.status",
+    "DocProcessConsentApproverCompanyShareholder4Status": "$.process.consent.approver_company_shareholder_4.status",
+    "DocProcessConsentApproverCompanyShareholder5Status": "$.process.consent.approver_company_shareholder_5.status",
+    "DocProcessConsentApproverCompanyShareholder6Status": "$.process.consent.approver_company_shareholder_6.status",
+    "DocProcessConsentApproverCompanyShareholder7Status": "$.process.consent.approver_company_shareholder_7.status",
+    "DocProcessConsentApproverCompanyShareholder8Status": "$.process.consent.approver_company_shareholder_8.status",
+    "DocProcessConsentApproverCompanyShareholder9Status": "$.process.consent.approver_company_shareholder_9.status",
+    "DocProcessConsentApproverCustomerIndividualStatus": "$.process.consent.approver_customer_individual.status",
+    "DocProcessConsentDocumentId": "$.process.consent.document_id",
+    "DocProcessMouNumber": "$.process.mou_number",
+    "DocProductId": "$.product_id",
+    "DocShowroomMainInfoAddressRt": "$.showroom.main.info.address.rt",
+    "DocShowroomMainInfoAddressRw": "$.showroom.main.info.address.rw",
+    "DocShowroomMainInfoAddressStreet": "$.showroom.main.info.address.street",
+    "DocShowroomMainInfoAddressSubDistrictCode": "$.showroom.main.info.address.sub_district_code",
+    "DocShowroomMainInfoEmployeeCount": "$.showroom.main.info.employee_count",
+    "DocShowroomMainInfoName": "$.showroom.main.info.name",
+    "DocSoaId": "$.soa_id",
+    "DocStatusApplication": "$.status.application"
+  }
+}
