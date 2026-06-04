@@ -356,11 +356,11 @@
           this.initSourceSelector();
           this.bindEvents();
 
-          // Default to first available source
-          if (this.availableSystems.length > 0) {
+          // Default to latest workflow, fallback to first Go source
+          if (this.workflowVersions.length > 0) {
+            this.setSource('workflow', this.workflowVersions[this.workflowVersions.length - 1]);
+          } else if (this.availableSystems.length > 0) {
             this.setSource('go', this.availableSystems[0]);
-          } else if (this.workflowVersions.length > 0) {
-            this.setSource('workflow', this.workflowVersions[0]);
           }
         } catch (error) {
           console.error('Failed to load readset data:', error);
@@ -526,6 +526,11 @@
           try {
             const rawData = JSON.parse(e.target.value);
             this.dataToCompare = this.sanitizeKeys(rawData);
+            if (Object.keys(this.dataToCompare).length === 0) {
+              document.getElementById('readset-checker').innerHTML =
+                '<p class="italic text-sm text-base-content/70">Enter doc revision to check...</p>';
+              return;
+            }
             this.check();
           } catch (err) {
             this.showError('Invalid JSON');
