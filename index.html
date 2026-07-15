@@ -459,7 +459,10 @@
           }
         }
 
-        const activities = this.workflowCache[version];
+        const cached = this.workflowCache[version];
+        // Support both the legacy array format and the newer
+        // { source_tag, source_commit, activities: [...] } wrapper.
+        const activities = Array.isArray(cached) ? cached : (cached.activities || []);
 
         // Transform to readset format — paths are already $.xpath, no constants needed
         this.readsets = activities.map(a => ({
