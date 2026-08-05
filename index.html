@@ -73,6 +73,7 @@
           <h2 class="card-title text-sm">Input Internal Doc Revision</h2>
           <textarea id="lastdocrev" class="textarea textarea-bordered w-full font-mono text-xs" rows="3"
             placeholder="Paste your Internal Doc Revision JSON here..."></textarea>
+          <div id="lastdocrev-status" class="text-xs mt-1 hidden"></div>
         </div>
       </div>
 
@@ -87,6 +88,14 @@
                 class="input input-bordered input-sm w-48" />
             </div>
             <div id="cy" class="border border-base-300 rounded-lg"></div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-base-content/70">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#6366f1"></span> process</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#10b981"></span> set_data (external)</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#ef4444;border:2px dashed #fbbf24"></span> rollback trigger (overwrote field)</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#f97316"></span> rolled back</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#14b8a6;border:2px dashed #f97316"></span> re-executed after rollback</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-5 border-t-2 border-dashed border-error"></span> rollback edge</span>
+            </div>
           </div>
         </div>
 
@@ -126,10 +135,69 @@
             <input type="checkbox" checked />
             <div class="collapse-title font-medium text-sm">⚠️ Rollback Info</div>
             <div class="collapse-content">
-              <div id="rollbackInfo" class="text-xs text-base-content/70 max-h-48 overflow-auto">
+              <div id="rollbackInfo" class="text-xs text-base-content/70">
                 <p class="italic">Load data to see rollback analysis</p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rollback Analysis (full width: list on the left, detail on the right) -->
+      <div id="rollback-panel" class="card bg-base-100 shadow-lg scroll-mt-4">
+        <div class="card-body p-4 gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="card-title text-sm">⚠️ Rollback Analysis</h2>
+            <div id="rollback-stats" class="flex flex-wrap items-center gap-1"></div>
+          </div>
+
+          <div role="tablist" class="tabs tabs-boxed tabs-sm self-start" id="rollback-tabs">
+            <button type="button" role="tab" class="tab tab-active" data-rbtab="events">🔄 Events</button>
+            <button type="button" role="tab" class="tab" data-rbtab="markers">↩️ Field markers</button>
+            <button type="button" role="tab" class="tab" data-rbtab="help">ℹ️ How it works</button>
+          </div>
+
+          <!-- Events -->
+          <div id="rbtab-events">
+            <div class="flex flex-wrap gap-2 mb-2">
+              <input type="text" id="rollback-search" placeholder="Filter by process or field..."
+                class="input input-bordered input-sm flex-1 min-w-[12rem]" />
+              <select id="rollback-filter" class="select select-bordered select-sm">
+                <option value="all">All events</option>
+                <option value="different">Re-run changed output</option>
+                <option value="same">Re-run identical output</option>
+              </select>
+            </div>
+            <div class="grid gap-3 lg:grid-cols-[22rem_1fr]">
+              <div id="rollback-list" class="lg:max-h-[32rem] overflow-y-auto pr-1 space-y-1">
+                <p class="text-xs italic opacity-60">Load data to see rollback analysis</p>
+              </div>
+              <div id="rollback-detail" class="lg:max-h-[32rem] overflow-y-auto lg:border-l lg:border-base-300 lg:pl-3">
+                <p class="text-xs italic opacity-60">Select an event on the left</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Field revert markers -->
+          <div id="rbtab-markers" class="hidden">
+            <input type="text" id="marker-search" placeholder="Filter fields..."
+              class="input input-bordered input-sm w-full mb-2" />
+            <div id="rollback-markers" class="max-h-[32rem] overflow-y-auto space-y-1">
+              <p class="text-xs italic opacity-60">Load data to see field revert markers</p>
+            </div>
+          </div>
+
+          <!-- Explainer -->
+          <div id="rbtab-help" class="hidden text-sm">
+            <ol class="ml-4 list-decimal space-y-1 opacity-80">
+              <li>A process <span class="font-semibold">overwrites</span> a field that a previous process already read.</li>
+              <li>The planner finds the <span class="font-semibold">prior writer</span> of that field, then the <span class="font-semibold">earliest reader</span> after it.</li>
+              <li>From that reader it walks forward: any process reading a field in the cumulative written-set is <span class="font-semibold">impacted</span>.</li>
+              <li>Impacted processes get their writes <span class="font-semibold">reverted</span> (except the updated fields) and are <span class="font-semibold">re-queued</span>.</li>
+              <li>They re-run with the new input — visible here as a second execution with a different read hash.</li>
+            </ol>
+            <div class="mt-2 text-xs opacity-60 italic">Reconstructed from revision history. Re-exec-neutral fields and
+              retain-data-on-rollback flags are not observable in this data.</div>
           </div>
         </div>
       </div>
@@ -281,6 +349,16 @@
       // Update panels
       document.getElementById('panel-visualizer').classList.toggle('hidden', tabName !== 'visualizer');
       document.getElementById('panel-readset').classList.toggle('hidden', tabName !== 'readset');
+    }
+
+    // ============================================
+    // Shared helpers
+    // ============================================
+    // Escapes quotes too, so the result is safe inside title="..." attributes.
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML.replace(/"/g, '&quot;');
     }
 
     // ============================================
@@ -1128,9 +1206,7 @@
       },
 
       escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        return escapeHtml(str);
       },
 
       showError(message) {
@@ -1153,14 +1229,13 @@
       requestData: null,
       setData: {},
 
+      escapeHtml(str) {
+        return escapeHtml(str);
+      },
+
       init() {
         document.getElementById('lastdocrev').addEventListener('input', (e) => {
-          try {
-            this.requestData = JSON.parse(e.target.value);
-            this.render();
-          } catch (err) {
-            console.error('Invalid JSON:', err);
-          }
+          this.handleInput(e.target.value);
         });
 
         // Document search functionality
@@ -1172,6 +1247,50 @@
         document.getElementById('graph-search').addEventListener('input', (e) => {
           this.searchNodes(e.target.value);
         });
+
+        this.initRollbackUI();
+      },
+
+      handleInput(rawValue) {
+        const value = rawValue.trim();
+
+        if (!value) {
+          this.requestData = null;
+          this.setStatus('');
+          return;
+        }
+
+        let parsed;
+        try {
+          parsed = JSON.parse(value);
+        } catch (err) {
+          this.setStatus(`Invalid JSON: ${err.message}`, 'error');
+          return;
+        }
+
+        // The visualizer expects [<meta>, { history: { nodes: [...], cache: {...} } }].
+        // Anything else (partially typed input, a different payload) is reported, not thrown.
+        const history = Array.isArray(parsed) ? parsed[1]?.history : undefined;
+        if (!history || !Array.isArray(history.nodes)) {
+          this.setStatus('Unexpected shape: expected an array whose 2nd item has history.nodes', 'error');
+          return;
+        }
+
+        this.requestData = parsed;
+        try {
+          this.render();
+          this.setStatus('');
+        } catch (err) {
+          console.error('Failed to render revision graph:', err);
+          this.setStatus(`Failed to render: ${err.message}`, 'error');
+        }
+      },
+
+      setStatus(message, type) {
+        const el = document.getElementById('lastdocrev-status');
+        if (!el) return;
+        el.textContent = message;
+        el.className = `text-xs mt-1 ${message ? (type === 'error' ? 'text-error' : 'text-base-content/70') : 'hidden'}`;
       },
 
       searchNodes(query) {
@@ -1216,229 +1335,621 @@
         this.setData = {};
         this.nodeKeysByNode = this.mapNodeKeys(nodesWithSetData);
 
-        const edges = this.buildEdges();
-        const nodes = this.buildNodes();
-
-        // Analyze rollbacks
+        // Analyze rollbacks BEFORE building nodes/edges — buildNodes and
+        // buildRollbackEdges both depend on this.rollbackData.
         this.rollbackData = this.analyzeRollbacks();
+        this.docRollbackMarkers = this.findDocRollbackMarkers();
+
+        const edges = [...this.buildEdges(), ...this.buildRollbackEdges()];
+        const nodes = this.buildNodes();
 
         this.initCytoscape(nodes, edges);
         this.displayRollbackSummary();
       },
 
+      // ============================================
+      // Rollback analysis — models planner.Rollback() from
+      // lora-process-sdk/framework/runtime/planner.go:
+      //   1. A field already written gets overwritten (the "updated" set).
+      //   2. PriorWrites: find the process that wrote the prior value.
+      //   3. findEarliestReaderAfter: first later process that READS the field.
+      //   4. impactedSteps: from that reader, walk forward with a cumulative
+      //      written-set; any process whose read set overlaps it is impacted.
+      //   5. Impacted processes get their writes reverted (RevertToValuePriorTo,
+      //      skipping the updated/newly-set fields) and are re-added to the
+      //      run list — so they re-execute with a NEW read hash.
+      // We reconstruct this from the revision history: a process appearing
+      // twice with different read_hash is a rolled-back-and-rerun process.
+      // ============================================
       analyzeRollbacks() {
         const req = this.requestData;
-        const cache = req[1].history.cache;
+        const cache = req[1].history.cache || {};
         const nodes = req[1].history.nodes;
 
-        // Build flat list of all process executions with their index
+        // Build flat exec list, mirroring the planner's exec linked list.
+        // ordinal = Nth occurrence of the process name, matching the "_N"
+        // suffix that mapNodeKeys() assigns to graph node ids.
         const processExecutions = [];
+        const nameCounts = {};
         nodes.forEach((nodeGroup, idx) => {
           for (const processName of Object.keys(nodeGroup)) {
+            nameCounts[processName] = (nameCounts[processName] || 0) + 1;
+            const readHash = nodeGroup[processName].read_hash;
+            const writeHash = nodeGroup[processName].write_hash;
             processExecutions.push({
               index: idx,
               name: processName,
-              readHash: nodeGroup[processName].read_hash,
-              writeHash: nodeGroup[processName].write_hash
+              ordinal: nameCounts[processName],
+              readHash,
+              writeHash,
+              readKeys: Object.keys(cache[readHash]?.value || {}),
+              writeKeys: Object.keys(cache[writeHash]?.value || {})
             });
           }
         });
+        this.processExecutions = processExecutions;
 
-        // Find processes that appear multiple times with different read_hash (= rollback happened)
         const processOccurrences = {};
-        processExecutions.forEach((exec, i) => {
-          if (!processOccurrences[exec.name]) {
-            processOccurrences[exec.name] = [];
-          }
-          processOccurrences[exec.name].push({ ...exec, execIndex: i });
+        processExecutions.forEach((exec) => {
+          (processOccurrences[exec.name] ||= []).push(exec);
         });
 
         const rollbackEvents = [];
 
         for (const [processName, occurrences] of Object.entries(processOccurrences)) {
-          if (occurrences.length <= 1) continue; // No rollback if only one occurrence
+          if (occurrences.length <= 1) continue;
 
-          // For each pair of consecutive occurrences
           for (let i = 0; i < occurrences.length - 1; i++) {
             const firstRun = occurrences[i];
             const rerun = occurrences[i + 1];
 
-            // If read_hash is different, rollback occurred
-            if (firstRun.readHash !== rerun.readHash) {
-              // Find processes that ran between firstRun and rerun
-              const processesBetween = processExecutions.filter(
-                p => p.index > firstRun.index && p.index < rerun.index
-              );
+            // Different read_hash on the rerun = its inputs changed = the
+            // planner rolled it back after an input field was overwritten.
+            if (firstRun.readHash === rerun.readHash) continue;
 
-              // Find which process changed the input values
-              const firstReadData = cache[firstRun.readHash]?.value || {};
-              const rerunReadData = cache[rerun.readHash]?.value || {};
+            const firstReadData = cache[firstRun.readHash]?.value || {};
+            const rerunReadData = cache[rerun.readHash]?.value || {};
 
-              // Find changed values
-              const changedValues = {};
-              const allKeys = new Set([...Object.keys(firstReadData), ...Object.keys(rerunReadData)]);
-              for (const key of allKeys) {
-                const oldVal = JSON.stringify(firstReadData[key]);
-                const newVal = JSON.stringify(rerunReadData[key]);
-                if (oldVal !== newVal) {
-                  changedValues[key] = {
-                    oldValue: firstReadData[key],
-                    newValue: rerunReadData[key]
-                  };
-                }
+            // The "updated" set passed to planner.Rollback(): input fields
+            // whose value differs between the two runs.
+            const changedValues = {};
+            const allKeys = new Set([...Object.keys(firstReadData), ...Object.keys(rerunReadData)]);
+            for (const key of allKeys) {
+              if (JSON.stringify(firstReadData[key]) !== JSON.stringify(rerunReadData[key])) {
+                changedValues[key] = {
+                  oldValue: firstReadData[key],
+                  newValue: rerunReadData[key]
+                };
               }
-
-              // Find which process wrote the changed values (take the LAST one for accuracy)
-              let causingProcess = null;
-              const changedKeys = Object.keys(changedValues);
-
-              // Iterate in reverse to find the last process that wrote the changed values
-              for (let j = processesBetween.length - 1; j >= 0; j--) {
-                const proc = processesBetween[j];
-                const writeData = cache[proc.writeHash]?.value || {};
-                const writtenKeys = Object.keys(writeData);
-
-                // Check if this process wrote any of the changed keys
-                const overlap = writtenKeys.filter(k => changedKeys.includes(k));
-                if (overlap.length > 0) {
-                  // Get the actual values written
-                  const writtenValues = {};
-                  for (const key of overlap) {
-                    writtenValues[key] = writeData[key];
-                  }
-
-                  causingProcess = {
-                    name: proc.name,
-                    nodeIndex: proc.index,
-                    writeHash: proc.writeHash,
-                    fieldsWritten: overlap,
-                    writtenValues: writtenValues,
-                    allFieldsWritten: writtenKeys
-                  };
-                  break; // Take the last (most recent) process that caused the change
-                }
-              }
-
-              rollbackEvents.push({
-                rolledBackProcess: processName,
-                firstRunIndex: firstRun.index,
-                rerunIndex: rerun.index,
-                causingProcess: causingProcess,
-                changedInputValues: changedValues,
-                processesBetween: processesBetween.map(p => p.name)
-              });
             }
+            const changedKeys = Object.keys(changedValues);
+
+            // Trigger: LAST process between the two runs that wrote a changed
+            // field — this is the overwrite that fired planner.Rollback().
+            let causingProcess = null;
+            const processesBetween = processExecutions.filter(
+              p => p.index > firstRun.index && p.index < rerun.index
+            );
+            for (let j = processesBetween.length - 1; j >= 0; j--) {
+              const proc = processesBetween[j];
+              const writeData = cache[proc.writeHash]?.value || {};
+              const overlap = Object.keys(writeData).filter(k => changedKeys.includes(k));
+              if (overlap.length > 0) {
+                const writtenValues = {};
+                for (const key of overlap) writtenValues[key] = writeData[key];
+                causingProcess = {
+                  name: proc.name,
+                  nodeIndex: proc.index,
+                  ordinal: proc.ordinal,
+                  writeHash: proc.writeHash,
+                  fieldsWritten: overlap,
+                  writtenValues,
+                  allFieldsWritten: Object.keys(writeData)
+                };
+                break;
+              }
+            }
+
+            // PriorWrites: the process that wrote the ORIGINAL value the
+            // first run read (or external set_data if no process wrote it).
+            const priorWriters = {};
+            for (const key of changedKeys) {
+              let writer = null;
+              for (const proc of processExecutions) {
+                if (proc.index >= firstRun.index) break;
+                if (proc.writeKeys.includes(key)) writer = proc;
+              }
+              priorWriters[key] = writer
+                ? { name: writer.name, nodeIndex: writer.index }
+                : { name: 'external (set_data)', nodeIndex: null };
+            }
+
+            // impactedSteps: firstRun is the "earliest reader after" the prior
+            // write. Walk forward with a cumulative written-set up to the
+            // trigger — a process whose read set overlaps it is a CANDIDATE
+            // for rollback.
+            //
+            // Overlap alone over-reports badly: common context fields
+            // ($.asset.asset_code, $.status.reservation_expiry, …) are read by
+            // nearly every process, so the cumulative set snowballs and tags
+            // most of the graph. The history gives us a hard check — the
+            // planner re-queues everything it rolls back, so a rolled-back
+            // process MUST execute again after the trigger. Candidates with no
+            // later execution were never rolled back: they are recorded
+            // separately and their writes do not propagate impact onward.
+            const written = new Set([...changedKeys, ...firstRun.writeKeys]);
+            const impactedChain = [{
+              name: firstRun.name,
+              nodeIndex: firstRun.index,
+              ordinal: firstRun.ordinal,
+              via: changedKeys,
+              writes: firstRun.writeKeys
+            }];
+            const unconfirmedReaders = [];
+            const horizon = causingProcess ? causingProcess.nodeIndex : rerun.index;
+            for (const proc of processExecutions) {
+              if (proc.index <= firstRun.index || proc.index > horizon) continue;
+              const via = proc.readKeys.filter(k => written.has(k));
+              if (via.length === 0) continue;
+
+              const reranAfterTrigger = processExecutions.some(
+                p => p.name === proc.name && p.index > horizon
+              );
+              if (!reranAfterTrigger) {
+                unconfirmedReaders.push({
+                  name: proc.name,
+                  nodeIndex: proc.index,
+                  ordinal: proc.ordinal,
+                  via
+                });
+                continue;
+              }
+
+              impactedChain.push({
+                name: proc.name,
+                nodeIndex: proc.index,
+                ordinal: proc.ordinal,
+                via,
+                writes: proc.writeKeys
+              });
+              proc.writeKeys.forEach(k => written.add(k));
+            }
+
+            // Reverted writes: impacted processes' written fields are reset
+            // via RevertToValuePriorTo — except the updated fields themselves
+            // (planner skips `updated` and `newlySet`).
+            const revertedFields = {};
+            for (const step of impactedChain) {
+              const reverted = step.writes.filter(k => !changedKeys.includes(k));
+              if (reverted.length > 0) revertedFields[step.name] = reverted;
+            }
+
+            rollbackEvents.push({
+              rolledBackProcess: processName,
+              firstRunIndex: firstRun.index,
+              firstRunOrdinal: firstRun.ordinal,
+              rerunIndex: rerun.index,
+              rerunOrdinal: rerun.ordinal,
+              sameOutput: firstRun.writeHash === rerun.writeHash,
+              causingProcess,
+              changedInputValues: changedValues,
+              priorWriters,
+              impactedChain,
+              unconfirmedReaders,
+              revertedFields,
+              processesBetween: processesBetween.map(p => p.name)
+            });
           }
         }
 
-        // Sort by historical order (firstRunIndex)
         rollbackEvents.sort((a, b) => a.firstRunIndex - b.firstRunIndex);
-
         return rollbackEvents;
       },
 
-      displayRollbackSummary() {
-        const container = document.getElementById('rollbackInfo');
+      // Explicit "__rollback" revert markers left in field version chains by
+      // RevertToValuePriorTo(id, "__rollback", zero) in planner.Rollback().
+      findDocRollbackMarkers() {
+        const req = this.requestData;
+        const fields = req[1].fields || {};
+        const markers = [];
+        for (const [name, f] of Object.entries(fields)) {
+          const desc = f?.value?.desc;
+          if (!desc || !desc.includes('__rollback')) continue;
+          const entries = desc.split('-->').filter(x => x.includes('__rollback'));
+          markers.push({ field: name, entries: entries.map(e => e.trim()) });
+        }
+        return markers;
+      },
 
-        if (!this.rollbackData || this.rollbackData.length === 0) {
-          container.innerHTML = '<p class="text-success">✅ No rollbacks detected</p>';
+      // ============================================
+      // Rollback UI — full-width master/detail panel.
+      // The sidebar card keeps only a summary; every detail lives in
+      // #rollback-panel so long field paths and values have room to breathe.
+      // ============================================
+      rollbackQuery: '',
+      rollbackFilter: 'all',
+      markerQuery: '',
+      selectedRollback: null,
+
+      initRollbackUI() {
+        document.getElementById('rollback-tabs').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-rbtab]');
+          if (btn) this.showRollbackTab(btn.dataset.rbtab);
+        });
+
+        document.getElementById('rollback-search').addEventListener('input', (e) => {
+          this.rollbackQuery = e.target.value;
+          this.selectedRollback = null;
+          this.renderRollbackEvents();
+        });
+
+        document.getElementById('rollback-filter').addEventListener('change', (e) => {
+          this.rollbackFilter = e.target.value;
+          this.selectedRollback = null;
+          this.renderRollbackEvents();
+        });
+
+        document.getElementById('rollback-list').addEventListener('click', (e) => {
+          const item = e.target.closest('[data-rb-idx]');
+          if (!item) return;
+          this.selectedRollback = Number(item.dataset.rbIdx);
+          this.renderRollbackEvents();
+        });
+
+        document.getElementById('rollback-detail').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-focus-node]');
+          if (btn) this.focusGraphNode(btn.dataset.focusNode);
+        });
+
+        document.getElementById('marker-search').addEventListener('input', (e) => {
+          this.markerQuery = e.target.value;
+          this.renderRollbackMarkers();
+        });
+
+        // Sidebar summary: a trigger row filters the full panel to that trigger.
+        document.getElementById('rollbackInfo').addEventListener('click', (e) => {
+          const row = e.target.closest('[data-trigger]');
+          if (row) {
+            this.rollbackQuery = row.dataset.trigger;
+            document.getElementById('rollback-search').value = this.rollbackQuery;
+            this.selectedRollback = null;
+            this.renderRollbackEvents();
+          }
+          if (row || e.target.closest('#rollback-jump')) {
+            this.showRollbackTab('events');
+            document.getElementById('rollback-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      },
+
+      showRollbackTab(name) {
+        for (const btn of document.querySelectorAll('#rollback-tabs [data-rbtab]')) {
+          btn.classList.toggle('tab-active', btn.dataset.rbtab === name);
+        }
+        for (const tab of ['events', 'markers', 'help']) {
+          document.getElementById(`rbtab-${tab}`).classList.toggle('hidden', tab !== name);
+        }
+      },
+
+      focusGraphNode(id) {
+        if (!this.cy) return;
+        const node = this.cy.$id(id);
+        if (!node || node.length === 0) return;
+        this.cy.elements().removeClass('selected highlighted');
+        node.addClass('selected');
+        this.cy.animate({ center: { eles: node }, duration: 300 });
+      },
+
+      displayRollbackSummary() {
+        this.renderRollbackStats();
+        this.renderRollbackSidebar();
+        this.renderRollbackEvents();
+        this.renderRollbackMarkers();
+      },
+
+      // ---- small formatting helpers ----
+
+      // Long JSON paths are the main readability problem: dim the prefix so the
+      // leaf name — the part that differs between rows — is what the eye lands on.
+      fieldPathHtml(path) {
+        const full = String(path);
+        const safe = this.escapeHtml(full);
+        const cut = full.lastIndexOf('.');
+        if (cut < 0) return `<span class="font-mono break-all" title="${safe}">${safe}</span>`;
+        return `<span class="font-mono break-all" title="${safe}"><span class="opacity-50">${this.escapeHtml(full.slice(0, cut + 1))}</span><span class="font-semibold">${this.escapeHtml(full.slice(cut + 1))}</span></span>`;
+      },
+
+      shortField(path) {
+        const full = String(path);
+        const cut = full.lastIndexOf('.');
+        return cut < 0 ? full : full.slice(cut + 1);
+      },
+
+      formatValue(val) {
+        const str = JSON.stringify(val);
+        if (str === undefined) return '<span class="opacity-50 italic">unset</span>';
+        if (str === 'null') return '<span class="opacity-50 italic">null</span>';
+        if (str === '""') return '<span class="opacity-50 italic">empty</span>';
+        const clipped = str.length > 240 ? `${str.slice(0, 240)}…` : str;
+        return `<span title="${this.escapeHtml(str.slice(0, 2000))}">${this.escapeHtml(clipped)}</span>`;
+      },
+
+      fieldChips(fields, max = 4) {
+        const shown = fields.slice(0, max).map(f =>
+          `<span class="badge badge-ghost badge-xs font-mono" title="${this.escapeHtml(String(f))}">${this.escapeHtml(this.shortField(f))}</span>`
+        ).join(' ');
+        const rest = fields.length - max;
+        return rest > 0
+          ? `${shown} <span class="badge badge-ghost badge-xs" title="${this.escapeHtml(fields.slice(max).join('\n'))}">+${rest}</span>`
+          : shown;
+      },
+
+      // ---- summary ----
+
+      renderRollbackStats() {
+        const events = this.rollbackData || [];
+        const markers = this.docRollbackMarkers || [];
+        const el = document.getElementById('rollback-stats');
+
+        if (!events.length && !markers.length) {
+          el.innerHTML = '<span class="badge badge-success badge-sm">✅ no rollbacks detected</span>';
           return;
         }
 
-        // Group by causingProcess
-        const groupedByCause = {};
-        for (const rb of this.rollbackData) {
-          const causeName = rb.causingProcess?.name || '_unknown';
-          if (!groupedByCause[causeName]) {
-            groupedByCause[causeName] = {
-              causingProcess: rb.causingProcess,
-              events: []
-            };
-          }
-          groupedByCause[causeName].events.push(rb);
+        const triggers = new Set(events.map(rb => rb.causingProcess?.name || '_unknown'));
+        const changedOutput = events.filter(rb => !rb.sameOutput).length;
+        el.innerHTML = `
+          <span class="badge badge-error badge-sm">${events.length} event(s)</span>
+          <span class="badge badge-warning badge-sm">${triggers.size} trigger(s)</span>
+          <span class="badge badge-outline badge-sm">${changedOutput} changed output</span>
+          <span class="badge badge-outline badge-sm">${markers.length} field marker(s)</span>`;
+      },
+
+      renderRollbackSidebar() {
+        const events = this.rollbackData || [];
+        const markers = this.docRollbackMarkers || [];
+        const el = document.getElementById('rollbackInfo');
+
+        if (!events.length && !markers.length) {
+          el.innerHTML = '<p class="text-success">✅ No rollbacks detected</p>';
+          return;
         }
 
-        // Count unique causes
-        const causeCount = Object.keys(groupedByCause).length;
+        const byTrigger = {};
+        for (const rb of events) {
+          const name = rb.causingProcess?.name || 'unknown (external change?)';
+          byTrigger[name] = (byTrigger[name] || 0) + 1;
+        }
 
-        let html = `
-          <div class="mb-2">
-            <span class="badge badge-error">${this.rollbackData.length} rollback event(s)</span>
-            <span class="badge badge-warning ml-1">${causeCount} cause(s)</span>
+        const rows = Object.entries(byTrigger).sort((a, b) => b[1] - a[1]).map(([name, count]) => `
+          <button type="button" data-trigger="${this.escapeHtml(name)}"
+            class="w-full flex items-center justify-between gap-2 p-1 rounded hover:bg-base-200 text-left">
+            <span class="truncate" title="${this.escapeHtml(name)}">🔥 ${this.escapeHtml(name)}</span>
+            <span class="badge badge-error badge-xs">${count}</span>
+          </button>`).join('');
+
+        el.innerHTML = `
+          <div class="flex flex-wrap gap-1 mb-2">
+            <span class="badge badge-error badge-sm">${events.length} event(s)</span>
+            <span class="badge badge-outline badge-sm">${markers.length} marker(s)</span>
           </div>
-        `;
+          <div class="font-medium mb-1">Triggers</div>
+          <div class="space-y-0.5 max-h-40 overflow-y-auto">${rows || '<p class="italic opacity-60">none</p>'}</div>
+          <button type="button" id="rollback-jump" class="btn btn-outline btn-xs w-full mt-2">Open full analysis ↓</button>`;
+      },
 
-        // Sort causes by nodeIndex (historical order)
-        const sortedCauses = Object.entries(groupedByCause).sort((a, b) => {
-          const idxA = a[1].causingProcess?.nodeIndex ?? 999999;
-          const idxB = b[1].causingProcess?.nodeIndex ?? 999999;
-          return idxA - idxB;
+      // ---- events tab ----
+
+      getFilteredRollbacks() {
+        const query = this.rollbackQuery.trim().toLowerCase();
+        return (this.rollbackData || []).map((rb, idx) => ({ rb, idx })).filter(({ rb }) => {
+          if (this.rollbackFilter === 'different' && rb.sameOutput) return false;
+          if (this.rollbackFilter === 'same' && !rb.sameOutput) return false;
+          if (!query) return true;
+          const haystack = [
+            rb.rolledBackProcess,
+            rb.causingProcess?.name || '',
+            ...Object.keys(rb.changedInputValues || {})
+          ].join(' ').toLowerCase();
+          return haystack.includes(query);
         });
+      },
 
-        for (const [causeName, data] of sortedCauses) {
-          const { causingProcess, events } = data;
+      renderRollbackEvents() {
+        const listEl = document.getElementById('rollback-list');
+        const detailEl = document.getElementById('rollback-detail');
+        const total = (this.rollbackData || []).length;
+        const filtered = this.getFilteredRollbacks();
 
-          // Sort events by firstRunIndex
-          events.sort((a, b) => a.firstRunIndex - b.firstRunIndex);
-
-          html += `
-            <div class="mb-3 p-2 bg-base-200 rounded border-l-4 border-error">
-              <div class="font-semibold text-error">🔥 ${causeName === '_unknown' ? 'Unknown Cause' : causeName}</div>
-              ${causingProcess ? `<div class="text-xs opacity-70">at node index ${causingProcess.nodeIndex}</div>` : ''}
-              
-              ${causingProcess?.writtenValues ? `
-                <details class="mt-2 bg-error/10 p-2 rounded" open>
-                  <summary class="cursor-pointer text-xs font-medium text-error">📋 Fields written by this process (${causingProcess.fieldsWritten.length})</summary>
-                  <div class="text-xs mt-1 max-h-32 overflow-auto">
-                    ${Object.entries(causingProcess.writtenValues).map(([key, val]) => `
-                      <div class="mb-1 p-1 bg-base-300 rounded">
-                        <div class="opacity-70 truncate" title="${key}">${key}</div>
-                        <div class="text-success font-mono">${JSON.stringify(val)}</div>
-                      </div>
-                    `).join('')}
-                  </div>
-                </details>
-              ` : ''}
-              
-              <div class="text-xs mt-2">Affected <span class="font-bold">${events.length}</span> process(es):</div>
-              
-              <div class="mt-2 space-y-2">
-                ${events.map(rb => {
-            const changedKeys = Object.keys(rb.changedInputValues || {});
-            return `
-                    <div class="p-2 bg-base-300 rounded">
-                      <div class="font-medium text-warning text-sm">🔄 ${rb.rolledBackProcess}</div>
-                      <div class="text-xs opacity-70">Node: ${rb.firstRunIndex} → ${rb.rerunIndex}</div>
-                      
-                      <details class="mt-1" open>
-                        <summary class="cursor-pointer text-xs">📝 Changed values (${changedKeys.length})</summary>
-                        <div class="text-xs ml-2 mt-1 max-h-48 overflow-auto">
-                          ${changedKeys.map(key => {
-              const change = rb.changedInputValues[key];
-              const oldStr = JSON.stringify(change.oldValue);
-              const newStr = JSON.stringify(change.newValue);
-              return `
-                              <div class="mb-1 p-1 bg-base-200 rounded">
-                                <div class="opacity-70 truncate" title="${key}">${key}</div>
-                                <div class="flex flex-wrap gap-1">
-                                  <span class="text-error">${oldStr || 'null'}</span>
-                                  <span>→</span>
-                                  <span class="text-success">${newStr || 'null'}</span>
-                                </div>
-                              </div>
-                            `;
-            }).join('')}
-                        </div>
-                      </details>
-                    </div>
-                  `;
-          }).join('')}
-              </div>
-            </div>
-          `;
+        if (!filtered.length) {
+          listEl.innerHTML = `<p class="text-xs italic opacity-60">${total ? 'No events match this filter' : 'No rollback events'}</p>`;
+          detailEl.innerHTML = '<p class="text-xs italic opacity-60">Nothing to show</p>';
+          return;
         }
 
-        container.innerHTML = html;
+        if (this.selectedRollback === null || !filtered.some(f => f.idx === this.selectedRollback)) {
+          this.selectedRollback = filtered[0].idx;
+        }
+
+        // Group by trigger, keeping historical order of first appearance.
+        const groups = [];
+        const byName = new Map();
+        for (const item of filtered) {
+          const name = item.rb.causingProcess?.name || 'unknown (external change?)';
+          if (!byName.has(name)) {
+            byName.set(name, { name, items: [] });
+            groups.push(byName.get(name));
+          }
+          byName.get(name).items.push(item);
+        }
+
+        listEl.innerHTML = `
+          <div class="text-[11px] opacity-60 pb-1">${filtered.length} of ${total} event(s)</div>
+          ${groups.map(g => `
+            <div>
+              <div class="sticky top-0 z-10 bg-base-100 py-1 flex items-center gap-1">
+                <span class="text-[11px] font-semibold text-error truncate" title="${this.escapeHtml(g.name)}">🔥 ${this.escapeHtml(g.name)}</span>
+                <span class="badge badge-error badge-xs">${g.items.length}</span>
+              </div>
+              ${g.items.map(({ rb, idx }) => this.renderRollbackListItem(rb, idx)).join('')}
+            </div>`).join('')}`;
+
+        detailEl.innerHTML = this.renderRollbackDetail(this.rollbackData[this.selectedRollback]);
+        detailEl.scrollTop = 0;
+      },
+
+      renderRollbackListItem(rb, idx) {
+        const selected = idx === this.selectedRollback;
+        const changed = Object.keys(rb.changedInputValues || {}).length;
+        return `
+          <button type="button" data-rb-idx="${idx}"
+            class="w-full text-left p-2 rounded border ${selected ? 'border-primary bg-primary/10' : 'border-transparent hover:bg-base-200'}">
+            <div class="flex items-start gap-2">
+              <span class="badge badge-xs mt-0.5 ${rb.sameOutput ? 'badge-success' : 'badge-error'}"
+                title="${rb.sameOutput ? 'Re-run produced identical output' : 'Re-run produced different output'}">${rb.sameOutput ? '=' : '≠'}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block text-xs font-medium break-all">${this.escapeHtml(rb.rolledBackProcess)}</span>
+                <span class="block text-[11px] opacity-60">node ${rb.firstRunIndex} → ${rb.rerunIndex} · ${changed} field(s) changed</span>
+              </span>
+            </div>
+          </button>`;
+      },
+
+      renderRollbackDetail(rb) {
+        const changedKeys = Object.keys(rb.changedInputValues || {});
+        const trigger = rb.causingProcess;
+        const chain = rb.impactedChain || [];
+        const reverted = Object.entries(rb.revertedFields || {});
+
+        const stepCard = (step, label, tone, title, sub, nodeId) => `
+          <div class="p-2 rounded bg-base-200 border-l-4 ${tone}">
+            <div class="text-[10px] uppercase tracking-wide opacity-60">${step} · ${label}</div>
+            <div class="text-xs font-medium break-all">${title}</div>
+            <div class="text-[11px] opacity-70">${sub}</div>
+            ${nodeId ? `<button type="button" data-focus-node="${this.escapeHtml(nodeId)}" class="btn btn-ghost btn-xs mt-1 px-1">🔍 show in graph</button>` : ''}
+          </div>`;
+
+        const timeline = `
+          <div class="grid gap-2 sm:grid-cols-3">
+            ${stepCard('1', 'first run', 'border-warning',
+              this.escapeHtml(rb.rolledBackProcess), `node ${rb.firstRunIndex}`,
+              `${rb.rolledBackProcess}_${rb.firstRunOrdinal}`)}
+            ${stepCard('2', 'trigger', 'border-error',
+              trigger ? this.escapeHtml(trigger.name) : 'external change (set_data / signal)',
+              trigger ? `node ${trigger.nodeIndex} · overwrote ${trigger.fieldsWritten.length} field(s)` : 'no in-history process wrote the changed field',
+              trigger ? `${trigger.name}_${trigger.ordinal}` : null)}
+            ${stepCard('3', 're-run', 'border-info',
+              this.escapeHtml(rb.rolledBackProcess), `node ${rb.rerunIndex}`,
+              `${rb.rolledBackProcess}_${rb.rerunOrdinal}`)}
+          </div>`;
+
+        const changedRows = changedKeys.map(key => {
+          const change = rb.changedInputValues[key];
+          const pw = rb.priorWriters?.[key];
+          const prior = pw
+            ? `prior value by <span class="font-medium">${this.escapeHtml(pw.name)}</span>${pw.nodeIndex !== null ? ` (node ${pw.nodeIndex})` : ''}`
+            : '';
+          return `
+            <tr class="align-top">
+              <td class="whitespace-normal">
+                ${this.fieldPathHtml(key)}
+                ${prior ? `<div class="text-[11px] opacity-60 mt-0.5">${prior}</div>` : ''}
+              </td>
+              <td class="font-mono text-error break-all whitespace-normal">${this.formatValue(change.oldValue)}</td>
+              <td class="font-mono text-success break-all whitespace-normal">${this.formatValue(change.newValue)}</td>
+            </tr>`;
+        }).join('');
+
+        const chainRows = chain.map((step, i) => `
+          <li class="flex flex-wrap items-center gap-1.5 p-1.5 rounded bg-base-200">
+            <span class="badge badge-xs ${i === 0 ? 'badge-warning' : 'badge-ghost'}">${i === 0 ? 'earliest reader' : i + 1}</span>
+            <span class="text-xs font-medium break-all">${this.escapeHtml(step.name)}</span>
+            <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
+            <span class="text-[11px] opacity-70">via ${this.fieldChips(step.via)}</span>
+          </li>`).join('');
+
+        const unconfirmed = rb.unconfirmedReaders || [];
+        const unconfirmedRows = unconfirmed.map(step => `
+          <li class="flex flex-wrap items-center gap-1.5 p-1.5 rounded bg-base-200 opacity-70">
+            <span class="text-xs font-medium break-all">${this.escapeHtml(step.name)}</span>
+            <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
+            <span class="text-[11px]">reads ${this.fieldChips(step.via)}</span>
+          </li>`).join('');
+
+        const revertedRows = reverted.map(([proc, fields]) => `
+          <div class="p-1.5 rounded bg-base-200">
+            <div class="text-xs font-medium break-all">${this.escapeHtml(proc)} <span class="opacity-60 font-normal">— ${fields.length} field(s)</span></div>
+            <div class="mt-1 flex flex-wrap gap-1">${this.fieldChips(fields, 12)}</div>
+          </div>`).join('');
+
+        const section = (title, count, body, open = true) => `
+          <details class="rounded border border-base-300" ${open ? 'open' : ''}>
+            <summary class="cursor-pointer px-2 py-1.5 text-xs font-semibold flex items-center gap-2">
+              <span>${title}</span><span class="badge badge-ghost badge-xs">${count}</span>
+            </summary>
+            <div class="p-2 pt-0">${body}</div>
+          </details>`;
+
+        return `
+          <div class="space-y-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm font-semibold text-warning break-all">🔄 ${this.escapeHtml(rb.rolledBackProcess)}</span>
+              <span class="badge badge-sm ${rb.sameOutput ? 'badge-success' : 'badge-error'}">
+                ${rb.sameOutput ? 're-run produced identical output' : 're-run produced DIFFERENT output'}
+              </span>
+            </div>
+
+            ${timeline}
+
+            ${section('📝 Changed inputs', changedKeys.length, changedKeys.length ? `
+              <div class="overflow-x-auto">
+                <table class="table table-xs">
+                  <thead>
+                    <tr><th class="w-2/5">Field</th><th>Before</th><th>After</th></tr>
+                  </thead>
+                  <tbody>${changedRows}</tbody>
+                </table>
+              </div>` : '<p class="text-xs italic opacity-60">none</p>')}
+
+            ${section('🌊 Rolled back with it', chain.length, chain.length
+              ? `<ol class="space-y-1">${chainRows}</ol>`
+              : '<p class="text-xs italic opacity-60">none</p>', false)}
+
+            ${unconfirmed.length ? section('👀 Read a changed field but never re-ran', unconfirmed.length, `
+              <p class="text-[11px] opacity-60 mb-1">Not marked as rolled back: the planner re-queues everything it
+                rolls back, and these never execute again after the trigger.</p>
+              <ul class="space-y-1">${unconfirmedRows}</ul>`, false) : ''}
+
+            ${section('↩️ Writes reverted before re-run', reverted.length, reverted.length
+              ? `<div class="space-y-1">${revertedRows}</div>`
+              : '<p class="text-xs italic opacity-60">none</p>', false)}
+          </div>`;
+      },
+
+      // ---- field revert markers tab ----
+
+      renderRollbackMarkers() {
+        const markers = this.docRollbackMarkers || [];
+        const el = document.getElementById('rollback-markers');
+        const query = this.markerQuery.trim().toLowerCase();
+        const shown = query ? markers.filter(m => String(m.field).toLowerCase().includes(query)) : markers;
+
+        if (!markers.length) {
+          el.innerHTML = '<p class="text-xs italic opacity-60">No __rollback revert markers in this document</p>';
+          return;
+        }
+
+        el.innerHTML = `
+          <div class="text-[11px] opacity-60 pb-1">
+            ${shown.length} of ${markers.length} field(s) carrying RevertToValuePriorTo entries
+          </div>
+          ${shown.map(m => `
+            <div class="p-2 rounded bg-base-200">
+              <div class="text-xs">${this.fieldPathHtml(m.field)}</div>
+              <div class="mt-1 space-y-0.5 font-mono text-[11px] opacity-80">
+                ${m.entries.map(e => `<div class="break-all">${this.escapeHtml(e)}</div>`).join('')}
+              </div>
+            </div>`).join('') || '<p class="text-xs italic opacity-60">No fields match this filter</p>'}`;
       },
 
       mapNodeKeys(nodes) {
@@ -1482,18 +1993,40 @@
         return edges;
       },
 
+      // Dashed red edges from the process that overwrote a field (trigger)
+      // to the re-executed instance of each rolled-back process.
+      buildRollbackEdges() {
+        const edges = [];
+        if (!this.rollbackData) return edges;
+        const nodeIds = new Set(this.nodeKeysByNode.flat().map(n => n.name));
+        for (const rb of this.rollbackData) {
+          if (!rb.causingProcess) continue;
+          const source = `${rb.causingProcess.name}_${rb.causingProcess.ordinal}`;
+          const target = `${rb.rolledBackProcess}_${rb.rerunOrdinal}`;
+          if (!nodeIds.has(source) || !nodeIds.has(target)) continue;
+          edges.push({
+            data: { id: `rollback_${source}_${target}`, source, target, label: 'rollback' },
+            classes: 'rollback-edge'
+          });
+        }
+        return edges;
+      },
+
       buildNodes() {
-        // Get processes affected by rollback
+        // Instance-specific rollback roles: node ids carry the same "_N"
+        // occurrence suffix that analyzeRollbacks() records as `ordinal`.
         const rollbackTriggers = new Set();
         const rollbackAffected = new Set();
+        const rollbackReruns = new Set();
         if (this.rollbackData) {
           for (const rb of this.rollbackData) {
-            if (rb.causingProcess?.name) {
-              rollbackTriggers.add(rb.causingProcess.name);
+            if (rb.causingProcess) {
+              rollbackTriggers.add(`${rb.causingProcess.name}_${rb.causingProcess.ordinal}`);
             }
-            if (rb.rolledBackProcess) {
-              rollbackAffected.add(rb.rolledBackProcess);
+            for (const step of (rb.impactedChain || [])) {
+              rollbackAffected.add(`${step.name}_${step.ordinal}`);
             }
+            rollbackReruns.add(`${rb.rolledBackProcess}_${rb.rerunOrdinal}`);
           }
         }
 
@@ -1507,12 +2040,12 @@
 
           layer.forEach((nodeData, nodeIndex) => {
             const nodeName = nodeData.name;
-            const baseName = nodeName.replace(/_\d+$/, '');
 
             let nodeClass = '';
             if (nodeName.includes('set_data')) nodeClass = 'green-node';
-            else if (rollbackTriggers.has(baseName)) nodeClass = 'rollback-trigger-node';
-            else if (rollbackAffected.has(baseName)) nodeClass = 'rollback-affected-node';
+            else if (rollbackTriggers.has(nodeName)) nodeClass = 'rollback-trigger-node';
+            else if (rollbackReruns.has(nodeName)) nodeClass = 'rollback-rerun-node';
+            else if (rollbackAffected.has(nodeName)) nodeClass = 'rollback-affected-node';
             else if (nodeName.match(/^(survey|review)_\d$/)) nodeClass = 'yellow-node';
 
             // Create display label: replace underscores with newlines for wrapping
@@ -1649,6 +2182,37 @@
               'background-opacity': 0.9,
               'border-width': 2,
               'border-color': '#fbbf24'
+            }
+          },
+          {
+            selector: '.rollback-rerun-node',
+            style: {
+              'background-color': '#14b8a6',
+              'background-opacity': 0.9,
+              'border-width': 2,
+              'border-color': '#f97316',
+              'border-style': 'dashed'
+            }
+          },
+          {
+            selector: '.rollback-edge',
+            style: {
+              'width': 2,
+              'line-color': '#ef4444',
+              'line-style': 'dashed',
+              'target-arrow-color': '#ef4444',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'unbundled-bezier',
+              'control-point-distances': '-60',
+              'control-point-weights': '0.5',
+              'opacity': 0.9,
+              'label': 'data(label)',
+              'font-size': '8px',
+              'color': '#ef4444',
+              'text-background-color': '#ffffff',
+              'text-background-opacity': 0.7,
+              'text-background-padding': '2px',
+              'z-index': 25
             }
           },
           {
