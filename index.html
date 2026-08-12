@@ -251,7 +251,7 @@
             <ol class="ml-4 list-decimal space-y-1 opacity-80">
               <li>A process <span class="font-semibold">overwrites</span> a field that a previous process already read.</li>
               <li>The planner finds the <span class="font-semibold">prior writer</span> of that field, then the <span class="font-semibold">earliest reader</span> after it.</li>
-              <li>From that reader it walks forward: any process reading a field in the cumulative written-set is <span class="font-semibold">impacted</span>.</li>
+              <li>From that reader it walks forward: any process whose <span class="font-semibold">required read set</span> overlaps the cumulative written-set is <span class="font-semibold">impacted</span>. Optional reads and precondition fields are <span class="font-semibold">by design not rolled back</span>, even though they feed the input hash.</li>
               <li>Impacted processes get their writes <span class="font-semibold">reverted</span> (except the updated fields) and are <span class="font-semibold">re-queued</span>.</li>
               <li>They re-run with the new input — visible here as a second execution with a different read hash.</li>
             </ol>
@@ -1343,7 +1343,20 @@
             id,
             sourceTag: data.source_tag || null,
             neutralFields: new Set(data.re_exec_neutral_fields || []),
-            retainActivities: new Set(activities.filter(a => a.retain_data_on_rollback).map(a => a.name))
+            retainActivities: new Set(activities.filter(a => a.retain_data_on_rollback).map(a => a.name)),
+            // Per-activity dependency kinds. The planner propagates rollback
+            // ONLY via the required read set — optional reads and precondition
+            // fields are by design never rolled back (planner.Rollback uses
+            // ReadSet().Paths alone), even though they contribute to the
+            // execution's input hash.
+            activityDeps: new Map(activities.map(a => [a.name, {
+              read: new Set(a.read_set || []),
+              optional: new Set(a.optional_read_set || []),
+              precond: new Set([
+                ...(a.precondition?.field_set || []),
+                ...(a.precondition?.optional_field_set || [])
+              ])
+            }]))
           };
         } catch (e) {
           console.error('Failed to load workflow definition:', e);
@@ -1560,6 +1573,18 @@
             // planner drops them from the updated-set, so they can explain a
             // read-hash change but never BE the rollback trigger.
             const neutralFields = this.workflowMeta?.neutralFields || new Set();
+            const activityDeps = this.workflowMeta?.activityDeps || null;
+            // How this process depends on a field: 'read' | 'optional' |
+            // 'precondition' | null (no static info). The input hash covers
+            // all three, but only 'read' can cause the planner to roll it back.
+            const depKind = (procName, key) => {
+              const d = activityDeps?.get(procName);
+              if (!d) return null;
+              if (d.read.has(key)) return 'read';
+              if (d.optional.has(key)) return 'optional';
+              if (d.precond.has(key)) return 'precondition';
+              return null;
+            };
             const changedValues = {};
             const allKeys = new Set([...Object.keys(firstReadData), ...Object.keys(rerunReadData)]);
             for (const key of allKeys) {
@@ -1567,15 +1592,20 @@
                 changedValues[key] = {
                   oldValue: firstReadData[key],
                   newValue: rerunReadData[key],
-                  neutral: neutralFields.has(key)
+                  neutral: neutralFields.has(key),
+                  dep: depKind(processName, key)
                 };
               }
             }
             const changedKeys = Object.keys(changedValues);
             const triggeringKeys = changedKeys.filter(k => !changedValues[k].neutral);
-            // If every changed field is neutral, fall back to all of them —
-            // better a marked-neutral trigger than none.
-            const searchKeys = triggeringKeys.length > 0 ? triggeringKeys : changedKeys;
+            // Only a REQUIRED-read field can have caused this process's
+            // rollback (optional/precondition changes are incidental). Fall
+            // back progressively when static info is missing or empty —
+            // better a marked-imprecise trigger than none.
+            const requiredKeys = triggeringKeys.filter(k => changedValues[k].dep === 'read');
+            const searchKeys = requiredKeys.length > 0 ? requiredKeys
+              : (triggeringKeys.length > 0 ? triggeringKeys : changedKeys);
 
             // Trigger: LAST process between the two runs that wrote a changed
             // (non-neutral) field — the overwrite that fired planner.Rollback().
@@ -1644,6 +1674,21 @@
               if (proc.index <= firstRun.index || proc.index > horizon) continue;
               const via = proc.readKeys.filter(k => written.has(k));
               if (via.length === 0) continue;
+
+              // Planner semantics (confirmed by design): rollback propagates
+              // via the REQUIRED read set only. A candidate whose overlap is
+              // entirely optional/precondition fields is never rolled back.
+              const kinds = activityDeps?.get(proc.name);
+              if (kinds && !via.some(k => kinds.read.has(k))) {
+                unconfirmedReaders.push({
+                  name: proc.name,
+                  nodeIndex: proc.index,
+                  ordinal: proc.ordinal,
+                  via,
+                  byDesign: true
+                });
+                continue;
+              }
 
               // Two independent kinds of evidence that the planner really did
               // roll this execution back: it was re-queued (runs again after
@@ -2067,6 +2112,9 @@
         const neutralBadge = (isNeutral) => isNeutral
           ? '<span class="badge badge-xs badge-ghost" title="SetReExecNeutral(true): the planner drops this field from the updated-set — a change to it never triggers a rollback.">neutral</span>'
           : '';
+        const depBadge = (dep) => (dep === 'optional' || dep === 'precondition')
+          ? `<span class="badge badge-xs badge-ghost" title="This process depends on the field via its ${dep === 'optional' ? 'optional read set' : 'precondition set'} — by design the planner never rolls a process back for it, so this change is incidental, not the cause.">${dep} only</span>`
+          : '';
 
         const changedRows = changedKeys.map(key => {
           const change = rb.changedInputValues[key];
@@ -2077,7 +2125,7 @@
           return `
             <tr class="align-top">
               <td class="whitespace-normal">
-                ${this.fieldPathHtml(key)} ${neutralBadge(change.neutral)}
+                ${this.fieldPathHtml(key)} ${neutralBadge(change.neutral)} ${depBadge(change.dep)}
                 ${prior ? `<div class="text-[11px] opacity-60 mt-0.5">${prior}</div>` : ''}
               </td>
               <td class="font-mono text-error break-all whitespace-normal">${this.formatValue(change.oldValue)}</td>
@@ -2100,6 +2148,7 @@
             <span class="text-xs">${nodeLink(step.name, step.ordinal)}</span>
             <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
             <span class="text-[11px]">reads ${this.fieldChips(step.via)}</span>
+            ${step.byDesign ? '<span class="badge badge-xs badge-info" title="Its overlap with the changed data is entirely optional-read/precondition fields — the planner propagates rollback via the required read set only, so skipping it is correct behavior.">optional/precondition only — skipped by design</span>' : ''}
             ${retainBadge(step.name)}
           </li>`).join('');
 
@@ -2158,9 +2207,10 @@
               ? `<ol class="space-y-1">${chainRows}</ol>`
               : '<p class="text-xs italic opacity-60">none</p>', false)}
 
-            ${unconfirmed.length ? section('👀 Read a changed field but never re-ran', unconfirmed.length, `
-              <p class="text-[11px] opacity-60 mb-1">Not marked as rolled back: the planner re-queues everything it
-                rolls back, and these never execute again after the trigger.</p>
+            ${unconfirmed.length ? section('👀 Read changed data but not rolled back', unconfirmed.length, `
+              <p class="text-[11px] opacity-60 mb-1">Two possible reasons: the overlap is optional-read/precondition
+                only (the planner propagates rollback via the required read set — by design), or no rollback evidence
+                exists (never re-ran after the trigger and left no revert marker).</p>
               <ul class="space-y-1">${unconfirmedRows}</ul>`, false) : ''}
 
             ${section('↩️ Writes reverted before re-run', reverted.length, (reverted.length
