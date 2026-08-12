@@ -78,7 +78,22 @@
       </div>
 
       <!-- Graph and Info Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <!-- Node list -->
+        <div class="card bg-base-100 shadow-lg">
+          <div class="card-body p-4 gap-2">
+            <div class="flex items-center justify-between gap-2">
+              <h2 class="card-title text-sm">🧩 Nodes</h2>
+              <span id="node-list-count" class="badge badge-ghost badge-sm">0</span>
+            </div>
+            <input type="text" id="node-list-search" placeholder="Filter nodes..."
+              class="input input-bordered input-sm w-full" />
+            <div id="node-list" class="max-h-[26rem] overflow-y-auto pr-1 space-y-0.5">
+              <p class="text-xs italic opacity-60">Load data to list nodes</p>
+            </div>
+          </div>
+        </div>
+
         <!-- Cytoscape Graph -->
         <div class="lg:col-span-2 card bg-base-100 shadow-lg">
           <div class="card-body p-4">
@@ -101,32 +116,12 @@
 
         <!-- Info Panels -->
         <div class="space-y-4">
-          <div class="collapse collapse-arrow bg-base-100 shadow-lg">
+          <div class="collapse collapse-arrow bg-base-100 shadow-lg border-l-4 border-primary">
             <input type="checkbox" checked />
-            <div class="collapse-title font-medium text-sm">📖 Read Set</div>
-            <div class="collapse-content pr-4">
-              <div id="readSet" class="text-xs text-base-content/70 max-h-32 overflow-auto">
-                <p class="italic">Click a node to see read set</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="collapse collapse-arrow bg-base-100 shadow-lg">
-            <input type="checkbox" checked />
-            <div class="collapse-title font-medium text-sm">✏️ Write Set</div>
-            <div class="collapse-content pr-4">
-              <div id="writeSet" class="text-xs text-base-content/70 max-h-32 overflow-auto">
-                <p class="italic">Click a node to see write set</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="collapse collapse-arrow bg-base-100 shadow-lg">
-            <input type="checkbox" checked />
-            <div class="collapse-title font-medium text-sm">🔄 Data Changed</div>
-            <div class="collapse-content pr-4">
-              <div id="diffToLastDoc" class="text-xs text-base-content/70 max-h-32 overflow-auto">
-                <p class="italic">Click a node to see diff</p>
+            <div class="collapse-title font-medium text-sm">🎯 Selected Node</div>
+            <div class="collapse-content">
+              <div id="node-summary" class="text-xs text-base-content/70">
+                <p class="italic">Click a node in the graph</p>
               </div>
             </div>
           </div>
@@ -138,6 +133,61 @@
               <div id="rollbackInfo" class="text-xs text-base-content/70">
                 <p class="italic">Load data to see rollback analysis</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Inspector (full width: read set / write set / changes / document) -->
+      <div id="node-inspector" class="card bg-base-100 shadow-lg scroll-mt-4">
+        <div class="card-body p-4 gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="card-title text-sm">🔍 Node Inspector</h2>
+            <div id="inspector-meta" class="flex flex-wrap items-center gap-1"></div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div role="tablist" class="tabs tabs-boxed tabs-sm" id="inspector-tabs">
+              <button type="button" role="tab" class="tab tab-active" data-instab="read">
+                📖 Read set <span class="badge badge-ghost badge-xs ml-1" data-instab-count="read">0</span>
+              </button>
+              <button type="button" role="tab" class="tab" data-instab="write">
+                ✏️ Write set <span class="badge badge-ghost badge-xs ml-1" data-instab-count="write">0</span>
+              </button>
+              <button type="button" role="tab" class="tab" data-instab="changed">
+                🔄 Changed <span class="badge badge-ghost badge-xs ml-1" data-instab-count="changed">0</span>
+              </button>
+              <button type="button" role="tab" class="tab" data-instab="document">
+                📄 Document <span class="badge badge-ghost badge-xs ml-1" data-instab-count="document">0</span>
+              </button>
+            </div>
+            <input type="text" id="inspector-search" placeholder="Filter by field or value..."
+              class="input input-bordered input-sm flex-1 min-w-[12rem]" />
+          </div>
+
+          <div id="inspector-body" class="max-h-[32rem] overflow-y-auto">
+            <p class="text-xs italic opacity-60">Click a node in the graph to inspect its data</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field History — which nodes wrote a field, and what they wrote -->
+      <div id="field-panel" class="card bg-base-100 shadow-lg scroll-mt-4">
+        <div class="card-body p-4 gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="card-title text-sm">🔎 Field History</h2>
+            <div id="field-meta" class="flex flex-wrap items-center gap-1"></div>
+          </div>
+
+          <input type="text" id="field-search" placeholder="Search a field, e.g. asset_code or loan_structure.ltv"
+            class="input input-bordered input-sm w-full" />
+
+          <div class="grid gap-3 lg:grid-cols-[22rem_1fr]">
+            <div id="field-list" class="lg:max-h-[28rem] overflow-y-auto pr-1 space-y-0.5">
+              <p class="text-xs italic opacity-60">Type to search the document's fields</p>
+            </div>
+            <div id="field-timeline" class="lg:max-h-[28rem] overflow-y-auto lg:border-l lg:border-base-300 lg:pl-3">
+              <p class="text-xs italic opacity-60">Pick a field to see every node that wrote it</p>
             </div>
           </div>
         </div>
@@ -202,21 +252,6 @@
         </div>
       </div>
 
-      <!-- Document Preview -->
-      <div class="card bg-base-100 shadow-lg">
-        <div class="card-body p-4">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="card-title text-sm">📄 Document</h2>
-          </div>
-          <div class="form-control">
-            <input type="text" id="document-search" placeholder="Search in document..."
-              class="input input-bordered input-sm w-full mb-2" />
-          </div>
-          <div id="document" class="text-xs text-base-content/70 max-h-48 overflow-auto">
-            <p class="italic">Click a node to see document</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- ReadSet Checker Panel -->
@@ -1238,16 +1273,14 @@
           this.handleInput(e.target.value);
         });
 
-        // Document search functionality
-        document.getElementById('document-search').addEventListener('input', (e) => {
-          this.filterDocument(e.target.value);
-        });
-
         // Graph node search functionality
         document.getElementById('graph-search').addEventListener('input', (e) => {
           this.searchNodes(e.target.value);
         });
 
+        this.initNodeList();
+        this.initInspector();
+        this.initFieldSearch();
         this.initRollbackUI();
       },
 
@@ -1345,6 +1378,15 @@
 
         this.initCytoscape(nodes, edges);
         this.displayRollbackSummary();
+        this.clearNodeInfo();
+
+        this.nodeListQuery = '';
+        this.fieldQuery = '';
+        this.selectedField = null;
+        document.getElementById('node-list-search').value = '';
+        document.getElementById('field-search').value = '';
+        this.renderNodeList();
+        this.renderFieldSearch();
       },
 
       // ============================================
@@ -1369,9 +1411,14 @@
         // Build flat exec list, mirroring the planner's exec linked list.
         // ordinal = Nth occurrence of the process name, matching the "_N"
         // suffix that mapNodeKeys() assigns to graph node ids.
+        // Index over the same filtered list the graph is built from (empty
+        // groups dropped, set_data prepended at 0), so "node N" here means the
+        // same execution as "node N" in the node list and inspector.
         const processExecutions = [];
         const nameCounts = {};
-        nodes.forEach((nodeGroup, idx) => {
+        const nonEmpty = nodes.filter(n => Object.keys(n).length > 0);
+        nonEmpty.forEach((nodeGroup, filteredIdx) => {
+          const idx = filteredIdx + 1; // slot 0 is the prepended set_data layer
           for (const processName of Object.keys(nodeGroup)) {
             nameCounts[processName] = (nameCounts[processName] || 0) + 1;
             const readHash = nodeGroup[processName].read_hash;
@@ -1388,6 +1435,7 @@
           }
         });
         this.processExecutions = processExecutions;
+        const execReverts = this.buildExecutionReverts(processExecutions);
 
         const processOccurrences = {};
         processExecutions.forEach((exec) => {
@@ -1460,7 +1508,7 @@
                 if (proc.writeKeys.includes(key)) writer = proc;
               }
               priorWriters[key] = writer
-                ? { name: writer.name, nodeIndex: writer.index }
+                ? { name: writer.name, nodeIndex: writer.index, ordinal: writer.ordinal }
                 : { name: 'external (set_data)', nodeIndex: null };
             }
 
@@ -1473,10 +1521,10 @@
             // ($.asset.asset_code, $.status.reservation_expiry, …) are read by
             // nearly every process, so the cumulative set snowballs and tags
             // most of the graph. The history gives us a hard check — the
-            // planner re-queues everything it rolls back, so a rolled-back
-            // process MUST execute again after the trigger. Candidates with no
-            // later execution were never rolled back: they are recorded
-            // separately and their writes do not propagate impact onward.
+            // planner re-queues everything it rolls back and reverts its
+            // writes, so a rolled-back process leaves at least one of those
+            // two traces. Candidates leaving neither are recorded separately
+            // and their writes do not propagate impact onward.
             const written = new Set([...changedKeys, ...firstRun.writeKeys]);
             const impactedChain = [{
               name: firstRun.name,
@@ -1492,10 +1540,16 @@
               const via = proc.readKeys.filter(k => written.has(k));
               if (via.length === 0) continue;
 
+              // Two independent kinds of evidence that the planner really did
+              // roll this execution back: it was re-queued (runs again after
+              // the trigger), or its writes carry __rollback revert markers.
+              // A process re-queued at the very end of the run never gets to
+              // re-execute, so the marker is the only trace it leaves.
               const reranAfterTrigger = processExecutions.some(
                 p => p.name === proc.name && p.index > horizon
               );
-              if (!reranAfterTrigger) {
+              const reverted = execReverts[`${proc.name}_${proc.ordinal}`] || [];
+              if (!reranAfterTrigger && reverted.length === 0) {
                 unconfirmedReaders.push({
                   name: proc.name,
                   nodeIndex: proc.index,
@@ -1515,13 +1569,15 @@
               proc.writeKeys.forEach(k => written.add(k));
             }
 
-            // Reverted writes: impacted processes' written fields are reset
-            // via RevertToValuePriorTo — except the updated fields themselves
-            // (planner skips `updated` and `newlySet`).
+            // Reverted writes, taken from the __rollback markers the planner
+            // left in the field chains rather than assumed from the write set:
+            // it skips re-exec-neutral and retain-data-on-rollback fields, and
+            // a write of an unchanged value leaves no chain entry at all.
             const revertedFields = {};
             for (const step of impactedChain) {
-              const reverted = step.writes.filter(k => !changedKeys.includes(k));
-              if (reverted.length > 0) revertedFields[step.name] = reverted;
+              const stepId = `${step.name}_${step.ordinal}`;
+              const reverted = execReverts[stepId] || [];
+              if (reverted.length > 0) revertedFields[stepId] = reverted;
             }
 
             rollbackEvents.push({
@@ -1544,6 +1600,49 @@
 
         rollbackEvents.sort((a, b) => a.firstRunIndex - b.firstRunIndex);
         return rollbackEvents;
+      },
+
+      // Which fields the planner demonstrably reverted after each execution's
+      // write. A field's version chain lists its writers in order; a
+      // "__rollback" entry sitting between one write by P and P's next write
+      // is RevertToValuePriorTo undoing exactly that write.
+      buildExecutionReverts(processExecutions) {
+        const fields = this.requestData[1].fields || {};
+        const chains = {};
+        const positions = {};
+
+        for (const [field, def] of Object.entries(fields)) {
+          const writers = (def?.value?.succ || []).map(s => String(s?.Id || '').split('-')[0]);
+          if (!writers.includes('__rollback')) continue; // nothing was reverted here
+          chains[field] = writers;
+          const byWriter = {};
+          writers.forEach((name, i) => { (byWriter[name] ||= []).push(i); });
+          positions[field] = byWriter;
+        }
+
+        // Walk executions in order so the Nth write of a field by a process
+        // lines up with that process's Nth entry in the field's chain.
+        const writeCounts = {};
+        const reverts = {};
+        for (const exec of processExecutions) {
+          for (const field of exec.writeKeys) {
+            const chain = chains[field];
+            if (!chain) continue;
+
+            const counterKey = `${exec.name}|${field}`;
+            writeCounts[counterKey] = (writeCounts[counterKey] || 0) + 1;
+
+            const own = positions[field][exec.name] || [];
+            const at = own[writeCounts[counterKey] - 1];
+            if (at === undefined) continue; // rewrote the same value: no chain entry
+
+            const until = own[writeCounts[counterKey]] ?? chain.length;
+            if (chain.slice(at + 1, until).includes('__rollback')) {
+              (reverts[`${exec.name}_${exec.ordinal}`] ||= []).push(field);
+            }
+          }
+        }
+        return reverts;
       },
 
       // Explicit "__rollback" revert markers left in field version chains by
@@ -1596,9 +1695,17 @@
           this.renderRollbackEvents();
         });
 
+        // A node reference in the detail selects the node everywhere: graph
+        // highlight + Selected Node card + Node Inspector.
         document.getElementById('rollback-detail').addEventListener('click', (e) => {
           const btn = e.target.closest('[data-focus-node]');
-          if (btn) this.focusGraphNode(btn.dataset.focusNode);
+          if (btn) this.selectNode(btn.dataset.focusNode);
+        });
+
+        // A field reference in the markers tab opens that field's history.
+        document.getElementById('rollback-markers').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-open-field]');
+          if (btn) this.openFieldHistory(btn.dataset.openField);
         });
 
         document.getElementById('marker-search').addEventListener('input', (e) => {
@@ -1637,6 +1744,7 @@
         if (!node || node.length === 0) return;
         this.cy.elements().removeClass('selected highlighted');
         node.addClass('selected');
+        node.connectedEdges().addClass('highlighted');
         this.cy.animate({ center: { eles: node }, duration: 300 });
       },
 
@@ -1843,11 +1951,15 @@
               `${rb.rolledBackProcess}_${rb.rerunOrdinal}`)}
           </div>`;
 
+        const nodeLink = (name, ordinal) => `
+          <button type="button" data-focus-node="${this.escapeHtml(`${name}_${ordinal}`)}"
+            class="link link-hover font-medium break-all">${this.escapeHtml(name)}</button>`;
+
         const changedRows = changedKeys.map(key => {
           const change = rb.changedInputValues[key];
           const pw = rb.priorWriters?.[key];
           const prior = pw
-            ? `prior value by <span class="font-medium">${this.escapeHtml(pw.name)}</span>${pw.nodeIndex !== null ? ` (node ${pw.nodeIndex})` : ''}`
+            ? `prior value by ${pw.ordinal ? nodeLink(pw.name, pw.ordinal) : `<span class="font-medium">${this.escapeHtml(pw.name)}</span>`}${pw.nodeIndex !== null ? ` (node ${pw.nodeIndex})` : ''}`
             : '';
           return `
             <tr class="align-top">
@@ -1863,7 +1975,7 @@
         const chainRows = chain.map((step, i) => `
           <li class="flex flex-wrap items-center gap-1.5 p-1.5 rounded bg-base-200">
             <span class="badge badge-xs ${i === 0 ? 'badge-warning' : 'badge-ghost'}">${i === 0 ? 'earliest reader' : i + 1}</span>
-            <span class="text-xs font-medium break-all">${this.escapeHtml(step.name)}</span>
+            <span class="text-xs">${nodeLink(step.name, step.ordinal)}</span>
             <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
             <span class="text-[11px] opacity-70">via ${this.fieldChips(step.via)}</span>
           </li>`).join('');
@@ -1871,14 +1983,20 @@
         const unconfirmed = rb.unconfirmedReaders || [];
         const unconfirmedRows = unconfirmed.map(step => `
           <li class="flex flex-wrap items-center gap-1.5 p-1.5 rounded bg-base-200 opacity-70">
-            <span class="text-xs font-medium break-all">${this.escapeHtml(step.name)}</span>
+            <span class="text-xs">${nodeLink(step.name, step.ordinal)}</span>
             <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
             <span class="text-[11px]">reads ${this.fieldChips(step.via)}</span>
           </li>`).join('');
 
-        const revertedRows = reverted.map(([proc, fields]) => `
+        // revertedFields is keyed by execution id ("name_ordinal") — already a
+        // graph node id, so link it directly.
+        const revertedRows = reverted.map(([stepId, fields]) => `
           <div class="p-1.5 rounded bg-base-200">
-            <div class="text-xs font-medium break-all">${this.escapeHtml(proc)} <span class="opacity-60 font-normal">— ${fields.length} field(s)</span></div>
+            <div class="text-xs">
+              <button type="button" data-focus-node="${this.escapeHtml(stepId)}"
+                class="link link-hover font-medium break-all">${this.escapeHtml(stepId)}</button>
+              <span class="opacity-60">— ${fields.length} field(s)</span>
+            </div>
             <div class="mt-1 flex flex-wrap gap-1">${this.fieldChips(fields, 12)}</div>
           </div>`).join('');
 
@@ -1945,7 +2063,11 @@
           </div>
           ${shown.map(m => `
             <div class="p-2 rounded bg-base-200">
-              <div class="text-xs">${this.fieldPathHtml(m.field)}</div>
+              <div class="text-xs flex flex-wrap items-center gap-2">
+                ${this.fieldPathHtml(m.field)}
+                <button type="button" data-open-field="${this.escapeHtml(m.field)}"
+                  class="link link-hover text-[10px]">open field history ↑</button>
+              </div>
               <div class="mt-1 space-y-0.5 font-mono text-[11px] opacity-80">
                 ${m.entries.map(e => `<div class="break-all">${this.escapeHtml(e)}</div>`).join('')}
               </div>
@@ -2259,55 +2381,242 @@
         });
       },
 
-      updateNodeInfo(nodeLabel) {
-        const req = this.requestData;
+      // ============================================
+      // Node Inspector — read set / write set / changes / document state
+      // for the node selected in the graph. All four are the same shape
+      // (field -> value), so they share one table, one filter, one panel.
+      // ============================================
+      inspectorTab: 'read',
+      inspectorQuery: '',
+      nodeData: null,
 
-        // Find node object
-        let nodeObj = null;
-        for (const nodeArr of this.nodeKeysByNode) {
-          nodeObj = nodeArr.find(n => n.name === nodeLabel);
-          if (nodeObj) break;
+      initInspector() {
+        document.getElementById('inspector-tabs').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-instab]');
+          if (btn) this.showInspectorTab(btn.dataset.instab);
+        });
+
+        document.getElementById('inspector-search').addEventListener('input', (e) => {
+          this.inspectorQuery = e.target.value;
+          this.renderInspector();
+        });
+
+        // Sidebar counters double as jump links into the matching tab.
+        document.getElementById('node-summary').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-instab-jump]');
+          if (!btn) return;
+          this.showInspectorTab(btn.dataset.instabJump);
+          document.getElementById('node-inspector').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      },
+
+      showInspectorTab(name) {
+        this.inspectorTab = name;
+        for (const btn of document.querySelectorAll('#inspector-tabs [data-instab]')) {
+          btn.classList.toggle('tab-active', btn.dataset.instab === name);
         }
+        this.renderInspector();
+      },
 
-        // Build document state
+      updateNodeInfo(nodeLabel) {
+        const cache = this.requestData[1].history.cache || {};
+
+        let nodeObj = null;
+        let nodeIndex = null;
+        this.nodeKeysByNode.forEach((layer, idx) => {
+          const found = layer.find(n => n.name === nodeLabel);
+          if (found && !nodeObj) {
+            nodeObj = found;
+            nodeIndex = idx;
+          }
+        });
+
         const { doc, lastDiff, setData } = this.buildDocumentState(nodeLabel);
         this.setData = setData;
 
-        // Format data as styled list like Rollback Info
-        const formatData = (data, title) => {
-          if (!data || Object.keys(data).length === 0) {
-            return '<p class="text-xs opacity-50 italic">No data</p>';
-          }
-
-          const entries = Object.entries(data.value || data);
-          return `
-            <div class="text-xs">
-              <div class="badge badge-sm mb-2">${entries.length} field(s)</div>
-              <div class="max-h-48 overflow-auto space-y-1">
-                ${entries.map(([key, val]) => `
-                  <div class="p-1 bg-base-200 rounded">
-                    <div class="opacity-70 truncate text-xs" title="${key}">${key}</div>
-                    <div class="text-success font-mono text-xs">${JSON.stringify(val)}</div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
+        // set_data nodes have no read/write hash — their writes come from the
+        // field version chains instead.
+        const isSetData = !!nodeLabel && nodeLabel.includes('set_data');
+        this.nodeData = {
+          name: nodeLabel,
+          nodeIndex,
+          readHash: nodeObj?.readHash || null,
+          writeHash: nodeObj?.writeHash || null,
+          read: isSetData ? {} : (cache[nodeObj?.readHash]?.value || {}),
+          write: isSetData ? (setData[nodeLabel] || {}) : (cache[nodeObj?.writeHash]?.value || {}),
+          changed: lastDiff || {},
+          document: doc
         };
 
-        if (nodeLabel?.includes('set_data')) {
-          document.getElementById('readSet').innerHTML = '<p class="text-xs opacity-50 italic">No data</p>';
-          document.getElementById('writeSet').innerHTML = formatData(setData[nodeLabel] || {});
-          document.getElementById('diffToLastDoc').innerHTML = formatData(setData[nodeLabel] || {});
-        } else if (nodeLabel && nodeObj) {
-          document.getElementById('readSet').innerHTML = formatData(req[1].history.cache[nodeObj.readHash] || {});
-          document.getElementById('writeSet').innerHTML = formatData(req[1].history.cache[nodeObj.writeHash] || {});
-          document.getElementById('diffToLastDoc').innerHTML = formatData(lastDiff);
+        this.renderNodeSummary();
+        this.renderInspector();
+        this.renderNodeList();
+      },
+
+      inspectorTabs() {
+        const d = this.nodeData;
+        return d ? { read: d.read, write: d.write, changed: d.changed, document: d.document } : {};
+      },
+
+      // A node's part in the rollback story, so the inspector says why it is
+      // coloured the way it is in the graph.
+      getRollbackRole(nodeId) {
+        for (const rb of (this.rollbackData || [])) {
+          if (rb.causingProcess && `${rb.causingProcess.name}_${rb.causingProcess.ordinal}` === nodeId) {
+            return { label: '🔥 rollback trigger', cls: 'badge-error' };
+          }
+        }
+        for (const rb of (this.rollbackData || [])) {
+          if (`${rb.rolledBackProcess}_${rb.rerunOrdinal}` === nodeId) {
+            return { label: '♻️ re-executed after rollback', cls: 'badge-info' };
+          }
+          if ((rb.impactedChain || []).some(step => `${step.name}_${step.ordinal}` === nodeId)) {
+            return { label: '🔄 rolled back', cls: 'badge-warning' };
+          }
+        }
+        return null;
+      },
+
+      renderNodeSummary() {
+        const el = document.getElementById('node-summary');
+        const d = this.nodeData;
+        if (!d) {
+          el.innerHTML = '<p class="italic">Click a node in the graph</p>';
+          return;
         }
 
-        // Store for search functionality
-        this.documentData = doc;
-        document.getElementById('document').innerHTML = formatData(doc);
+        const labels = { read: 'read', write: 'write', changed: 'changed', document: 'document' };
+        const tabs = this.inspectorTabs();
+        const role = this.getRollbackRole(d.name);
+
+        el.innerHTML = `
+          <div class="font-medium text-sm text-base-content break-all">${this.escapeHtml(d.name)}</div>
+          <div class="opacity-70 mt-0.5">${d.nodeIndex !== null ? `node ${d.nodeIndex}` : 'external input'}</div>
+          ${role ? `<div class="mt-1"><span class="badge badge-xs ${role.cls}">${role.label}</span></div>` : ''}
+          <div class="mt-2 grid grid-cols-2 gap-1">
+            ${Object.keys(labels).map(key => `
+              <button type="button" data-instab-jump="${key}"
+                class="p-1 rounded bg-base-200 hover:bg-base-300 text-left">
+                <span class="block text-[10px] uppercase tracking-wide opacity-60">${labels[key]}</span>
+                <span class="block font-semibold text-sm text-base-content">${Object.keys(tabs[key] || {}).length}</span>
+              </button>`).join('')}
+          </div>`;
+      },
+
+      renderInspector() {
+        const body = document.getElementById('inspector-body');
+        const meta = document.getElementById('inspector-meta');
+        const tabs = this.inspectorTabs();
+
+        for (const badge of document.querySelectorAll('[data-instab-count]')) {
+          badge.textContent = Object.keys(tabs[badge.dataset.instabCount] || {}).length;
+        }
+
+        const d = this.nodeData;
+        if (!d) {
+          meta.innerHTML = '';
+          body.innerHTML = '<p class="text-xs italic opacity-60">Click a node in the graph to inspect its data</p>';
+          return;
+        }
+
+        meta.innerHTML = `
+          <span class="badge badge-sm badge-primary break-all">${this.escapeHtml(d.name)}</span>
+          ${d.nodeIndex !== null ? `<span class="badge badge-sm badge-ghost">node ${d.nodeIndex}</span>` : ''}
+          ${d.readHash ? `<span class="badge badge-sm badge-ghost font-mono" title="read hash ${this.escapeHtml(d.readHash)}">r:${this.escapeHtml(d.readHash.slice(0, 8))}</span>` : ''}
+          ${d.writeHash ? `<span class="badge badge-sm badge-ghost font-mono" title="write hash ${this.escapeHtml(d.writeHash)}">w:${this.escapeHtml(d.writeHash.slice(0, 8))}</span>` : ''}`;
+
+        const empty = {
+          read: 'No read set — this node takes no document input.',
+          write: 'This node wrote no fields.',
+          changed: 'No document field changed value at this node.',
+          document: 'No document state at this node.'
+        };
+
+        const all = tabs[this.inspectorTab] || {};
+        const total = Object.keys(all).length;
+        if (!total) {
+          body.innerHTML = `<p class="text-xs italic opacity-60">${empty[this.inspectorTab]}</p>`;
+          return;
+        }
+
+        const entries = this.filterFieldEntries(all);
+        if (!entries.length) {
+          body.innerHTML = '<p class="text-xs italic opacity-60">No fields match this filter</p>';
+          return;
+        }
+
+        // The document tab can hold ~750 fields; rendering them all on every
+        // keystroke is slow, so cap the rows and say so rather than truncating
+        // silently.
+        const MAX_ROWS = 300;
+        const shown = entries.slice(0, MAX_ROWS);
+        const header = `
+          <div class="text-[11px] opacity-60 pb-1">
+            ${entries.length} of ${total} field(s)${entries.length > MAX_ROWS
+              ? ` — showing the first ${MAX_ROWS}, filter to narrow it down` : ''}
+          </div>`;
+
+        body.innerHTML = header + (this.inspectorTab === 'changed'
+          ? this.renderChangedTable(shown)
+          : this.renderFieldTable(shown, this.inspectorTab));
+      },
+
+      filterFieldEntries(data) {
+        const query = this.inspectorQuery.trim().toLowerCase();
+        const entries = Object.entries(data).sort((a, b) => a[0].localeCompare(b[0]));
+        if (!query) return entries;
+        return entries.filter(([key, val]) =>
+          key.toLowerCase().includes(query) ||
+          String(JSON.stringify(val ?? null)).toLowerCase().includes(query));
+      },
+
+      renderFieldTable(entries, tab) {
+        const d = this.nodeData;
+        // Cross-reference: which read fields this node overwrites, and which
+        // written fields it had also read — that pairing is the whole point of
+        // a read/write set.
+        const other = tab === 'read' ? d.write : (tab === 'write' ? d.read : {});
+        const otherLabel = tab === 'read' ? 'written here' : 'read here';
+        const changed = d.changed || {};
+
+        return `
+          <div class="overflow-x-auto rounded border border-base-300">
+            <table class="table table-xs">
+              <thead>
+                <tr><th class="w-2/5">Field</th><th>Value</th></tr>
+              </thead>
+              <tbody>
+                ${entries.map(([key, val]) => `
+                  <tr class="align-top">
+                    <td class="whitespace-normal">
+                      ${this.fieldPathHtml(key)}
+                      ${tab !== 'document' && key in other ? `<span class="badge badge-ghost badge-xs ml-1">${otherLabel}</span>` : ''}
+                      ${tab === 'write' && key in changed ? '<span class="badge badge-warning badge-xs ml-1">changed</span>' : ''}
+                    </td>
+                    <td class="font-mono break-all whitespace-normal">${this.formatValue(val)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      },
+
+      renderChangedTable(entries) {
+        return `
+          <div class="overflow-x-auto rounded border border-base-300">
+            <table class="table table-xs">
+              <thead>
+                <tr><th class="w-2/5">Field</th><th>Before</th><th>After</th></tr>
+              </thead>
+              <tbody>
+                ${entries.map(([key, change]) => `
+                  <tr class="align-top">
+                    <td class="whitespace-normal">${this.fieldPathHtml(key)}</td>
+                    <td class="font-mono text-error break-all whitespace-normal">${this.formatValue(change?.from)}</td>
+                    <td class="font-mono text-success break-all whitespace-normal">${this.formatValue(change?.to)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
       },
 
       buildDocumentState(nodeLabel) {
@@ -2352,12 +2661,14 @@
               field => rawDoc[field].length > 0 && rawDoc[field][0]?.name === normalize
             );
 
+            // diff keeps the prior value too, so the inspector can show
+            // before → after rather than just the new value.
             if (y.writeHash) {
               const writeSet = Object.keys(req[1].history.cache[y.writeHash]?.value || {});
               for (const f of filteredFields) {
                 if (writeSet.includes(f)) {
                   const res = rawDoc[f].shift();
-                  if (doc[f] !== res?.value) diff[f] = res?.value;
+                  if (doc[f] !== res?.value) diff[f] = { from: doc[f], to: res?.value };
                   doc[f] = res?.value;
                 }
               }
@@ -2368,7 +2679,7 @@
                   if (!setData[y.name]) setData[y.name] = {};
                   setData[y.name][f] = res?.value;
                 }
-                if (doc[f] !== res?.value) diff[f] = res?.value;
+                if (doc[f] !== res?.value) diff[f] = { from: doc[f], to: res?.value };
                 doc[f] = res?.value;
               }
             }
@@ -2383,95 +2694,371 @@
         return { doc, lastDiff, setData };
       },
 
-      clearNodeInfo() {
-        const placeholder = '<p class="italic">Click a node to view</p>';
-        document.getElementById('readSet').innerHTML = placeholder;
-        document.getElementById('writeSet').innerHTML = placeholder;
-        document.getElementById('diffToLastDoc').innerHTML = placeholder;
-        document.getElementById('document').innerHTML = placeholder;
-        document.getElementById('document-search').value = '';
+      // ============================================
+      // Node list — the graph's nodes as a searchable, clickable index.
+      // ============================================
+      nodeListQuery: '',
+
+      initNodeList() {
+        document.getElementById('node-list-search').addEventListener('input', (e) => {
+          this.nodeListQuery = e.target.value;
+          this.renderNodeList();
+        });
+
+        document.getElementById('node-list').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-node-id]');
+          if (btn) this.selectNode(btn.dataset.nodeId);
+        });
       },
 
-      filterDocument(searchTerm) {
-        if (!this.documentData || Object.keys(this.documentData).length === 0) return;
+      allGraphNodes() {
+        const nodes = [];
+        (this.nodeKeysByNode || []).forEach((layer, index) => {
+          layer.forEach(n => nodes.push({ id: n.name, index }));
+        });
+        return nodes;
+      },
 
-        const docElement = document.getElementById('document');
-        const search = searchTerm.trim().toLowerCase();
+      // Selecting from a list behaves like clicking the node in the graph.
+      selectNode(nodeId) {
+        this.focusGraphNode(nodeId);
+        this.updateNodeInfo(nodeId);
+      },
 
-        if (search === '') {
-          // No search term, show all
-          docElement.innerHTML = this.formatDataForDisplay(this.documentData);
+      nodeDotClass(nodeId) {
+        if (nodeId.includes('set_data')) return 'bg-success';
+        const role = this.getRollbackRole(nodeId);
+        if (!role) return 'bg-primary';
+        if (role.cls === 'badge-error') return 'bg-error';
+        if (role.cls === 'badge-info') return 'bg-info';
+        return 'bg-warning';
+      },
+
+      renderNodeList() {
+        const listEl = document.getElementById('node-list');
+        const countEl = document.getElementById('node-list-count');
+        const all = this.allGraphNodes();
+
+        if (!all.length) {
+          countEl.textContent = '0';
+          listEl.innerHTML = '<p class="text-xs italic opacity-60">Load data to list nodes</p>';
           return;
         }
 
-        // Filter the data
-        const filtered = {};
-        for (const [key, value] of Object.entries(this.documentData)) {
-          const keyMatch = key.toLowerCase().includes(search);
-          const valMatch = JSON.stringify(value).toLowerCase().includes(search);
-          if (keyMatch || valMatch) {
-            filtered[key] = value;
+        const query = this.nodeListQuery.trim().toLowerCase().replace(/\s+/g, '_');
+        const shown = query ? all.filter(n => n.id.toLowerCase().includes(query)) : all;
+        countEl.textContent = query ? `${shown.length}/${all.length}` : String(all.length);
+
+        if (!shown.length) {
+          listEl.innerHTML = '<p class="text-xs italic opacity-60">No nodes match</p>';
+          return;
+        }
+
+        const selected = this.nodeData?.name;
+        listEl.innerHTML = shown.map(n => `
+          <button type="button" data-node-id="${this.escapeHtml(n.id)}"
+            class="w-full text-left px-1.5 py-1 rounded flex items-start gap-1.5 ${n.id === selected ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-base-200'}">
+            <span class="mt-1 w-2 h-2 rounded-full shrink-0 ${this.nodeDotClass(n.id)}"></span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-xs break-all">${this.escapeHtml(n.id)}</span>
+              <span class="block text-[10px] opacity-60">node ${n.index}</span>
+            </span>
+          </button>`).join('');
+      },
+
+      // ============================================
+      // Field history — search a field, see every node that wrote it and the
+      // value it wrote. Built from the field's own version chain (succ), which
+      // is ordered and includes the planner's __rollback reverts.
+      // ============================================
+      fieldQuery: '',
+      selectedField: null,
+
+      initFieldSearch() {
+        document.getElementById('field-search').addEventListener('input', (e) => {
+          this.fieldQuery = e.target.value;
+          const matches = this.matchingFields();
+          // A single hit is unambiguous — open it straight away.
+          if (matches.length === 1) this.selectedField = matches[0];
+          else if (this.selectedField && !matches.includes(this.selectedField)) this.selectedField = null;
+          this.renderFieldSearch();
+        });
+
+        document.getElementById('field-list').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-field]');
+          if (!btn) return;
+          this.selectedField = btn.dataset.field;
+          this.renderFieldSearch();
+        });
+
+        document.getElementById('field-timeline').addEventListener('click', (e) => {
+          const rbBtn = e.target.closest('[data-rb-open]');
+          if (rbBtn) {
+            this.openRollbackEvent(Number(rbBtn.dataset.rbOpen));
+            return;
           }
-        }
-
-        if (Object.keys(filtered).length === 0) {
-          docElement.innerHTML = '<p class="text-xs opacity-50 italic">No matches found</p>';
-        } else {
-          docElement.innerHTML = this.formatDataForDisplay(filtered);
-        }
+          const btn = e.target.closest('[data-node-id]');
+          if (btn) this.selectNode(btn.dataset.nodeId);
+        });
       },
 
-      formatDataForDisplay(data) {
-        if (!data || Object.keys(data).length === 0) {
-          return '<p class="text-xs opacity-50 italic">No data</p>';
-        }
-
-        const entries = Object.entries(data);
-        return `
-          <div class="text-xs">
-            <div class="badge badge-sm mb-2">${entries.length} field(s)</div>
-            <div class="max-h-48 overflow-auto space-y-1">
-              ${entries.map(([key, val]) => `
-                <div class="p-1 bg-base-200 rounded">
-                  <div class="opacity-70 truncate text-xs" title="${key}">${key}</div>
-                  <div class="text-success font-mono text-xs">${JSON.stringify(val)}</div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        `;
+      matchingFields() {
+        const fields = Object.keys(this.requestData?.[1]?.fields || {});
+        const query = this.fieldQuery.trim().toLowerCase();
+        const written = fields.filter(f => (this.requestData[1].fields[f]?.value?.succ || []).length > 0);
+        if (!query) return written;
+        return written.filter(f => f.toLowerCase().includes(query));
       },
 
-      filterObject(obj, searchTerm) {
-        if (typeof obj !== 'object' || obj === null) {
-          return String(obj).toLowerCase().includes(searchTerm) ? obj : null;
-        }
+      // Rollback operations that reverted ONE specific write of a field, in
+      // the order they fired. Attribution has to be per write, not per field:
+      // a single execution appears in many events' impacted chains, so "every
+      // event that reverted this field somewhere" over-counts wildly. Events
+      // sharing a trigger are one planner Rollback() call, so they collapse.
+      rollbackCausesForWrite(field, writeRow) {
+        if (!writeRow) return [];
+        const stepId = `${writeRow.execName}_${writeRow.ordinal}`;
+        const firedAt = ({ rb }) => rb.causingProcess?.nodeIndex ?? rb.rerunIndex;
+        const seenTrigger = new Set();
 
-        if (Array.isArray(obj)) {
-          const filtered = obj.map(item => this.filterObject(item, searchTerm)).filter(item => item !== null);
-          return filtered.length > 0 ? filtered : null;
-        }
+        return (this.rollbackData || [])
+          .map((rb, idx) => ({ rb, idx }))
+          .filter(({ rb }) => (rb.revertedFields?.[stepId] || []).includes(field))
+          .filter(entry => firedAt(entry) > (writeRow.nodeIndex ?? -1))
+          .sort((a, b) => firedAt(a) - firedAt(b))
+          .filter(({ rb }) => {
+            const trigger = rb.causingProcess
+              ? `${rb.causingProcess.name}_${rb.causingProcess.ordinal}`
+              : `external_${rb.rerunIndex}`;
+            if (seenTrigger.has(trigger)) return false;
+            seenTrigger.add(trigger);
+            return true;
+          });
+      },
 
-        const result = {};
-        for (const [key, value] of Object.entries(obj)) {
-          // Check if key matches
-          if (key.toLowerCase().includes(searchTerm)) {
-            result[key] = value;
+      // Chain entries in order, each mapped back to the execution that wrote it
+      // (nth entry named P is P's nth execution), so a row points at a graph node.
+      // A __rollback entry undoes the write directly above it, so it is
+      // attributed to the rollback operations that reverted that write —
+      // consecutive reverts of the same write take successive operations.
+      buildFieldTimeline(field) {
+        const succ = this.requestData?.[1]?.fields?.[field]?.value?.succ || [];
+        const execs = this.processExecutions || [];
+        const nodeIds = new Set(this.allGraphNodes().map(n => n.id));
+        const seen = {};
+        const rows = [];
+        let previous;
+        let lastWrite = null;
+        let revertSeq = 0;
+
+        for (const item of succ) {
+          const id = String(item?.Id || '');
+          const name = id.split('-')[0];
+          const isSet = item?.Value?.SetFlag === true;
+          const value = isSet ? item?.Value?.Value : undefined;
+
+          if (name === '__rollback') {
+            revertSeq += 1;
+            const causes = this.rollbackCausesForWrite(field, lastWrite);
+            rows.push({ kind: 'rollback', from: previous, value, event: causes[revertSeq - 1] || null });
+            previous = value;
             continue;
           }
 
-          // Check if value matches
-          if (typeof value === 'object' && value !== null) {
-            const filtered = this.filterObject(value, searchTerm);
-            if (filtered !== null && (Array.isArray(filtered) ? filtered.length > 0 : Object.keys(filtered).length > 0)) {
-              result[key] = filtered;
-            }
-          } else if (String(value).toLowerCase().includes(searchTerm)) {
-            result[key] = value;
-          }
+          seen[name] = (seen[name] || 0) + 1;
+          const ordinal = seen[name];
+          // The graph renames the external writer to set_data, as buildDocumentState does.
+          const displayName = name === '__external' ? 'set_data' : name;
+          const candidateId = `${displayName}_${ordinal}`;
+          const exec = execs.find(e => e.name === name && e.ordinal === ordinal);
+
+          rows.push({
+            kind: 'write',
+            name: displayName,
+            nodeId: nodeIds.has(candidateId) ? candidateId : null,
+            nodeIndex: exec ? exec.index : null,
+            external: name.startsWith('__'),
+            from: previous,
+            value
+          });
+          previous = value;
+          lastWrite = { execName: name, ordinal, nodeIndex: exec ? exec.index : null };
+          revertSeq = 0;
         }
 
-        return result;
+        return rows;
+      },
+
+      renderFieldSearch() {
+        const listEl = document.getElementById('field-list');
+        const metaEl = document.getElementById('field-meta');
+        const matches = this.matchingFields();
+        const total = Object.keys(this.requestData?.[1]?.fields || {}).length;
+
+        metaEl.innerHTML = total
+          ? `<span class="badge badge-sm badge-ghost">${matches.length} of ${total} field(s)</span>`
+          : '';
+
+        if (!total) {
+          listEl.innerHTML = '<p class="text-xs italic opacity-60">Load data to search fields</p>';
+          this.renderFieldTimeline();
+          return;
+        }
+
+        if (!matches.length) {
+          listEl.innerHTML = '<p class="text-xs italic opacity-60">No field matches this search</p>';
+          this.renderFieldTimeline();
+          return;
+        }
+
+        const MAX = 200;
+        const shown = matches.slice(0, MAX);
+        listEl.innerHTML = `
+          ${matches.length > MAX ? `<p class="text-[11px] opacity-60 pb-1">showing the first ${MAX} of ${matches.length} — refine the search</p>` : ''}
+          ${shown.map(f => {
+            const succ = this.requestData[1].fields[f]?.value?.succ || [];
+            const writes = succ.filter(s => String(s?.Id || '').split('-')[0] !== '__rollback').length;
+            const reverts = succ.length - writes;
+            return `
+              <button type="button" data-field="${this.escapeHtml(f)}"
+                class="w-full text-left px-1.5 py-1 rounded ${f === this.selectedField ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-base-200'}">
+                <span class="block text-xs">${this.fieldPathHtml(f)}</span>
+                <span class="block text-[10px] opacity-60">
+                  ${writes} write(s)${reverts ? ` · ${reverts} rollback revert(s)` : ''}
+                </span>
+              </button>`;
+          }).join('')}`;
+
+        this.renderFieldTimeline();
+      },
+
+      // Why this revert happened: the trigger process and the data it changed
+      // (old → new), taken from the matched rollback event. Rendered inside a
+      // revert row of the field timeline.
+      rollbackCauseHtml(match) {
+        if (!match) {
+          return '<span class="block text-[10px] opacity-60 mt-0.5">trigger not identified from history</span>';
+        }
+        const { rb, idx } = match;
+        const trigger = rb.causingProcess;
+        const changed = Object.entries(rb.changedInputValues || {});
+
+        const changedRows = changed.map(([key, ch]) => `
+          <div class="flex flex-wrap items-center gap-1 text-[10px]">
+            <span class="font-mono opacity-70" title="${this.escapeHtml(key)}">${this.escapeHtml(this.shortField(key))}:</span>
+            <span class="font-mono text-error">${this.formatValue(ch.oldValue)}</span>
+            <span>→</span>
+            <span class="font-mono text-success">${this.formatValue(ch.newValue)}</span>
+          </div>`).join('');
+
+        return `
+          <div class="mt-0.5 space-y-0.5">
+            <div class="text-[10px] opacity-70">
+              triggered by <span class="font-medium text-error">${this.escapeHtml(trigger ? trigger.name : 'external change')}</span>${trigger ? ` (node ${trigger.nodeIndex})` : ''}
+              overwriting:
+            </div>
+            ${changedRows}
+            <button type="button" data-rb-open="${idx}" class="link link-hover text-[10px]">open rollback event ↓</button>
+          </div>`;
+      },
+
+      // Jump from anywhere to a field's history timeline, clearing any search
+      // that could hide it.
+      openFieldHistory(field) {
+        this.selectedField = field;
+        this.fieldQuery = field;
+        document.getElementById('field-search').value = field;
+        this.renderFieldSearch();
+        document.getElementById('field-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+
+      // Jump from a timeline revert row to the matching event in the Rollback
+      // Analysis panel, clearing any filter that could hide it.
+      openRollbackEvent(idx) {
+        this.rollbackQuery = '';
+        this.rollbackFilter = 'all';
+        document.getElementById('rollback-search').value = '';
+        document.getElementById('rollback-filter').value = 'all';
+        this.selectedRollback = idx;
+        this.renderRollbackEvents();
+        this.showRollbackTab('events');
+        document.getElementById('rollback-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+
+      renderFieldTimeline() {
+        const el = document.getElementById('field-timeline');
+        const field = this.selectedField;
+
+        if (!field) {
+          el.innerHTML = '<p class="text-xs italic opacity-60">Pick a field to see every node that wrote it</p>';
+          return;
+        }
+
+        const rows = this.buildFieldTimeline(field);
+        if (!rows.length) {
+          el.innerHTML = `<div class="text-xs">${this.fieldPathHtml(field)}</div>
+            <p class="text-xs italic opacity-60 mt-2">This field was never written.</p>`;
+          return;
+        }
+
+        let step = 0;
+        el.innerHTML = `
+          <div class="mb-2">
+            <div class="text-sm">${this.fieldPathHtml(field)}</div>
+            <div class="text-[11px] opacity-60">current value: <span class="font-mono">${this.formatValue(rows[rows.length - 1].value)}</span></div>
+          </div>
+          <div class="overflow-x-auto rounded border border-base-300">
+            <table class="table table-xs">
+              <thead>
+                <tr><th class="w-8">#</th><th>Written by</th><th>Value</th></tr>
+              </thead>
+              <tbody>
+                ${rows.map(row => {
+                  if (row.kind === 'rollback') {
+                    return `
+                      <tr class="align-top">
+                        <td></td>
+                        <td class="whitespace-normal">
+                          <span class="badge badge-warning badge-xs">↩ rollback revert</span>
+                          ${this.rollbackCauseHtml(row.event)}
+                        </td>
+                        <td class="font-mono break-all whitespace-normal opacity-70">${this.formatValue(row.value)}</td>
+                      </tr>`;
+                  }
+                  step += 1;
+                  const changed = JSON.stringify(row.from) !== JSON.stringify(row.value);
+                  return `
+                    <tr class="align-top">
+                      <td class="opacity-60">${step}</td>
+                      <td class="whitespace-normal">
+                        ${row.nodeId
+                          ? `<button type="button" data-node-id="${this.escapeHtml(row.nodeId)}"
+                               class="link link-hover font-medium break-all">${this.escapeHtml(row.nodeId)}</button>`
+                          : `<span class="font-medium break-all">${this.escapeHtml(row.name)}</span>`}
+                        ${row.nodeIndex !== null ? `<span class="opacity-60 ml-1">node ${row.nodeIndex}</span>` : ''}
+                        ${row.external ? '<span class="badge badge-success badge-xs ml-1">external</span>' : ''}
+                      </td>
+                      <td class="font-mono break-all whitespace-normal ${changed ? 'text-success' : 'opacity-70'}">
+                        ${this.formatValue(row.value)}
+                        ${changed && row.from !== undefined
+                          ? `<span class="block text-error opacity-70">was ${this.formatValue(row.from)}</span>` : ''}
+                        ${changed ? '' : '<span class="block text-[10px] opacity-60">unchanged</span>'}
+                      </td>
+                    </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      },
+
+      clearNodeInfo() {
+        this.nodeData = null;
+        this.inspectorQuery = '';
+        const search = document.getElementById('inspector-search');
+        if (search) search.value = '';
+        this.renderNodeSummary();
+        this.renderInspector();
+        this.renderNodeList();
       }
     };
 
