@@ -70,7 +70,16 @@
       <!-- Input Section -->
       <div class="card bg-base-100 shadow-lg">
         <div class="card-body p-4">
-          <h2 class="card-title text-sm">Input Internal Doc Revision</h2>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h2 class="card-title text-sm">Input Internal Doc Revision</h2>
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="opacity-70">Workflow definition:</span>
+              <select id="viz-workflow-select" class="select select-bordered select-xs">
+                <option value="">none</option>
+              </select>
+              <span id="viz-workflow-badges" class="flex flex-wrap items-center gap-1"></span>
+            </div>
+          </div>
           <textarea id="lastdocrev" class="textarea textarea-bordered w-full font-mono text-xs" rows="3"
             placeholder="Paste your Internal Doc Revision JSON here..."></textarea>
           <div id="lastdocrev-status" class="text-xs mt-1 hidden"></div>
@@ -1282,6 +1291,93 @@
         this.initInspector();
         this.initFieldSearch();
         this.initRollbackUI();
+        this.initWorkflowDefinition();
+      },
+
+      // ============================================
+      // Workflow definition (depchain-generator output) — static metadata the
+      // runtime document cannot carry: which activities keep their writes on
+      // rollback (SetRetainDataOnRollback) and which fields never trigger a
+      // rollback (SetReExecNeutral). Loaded per workflow id from workflow/.
+      // ============================================
+      workflowVersions: [],
+      workflowMeta: null,
+
+      initWorkflowDefinition() {
+        document.getElementById('viz-workflow-select').addEventListener('change', (e) => {
+          this.setWorkflowDefinition(e.target.value);
+        });
+        this.loadWorkflowIndex(); // async; UI works without it
+      },
+
+      async loadWorkflowIndex() {
+        try {
+          const resp = await fetch('workflow/index.json');
+          if (!resp.ok) return;
+          this.workflowVersions = await resp.json();
+        } catch (e) {
+          return; // served without workflow data (e.g. file://) — selector stays "none"
+        }
+        if (!Array.isArray(this.workflowVersions) || this.workflowVersions.length === 0) return;
+        const sel = document.getElementById('viz-workflow-select');
+        sel.innerHTML = '<option value="">none</option>' + this.workflowVersions.map(v =>
+          `<option value="${this.escapeHtml(v)}">${this.escapeHtml(v)}</option>`).join('');
+        const latest = this.workflowVersions[this.workflowVersions.length - 1];
+        sel.value = latest;
+        await this.setWorkflowDefinition(latest);
+      },
+
+      async setWorkflowDefinition(id) {
+        if (!id) {
+          this.workflowMeta = null;
+          this.renderWorkflowBadges();
+          this.rerenderAnalysis();
+          return;
+        }
+        try {
+          const resp = await fetch(`workflow/${id}.json`);
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+          const activities = Array.isArray(data) ? data : (data.activities || []);
+          this.workflowMeta = {
+            id,
+            sourceTag: data.source_tag || null,
+            neutralFields: new Set(data.re_exec_neutral_fields || []),
+            retainActivities: new Set(activities.filter(a => a.retain_data_on_rollback).map(a => a.name))
+          };
+        } catch (e) {
+          console.error('Failed to load workflow definition:', e);
+          this.workflowMeta = null;
+        }
+        this.renderWorkflowBadges();
+        this.rerenderAnalysis();
+      },
+
+      renderWorkflowBadges() {
+        const el = document.getElementById('viz-workflow-badges');
+        const m = this.workflowMeta;
+        if (!m) {
+          el.innerHTML = '<span class="badge badge-ghost badge-xs" title="Rollback analysis runs on runtime data only — retain-data-on-rollback and re-exec-neutral cannot be explained.">no static metadata</span>';
+          return;
+        }
+        el.innerHTML = `
+          ${m.sourceTag ? `<span class="badge badge-ghost badge-xs font-mono" title="source tag">${this.escapeHtml(m.sourceTag)}</span>` : ''}
+          <span class="badge badge-outline badge-xs" title="fields flagged SetReExecNeutral(true): a change to them never triggers a rollback">${m.neutralFields.size} neutral field(s)</span>
+          <span class="badge badge-outline badge-xs" title="activities calling SetRetainDataOnRollback(): their writes are kept on rollback, so no revert markers appear">${m.retainActivities.size} retain-data activit(ies)</span>`;
+      },
+
+      // Re-run the analysis and every panel that shows its result — used when
+      // the workflow definition changes after a document is already loaded.
+      // Never re-runs render(): that would shift history.nodes a second time.
+      rerenderAnalysis() {
+        if (!this.requestData || !this.nodeKeysByNode.length) return;
+        this.rollbackData = this.analyzeRollbacks();
+        const edges = [...this.buildEdges(), ...this.buildRollbackEdges()];
+        this.initCytoscape(this.buildNodes(), edges);
+        this.displayRollbackSummary();
+        this.renderNodeList();
+        if (this.nodeData) this.updateNodeInfo(this.nodeData.name);
+        if (this.selectedField) this.renderFieldTimeline();
       },
 
       handleInput(rawValue) {
@@ -1459,21 +1555,30 @@
             const rerunReadData = cache[rerun.readHash]?.value || {};
 
             // The "updated" set passed to planner.Rollback(): input fields
-            // whose value differs between the two runs.
+            // whose value differs between the two runs. Fields flagged
+            // re-exec-neutral in the workflow definition are marked — the
+            // planner drops them from the updated-set, so they can explain a
+            // read-hash change but never BE the rollback trigger.
+            const neutralFields = this.workflowMeta?.neutralFields || new Set();
             const changedValues = {};
             const allKeys = new Set([...Object.keys(firstReadData), ...Object.keys(rerunReadData)]);
             for (const key of allKeys) {
               if (JSON.stringify(firstReadData[key]) !== JSON.stringify(rerunReadData[key])) {
                 changedValues[key] = {
                   oldValue: firstReadData[key],
-                  newValue: rerunReadData[key]
+                  newValue: rerunReadData[key],
+                  neutral: neutralFields.has(key)
                 };
               }
             }
             const changedKeys = Object.keys(changedValues);
+            const triggeringKeys = changedKeys.filter(k => !changedValues[k].neutral);
+            // If every changed field is neutral, fall back to all of them —
+            // better a marked-neutral trigger than none.
+            const searchKeys = triggeringKeys.length > 0 ? triggeringKeys : changedKeys;
 
             // Trigger: LAST process between the two runs that wrote a changed
-            // field — this is the overwrite that fired planner.Rollback().
+            // (non-neutral) field — the overwrite that fired planner.Rollback().
             let causingProcess = null;
             const processesBetween = processExecutions.filter(
               p => p.index > firstRun.index && p.index < rerun.index
@@ -1481,7 +1586,7 @@
             for (let j = processesBetween.length - 1; j >= 0; j--) {
               const proc = processesBetween[j];
               const writeData = cache[proc.writeHash]?.value || {};
-              const overlap = Object.keys(writeData).filter(k => changedKeys.includes(k));
+              const overlap = Object.keys(writeData).filter(k => searchKeys.includes(k));
               if (overlap.length > 0) {
                 const writtenValues = {};
                 for (const key of overlap) writtenValues[key] = writeData[key];
@@ -1810,7 +1915,8 @@
           <span class="badge badge-error badge-sm">${events.length} event(s)</span>
           <span class="badge badge-warning badge-sm">${triggers.size} trigger(s)</span>
           <span class="badge badge-outline badge-sm">${changedOutput} changed output</span>
-          <span class="badge badge-outline badge-sm">${markers.length} field marker(s)</span>`;
+          <span class="badge badge-outline badge-sm">${markers.length} field marker(s)</span>
+          ${this.workflowMeta ? `<span class="badge badge-ghost badge-sm font-mono" title="static metadata from depchain-generator">def: ${this.escapeHtml(this.workflowMeta.id)}</span>` : ''}`;
       },
 
       renderRollbackSidebar() {
@@ -1955,6 +2061,13 @@
           <button type="button" data-focus-node="${this.escapeHtml(`${name}_${ordinal}`)}"
             class="link link-hover font-medium break-all">${this.escapeHtml(name)}</button>`;
 
+        const retainBadge = (name) => this.workflowMeta?.retainActivities?.has(name)
+          ? '<span class="badge badge-xs badge-outline" title="SetRetainDataOnRollback(): the planner keeps this activity\'s writes when it is rolled back — no __rollback revert markers ever appear for them.">retains data</span>'
+          : '';
+        const neutralBadge = (isNeutral) => isNeutral
+          ? '<span class="badge badge-xs badge-ghost" title="SetReExecNeutral(true): the planner drops this field from the updated-set — a change to it never triggers a rollback.">neutral</span>'
+          : '';
+
         const changedRows = changedKeys.map(key => {
           const change = rb.changedInputValues[key];
           const pw = rb.priorWriters?.[key];
@@ -1964,7 +2077,7 @@
           return `
             <tr class="align-top">
               <td class="whitespace-normal">
-                ${this.fieldPathHtml(key)}
+                ${this.fieldPathHtml(key)} ${neutralBadge(change.neutral)}
                 ${prior ? `<div class="text-[11px] opacity-60 mt-0.5">${prior}</div>` : ''}
               </td>
               <td class="font-mono text-error break-all whitespace-normal">${this.formatValue(change.oldValue)}</td>
@@ -1978,6 +2091,7 @@
             <span class="text-xs">${nodeLink(step.name, step.ordinal)}</span>
             <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
             <span class="text-[11px] opacity-70">via ${this.fieldChips(step.via)}</span>
+            ${retainBadge(step.name)}
           </li>`).join('');
 
         const unconfirmed = rb.unconfirmedReaders || [];
@@ -1986,7 +2100,18 @@
             <span class="text-xs">${nodeLink(step.name, step.ordinal)}</span>
             <span class="text-[11px] opacity-60">node ${step.nodeIndex}</span>
             <span class="text-[11px]">reads ${this.fieldChips(step.via)}</span>
+            ${retainBadge(step.name)}
           </li>`).join('');
+
+        // With static metadata, explain missing reverts: retain-data steps in
+        // the impacted chain keep their writes, so an empty reverted section
+        // is expected — not evidence that nothing was rolled back.
+        const retainedSteps = this.workflowMeta
+          ? chain.filter(step => this.workflowMeta.retainActivities.has(step.name))
+          : [];
+        const retainedNote = retainedSteps.length > 0 ? `
+          <p class="text-[11px] opacity-60 mt-1">💾 ${retainedSteps.map(s => this.escapeHtml(s.name)).join(', ')}
+            retain${retainedSteps.length === 1 ? 's' : ''} data on rollback — their writes are kept and leave no revert markers.</p>` : '';
 
         // revertedFields is keyed by execution id ("name_ordinal") — already a
         // graph node id, so link it directly.
@@ -2038,9 +2163,9 @@
                 rolls back, and these never execute again after the trigger.</p>
               <ul class="space-y-1">${unconfirmedRows}</ul>`, false) : ''}
 
-            ${section('↩️ Writes reverted before re-run', reverted.length, reverted.length
+            ${section('↩️ Writes reverted before re-run', reverted.length, (reverted.length
               ? `<div class="space-y-1">${revertedRows}</div>`
-              : '<p class="text-xs italic opacity-60">none</p>', false)}
+              : '<p class="text-xs italic opacity-60">none</p>') + retainedNote, false)}
           </div>`;
       },
 
@@ -2810,21 +2935,27 @@
         return written.filter(f => f.toLowerCase().includes(query));
       },
 
-      // Rollback operations that reverted ONE specific write of a field, in
-      // the order they fired. Attribution has to be per write, not per field:
-      // a single execution appears in many events' impacted chains, so "every
-      // event that reverted this field somewhere" over-counts wildly. Events
-      // sharing a trigger are one planner Rollback() call, so they collapse.
-      rollbackCausesForWrite(field, writeRow) {
-        if (!writeRow) return [];
-        const stepId = `${writeRow.execName}_${writeRow.ordinal}`;
+      // Rollback operations that reverted writes of `field` made by process
+      // `execName`, in the order they fired. Two kinds of evidence:
+      //  - precise: an event's revert markers name one of this process's
+      //    writes of this field (chain-marker based);
+      //  - positional: the event rolled back this process. A value-identical
+      //    rewrite leaves NO chain entry, so its revert can never be matched
+      //    by marker — but reverts and events are both chronological, so the
+      //    Nth revert in the chain pairs with the Nth event. Those matches
+      //    are flagged `inferred`.
+      // Events sharing a trigger are one planner Rollback() call: collapsed.
+      rollbackCausesForProcess(field, execName) {
         const firedAt = ({ rb }) => rb.causingProcess?.nodeIndex ?? rb.rerunIndex;
         const seenTrigger = new Set();
 
         return (this.rollbackData || [])
-          .map((rb, idx) => ({ rb, idx }))
-          .filter(({ rb }) => (rb.revertedFields?.[stepId] || []).includes(field))
-          .filter(entry => firedAt(entry) > (writeRow.nodeIndex ?? -1))
+          .map((rb, idx) => {
+            const precise = Object.entries(rb.revertedFields || {}).some(([sid, fs]) =>
+              sid.replace(/_\d+$/, '') === execName && fs.includes(field));
+            return { rb, idx, inferred: !precise };
+          })
+          .filter(entry => !entry.inferred || entry.rb.rolledBackProcess === execName)
           .sort((a, b) => firedAt(a) - firedAt(b))
           .filter(({ rb }) => {
             const trigger = rb.causingProcess
@@ -2838,9 +2969,10 @@
 
       // Chain entries in order, each mapped back to the execution that wrote it
       // (nth entry named P is P's nth execution), so a row points at a graph node.
-      // A __rollback entry undoes the write directly above it, so it is
-      // attributed to the rollback operations that reverted that write —
-      // consecutive reverts of the same write take successive operations.
+      // A __rollback entry undoes the write directly above it. Reverts are
+      // matched to rollback events per preceding-writer process, positionally:
+      // the process's Nth revert in this chain pairs with its Nth event —
+      // this survives value-identical rewrites, which leave no chain entry.
       buildFieldTimeline(field) {
         const succ = this.requestData?.[1]?.fields?.[field]?.value?.succ || [];
         const execs = this.processExecutions || [];
@@ -2848,8 +2980,7 @@
         const seen = {};
         const rows = [];
         let previous;
-        let lastWrite = null;
-        let revertSeq = 0;
+        let lastWriter = null;
 
         for (const item of succ) {
           const id = String(item?.Id || '');
@@ -2858,9 +2989,7 @@
           const value = isSet ? item?.Value?.Value : undefined;
 
           if (name === '__rollback') {
-            revertSeq += 1;
-            const causes = this.rollbackCausesForWrite(field, lastWrite);
-            rows.push({ kind: 'rollback', from: previous, value, event: causes[revertSeq - 1] || null });
+            rows.push({ kind: 'rollback', from: previous, value, _writer: lastWriter });
             previous = value;
             continue;
           }
@@ -2882,8 +3011,25 @@
             value
           });
           previous = value;
-          lastWrite = { execName: name, ordinal, nodeIndex: exec ? exec.index : null };
-          revertSeq = 0;
+          lastWriter = name;
+        }
+
+        // Match reverts to events, one chronological stream per writer process.
+        const causesByProc = {};
+        const cursorByProc = {};
+        for (const row of rows) {
+          if (row.kind !== 'rollback') continue;
+          const writer = row._writer;
+          delete row._writer;
+          if (!writer) {
+            row.event = null;
+            continue;
+          }
+          if (!(writer in causesByProc)) {
+            causesByProc[writer] = this.rollbackCausesForProcess(field, writer);
+            cursorByProc[writer] = 0;
+          }
+          row.event = causesByProc[writer][cursorByProc[writer]++] || null;
         }
 
         return rows;
@@ -2949,6 +3095,7 @@
             <span class="font-mono text-error">${this.formatValue(ch.oldValue)}</span>
             <span>→</span>
             <span class="font-mono text-success">${this.formatValue(ch.newValue)}</span>
+            ${ch.neutral ? '<span class="badge badge-ghost badge-xs" title="re-exec-neutral: changed, but can never be the rollback trigger">neutral</span>' : ''}
           </div>`).join('');
 
         return `
@@ -2956,6 +3103,7 @@
             <div class="text-[10px] opacity-70">
               triggered by <span class="font-medium text-error">${this.escapeHtml(trigger ? trigger.name : 'external change')}</span>${trigger ? ` (node ${trigger.nodeIndex})` : ''}
               overwriting:
+              ${match.inferred ? '<span class="badge badge-ghost badge-xs" title="Matched by execution order, not by an explicit revert marker — a value-identical rewrite leaves no chain entry to match against.">inferred</span>' : ''}
             </div>
             ${changedRows}
             <button type="button" data-rb-open="${idx}" class="link link-hover text-[10px]">open rollback event ↓</button>
