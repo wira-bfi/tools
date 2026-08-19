@@ -118,7 +118,8 @@
               <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#ef4444;border:2px dashed #fbbf24"></span> rollback trigger (overwrote field)</span>
               <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#f97316"></span> rolled back</span>
               <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm inline-block" style="background:#14b8a6;border:2px dashed #f97316"></span> re-executed after rollback</span>
-              <span class="flex items-center gap-1"><span class="inline-block w-5 border-t-2 border-dashed border-error"></span> rollback edge</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-5 border-t-2 border-dashed border-error"></span> rollback edge (trigger &rarr; re-run)</span>
+              <span class="flex items-center gap-1"><span class="inline-block w-5 border-t-2 border-dashed" style="border-color:#f97316"></span> rolled-back-by (shown for the selected node)</span>
             </div>
           </div>
         </div>
@@ -2513,6 +2514,27 @@
             }
           },
           {
+            selector: '.rollback-focus-edge',
+            style: {
+              'width': 2.5,
+              'line-color': '#f97316',
+              'line-style': 'dashed',
+              'target-arrow-color': '#f97316',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'unbundled-bezier',
+              'control-point-distances': '60',
+              'control-point-weights': '0.5',
+              'opacity': 0.95,
+              'label': 'data(label)',
+              'font-size': '8px',
+              'color': '#c2410c',
+              'text-background-color': '#ffffff',
+              'text-background-opacity': 0.8,
+              'text-background-padding': '2px',
+              'z-index': 30
+            }
+          },
+          {
             selector: '.search-match',
             style: {
               'border-width': 4,
@@ -2576,12 +2598,50 @@
           this.renderInspector();
         });
 
-        // Sidebar counters double as jump links into the matching tab.
+        // Sidebar counters double as jump links into the matching tab; the
+        // rollback cause card links out to the trigger node and to the full
+        // event in the Rollback Analysis panel.
         document.getElementById('node-summary').addEventListener('click', (e) => {
-          const btn = e.target.closest('[data-instab-jump]');
-          if (!btn) return;
-          this.showInspectorTab(btn.dataset.instabJump);
-          document.getElementById('node-inspector').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const jump = e.target.closest('[data-instab-jump]');
+          if (jump) {
+            this.showInspectorTab(jump.dataset.instabJump);
+            document.getElementById('node-inspector').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
+
+          const focus = e.target.closest('[data-focus-node]');
+          if (focus) {
+            this.selectNode(focus.dataset.focusNode);
+            return;
+          }
+
+          const search = e.target.closest('[data-open-rb-search]');
+          if (search) {
+            this.rollbackQuery = search.dataset.openRbSearch;
+            this.rollbackFilter = 'all';
+            document.getElementById('rollback-search').value = this.rollbackQuery;
+            document.getElementById('rollback-filter').value = 'all';
+            this.selectedRollback = null;
+            this.renderRollbackEvents();
+            this.showRollbackTab('events');
+            document.getElementById('rollback-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return;
+          }
+
+          const open = e.target.closest('[data-open-rb]');
+          if (open) {
+            // Clear the filters first — the target event is otherwise liable
+            // to be filtered out, and renderRollbackEvents would silently
+            // select a different one.
+            this.rollbackQuery = '';
+            this.rollbackFilter = 'all';
+            document.getElementById('rollback-search').value = '';
+            document.getElementById('rollback-filter').value = 'all';
+            this.selectedRollback = Number(open.dataset.openRb);
+            this.renderRollbackEvents();
+            this.showRollbackTab('events');
+            document.getElementById('rollback-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         });
       },
 
@@ -2623,9 +2683,68 @@
           document: doc
         };
 
+        this.showRollbackFocusEdges(nodeLabel);
         this.renderNodeSummary();
         this.renderInspector();
         this.renderNodeList();
+      },
+
+      // Dashed orange arrows answering "who rolled this node back?", drawn
+      // only while the node is selected — a 130-node graph with every
+      // trigger's blast radius drawn at once is unreadable.
+      //
+      // Every arrow is incident to the selected node: pointing AT it when it
+      // is a casualty (one arrow per event — the causation that explains it),
+      // and FANNING OUT from it when it is itself a trigger (that fan-out is
+      // the blast radius, which is the reason to select a trigger at all).
+      showRollbackFocusEdges(nodeId) {
+        if (!this.cy) return;
+        this.clearRollbackFocusEdges();
+        if (!nodeId) return;
+
+        const seen = new Set();
+        const toAdd = [];
+        const edge = (source, target, via) => {
+          if (source === target) return;
+          if (this.cy.$id(source).length === 0 || this.cy.$id(target).length === 0) return;
+          const id = `rbfocus_${source}_${target}`;
+          if (seen.has(id)) return;
+          seen.add(id);
+          toAdd.push({
+            group: 'edges',
+            data: {
+              id, source, target,
+              label: (via && via.length)
+                ? `${this.shortField(via[0])}${via.length > 1 ? ` +${via.length - 1}` : ''}`
+                : 'rolled back'
+            },
+            classes: 'rollback-focus-edge'
+          });
+        };
+
+        for (const c of this.getRollbackContext(nodeId)) {
+          // No trigger means an external change (set_data / signal) — there is
+          // no in-history process to draw an arrow from.
+          if (!c.triggerId) continue;
+
+          if (c.role === 'trigger') {
+            for (const step of (c.rb.impactedChain || [])) {
+              edge(c.triggerId, `${step.name}_${step.ordinal}`, step.via);
+            }
+          } else {
+            edge(c.triggerId, nodeId, c.fields);
+          }
+        }
+
+        if (!toAdd.length) return;
+        // A trigger with a wide blast radius would stack dozens of labels on
+        // top of each other; past that point the arrows alone carry the shape.
+        if (toAdd.length > 12) for (const e of toAdd) e.data.label = '';
+        this.cy.add(toAdd);
+      },
+
+      clearRollbackFocusEdges() {
+        if (this.cy) this.cy.remove('.rollback-focus-edge');
       },
 
       inspectorTabs() {
@@ -2634,22 +2753,66 @@
       },
 
       // A node's part in the rollback story, so the inspector says why it is
-      // coloured the way it is in the graph.
-      getRollbackRole(nodeId) {
-        for (const rb of (this.rollbackData || [])) {
-          if (rb.causingProcess && `${rb.causingProcess.name}_${rb.causingProcess.ordinal}` === nodeId) {
-            return { label: '🔥 rollback trigger', cls: 'badge-error' };
+      // coloured the way it is in the graph — and, for a casualty, WHO rolled
+      // it back and over WHICH fields.
+      //
+      // Returns every event the execution takes part in, not just the first:
+      // one execution can be the trigger of one rollback and a casualty of
+      // another, and the panel should say so rather than pick one silently.
+      getRollbackContext(nodeId) {
+        const out = [];
+        (this.rollbackData || []).forEach((rb, rbIndex) => {
+          const trigger = rb.causingProcess;
+          const triggerId = trigger ? `${trigger.name}_${trigger.ordinal}` : null;
+          const base = { rb, rbIndex, trigger, triggerId };
+
+          if (triggerId && triggerId === nodeId) {
+            out.push({
+              ...base,
+              role: 'trigger',
+              label: '🔥 rollback trigger',
+              cls: 'badge-error',
+              // The overlap between what it wrote and what the rolled-back
+              // process read — the overwrite that fired planner.Rollback().
+              fields: trigger.fieldsWritten || []
+            });
           }
-        }
-        for (const rb of (this.rollbackData || [])) {
+
           if (`${rb.rolledBackProcess}_${rb.rerunOrdinal}` === nodeId) {
-            return { label: '♻️ re-executed after rollback', cls: 'badge-info' };
+            out.push({
+              ...base,
+              role: 'rerun',
+              label: '♻️ re-executed after rollback',
+              cls: 'badge-info',
+              fields: Object.keys(rb.changedInputValues || {})
+            });
           }
-          if ((rb.impactedChain || []).some(step => `${step.name}_${step.ordinal}` === nodeId)) {
-            return { label: '🔄 rolled back', cls: 'badge-warning' };
+
+          const step = (rb.impactedChain || []).find(s => `${s.name}_${s.ordinal}` === nodeId);
+          if (step) {
+            out.push({
+              ...base,
+              role: 'impacted',
+              label: '🔄 rolled back',
+              cls: 'badge-warning',
+              // `via`: the fields this execution READ that the trigger changed
+              // underneath it — the reason the planner rolled it back.
+              fields: step.via || [],
+              // What the planner demonstrably undid here. Empty is normal for
+              // retain-data-on-rollback activities.
+              reverted: (rb.revertedFields || {})[nodeId] || []
+            });
           }
-        }
-        return null;
+        });
+
+        // Trigger > re-run > casualty: the same precedence buildNodes() uses
+        // to colour the node, so badge and colour never disagree.
+        const rank = { trigger: 0, rerun: 1, impacted: 2 };
+        return out.sort((a, b) => rank[a.role] - rank[b.role]);
+      },
+
+      getRollbackRole(nodeId) {
+        return this.getRollbackContext(nodeId)[0] || null;
       },
 
       renderNodeSummary() {
@@ -2662,12 +2825,12 @@
 
         const labels = { read: 'read', write: 'write', changed: 'changed', document: 'document' };
         const tabs = this.inspectorTabs();
-        const role = this.getRollbackRole(d.name);
+        const ctx = this.getRollbackContext(d.name);
 
         el.innerHTML = `
           <div class="font-medium text-sm text-base-content break-all">${this.escapeHtml(d.name)}</div>
           <div class="opacity-70 mt-0.5">${d.nodeIndex !== null ? `node ${d.nodeIndex}` : 'external input'}</div>
-          ${role ? `<div class="mt-1"><span class="badge badge-xs ${role.cls}">${role.label}</span></div>` : ''}
+          ${this.renderRollbackCauses(ctx, d.name)}
           <div class="mt-2 grid grid-cols-2 gap-1">
             ${Object.keys(labels).map(key => `
               <button type="button" data-instab-jump="${key}"
@@ -2675,6 +2838,81 @@
                 <span class="block text-[10px] uppercase tracking-wide opacity-60">${labels[key]}</span>
                 <span class="block font-semibold text-sm text-base-content">${Object.keys(tabs[key] || {}).length}</span>
               </button>`).join('')}
+          </div>`;
+      },
+
+      // An execution can take part in many events at once — one node here is
+      // the trigger of 3 rollbacks and a casualty of 11. Stacking 14 cards in
+      // a sidebar is unreadable, so show the first few and roll the rest up
+      // into a count that opens the full analysis filtered to this process.
+      renderRollbackCauses(ctx, nodeId) {
+        const MAX_CARDS = 3;
+        if (!ctx.length) return '';
+
+        const cards = ctx.slice(0, MAX_CARDS).map(c => this.renderRollbackCause(c)).join('');
+        const rest = ctx.length - MAX_CARDS;
+        if (rest <= 0) return cards;
+
+        const counts = { trigger: 0, rerun: 0, impacted: 0 };
+        for (const c of ctx) counts[c.role]++;
+        const parts = [];
+        if (counts.trigger) parts.push(`\u{1F525} triggers ${counts.trigger}`);
+        if (counts.rerun) parts.push(`\u267B\uFE0F re-run ${counts.rerun}`);
+        if (counts.impacted) parts.push(`\u{1F504} rolled back ${counts.impacted}`);
+
+        // Strip the "_N" occurrence suffix: the rollback panel's search matches
+        // process names, which carry no ordinal.
+        const process = String(nodeId).replace(/_\d+$/, '');
+        return `
+          ${cards}
+          <div class="mt-1.5 p-1.5 rounded bg-base-200 text-[11px]">
+            <div>+${rest} more rollback event(s) involving this node</div>
+            <div class="opacity-60 mt-0.5">${parts.join(' \u00b7 ')}</div>
+            <button type="button" data-open-rb-search="${this.escapeHtml(process)}"
+              class="btn btn-ghost btn-xs mt-1 px-1">see all ${ctx.length} \u2193</button>
+          </div>`;
+      },
+
+      // One "why" card under the Selected Node badge: the badge itself, the
+      // execution that caused this node's fate, and the fields that carry the
+      // causation. Everything here is already computed by analyzeRollbacks();
+      // this only surfaces it where the node is selected.
+      renderRollbackCause(c) {
+        const t = c.trigger;
+        const who = t
+          ? `<button type="button" data-focus-node="${this.escapeHtml(c.triggerId)}"
+               class="link link-hover font-medium break-all">${this.escapeHtml(t.name)}</button><span class="opacity-60"> (node ${t.nodeIndex})</span>`
+          : '<span class="font-medium">external change (set_data / signal)</span>';
+
+        const chips = (fields) => fields.length
+          ? this.fieldChips(fields, 3)
+          : '<span class="italic opacity-60">none recorded</span>';
+
+        let body = '';
+        if (c.role === 'impacted') {
+          body = `
+            <div>rolled back by ${who}</div>
+            <div class="mt-1"><span class="opacity-60">via read of</span> ${chips(c.fields)}</div>
+            ${c.reverted.length ? `<div class="mt-1"><span class="opacity-60">writes reverted here</span> ${this.fieldChips(c.reverted, 3)}</div>` : ''}`;
+        } else if (c.role === 'rerun') {
+          body = `
+            <div>re-run after ${who}</div>
+            <div class="mt-1"><span class="opacity-60">changed inputs</span> ${chips(c.fields)}</div>`;
+        } else {
+          const firstRunId = `${c.rb.rolledBackProcess}_${c.rb.firstRunOrdinal}`;
+          body = `
+            <div>rolled back
+              <button type="button" data-focus-node="${this.escapeHtml(firstRunId)}"
+                class="link link-hover font-medium break-all">${this.escapeHtml(c.rb.rolledBackProcess)}</button><span class="opacity-60"> (node ${c.rb.firstRunIndex})</span></div>
+            <div class="mt-1"><span class="opacity-60">by overwriting</span> ${chips(c.fields)}</div>`;
+        }
+
+        return `
+          <div class="mt-1.5 p-1.5 rounded bg-base-200 border-l-4 ${
+            c.role === 'trigger' ? 'border-error' : (c.role === 'rerun' ? 'border-info' : 'border-warning')}">
+            <span class="badge badge-xs ${c.cls}">${c.label}</span>
+            <div class="mt-1 text-[11px] leading-relaxed">${body}</div>
+            <button type="button" data-open-rb="${c.rbIndex}" class="btn btn-ghost btn-xs mt-1 px-1">open event ↓</button>
           </div>`;
       },
 
@@ -3252,6 +3490,7 @@
       clearNodeInfo() {
         this.nodeData = null;
         this.inspectorQuery = '';
+        this.clearRollbackFocusEdges();
         const search = document.getElementById('inspector-search');
         if (search) search.value = '';
         this.renderNodeSummary();
